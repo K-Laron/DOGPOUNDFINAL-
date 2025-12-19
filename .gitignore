@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+__pycache__/
+venv/
+
+# Build output
+dist/
+build/
+bin/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment variables (Never commit secrets!)
+.env
