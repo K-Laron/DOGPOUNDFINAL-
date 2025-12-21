@@ -10,17 +10,17 @@ const SettingsPage = {
      * Settings data
      */
     settings: {},
-    
+
     /**
      * Current tab
      */
     currentTab: 'general',
-    
+
     /**
      * Activity logs
      */
     activityLogs: [],
-    
+
     /**
      * Render the page
      * @returns {string}
@@ -39,7 +39,7 @@ const SettingsPage = {
                 </div>
             `;
         }
-        
+
         return `
             <div class="page-header">
                 <div>
@@ -102,26 +102,26 @@ const SettingsPage = {
             </div>
         `;
     },
-    
+
     /**
      * After render callback
      */
     async afterRender() {
         if (!Auth.isAdmin()) return;
-        
+
         await this.loadSettings();
         this.setupEventListeners();
         this.renderCurrentTab();
         this.addStyles();
     },
-    
+
     /**
      * Load settings
      */
     async loadSettings() {
         try {
             const response = await API.get('/settings');
-            
+
             if (response.success) {
                 this.settings = response.data || {};
             }
@@ -130,7 +130,7 @@ const SettingsPage = {
             this.settings = this.getDefaultSettings();
         }
     },
-    
+
     /**
      * Get default settings
      * @returns {Object}
@@ -182,7 +182,7 @@ const SettingsPage = {
             }
         };
     },
-    
+
     /**
      * Setup event listeners
      */
@@ -200,7 +200,7 @@ const SettingsPage = {
             });
         }
     },
-    
+
     /**
      * Render current tab
      */
@@ -235,16 +235,16 @@ const SettingsPage = {
                 break;
         }
     },
-    
+
     /**
      * Render general settings
      */
     renderGeneralSettings() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         const settings = this.settings.general || {};
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">General Settings</h3>
             
@@ -290,19 +290,19 @@ const SettingsPage = {
                 ${this.renderSaveButton('general')}
             </form>
         `;
-        
+
         this.setupFormHandler('general-settings-form', 'general');
     },
-    
+
     /**
      * Render shelter settings
      */
     renderShelterSettings() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         const settings = this.settings.shelter || {};
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">Shelter Information</h3>
             
@@ -346,19 +346,19 @@ const SettingsPage = {
                 ${this.renderSaveButton('shelter')}
             </form>
         `;
-        
+
         this.setupFormHandler('shelter-settings-form', 'shelter');
     },
-    
+
     /**
      * Render adoption settings
      */
     renderAdoptionSettings() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         const settings = this.settings.adoption || {};
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">Adoption Settings</h3>
             
@@ -415,19 +415,19 @@ const SettingsPage = {
                 ${this.renderSaveButton('adoption')}
             </form>
         `;
-        
+
         this.setupFormHandler('adoption-settings-form', 'adoption');
     },
-    
+
     /**
      * Render fees settings
      */
     renderFeesSettings() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         const settings = this.settings.fees || {};
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">Fees & Pricing</h3>
             
@@ -512,34 +512,25 @@ const SettingsPage = {
                 ${this.renderSaveButton('fees')}
             </form>
         `;
-        
+
         this.setupFormHandler('fees-settings-form', 'fees');
     },
-    
+
     /**
      * Render notification settings
      */
     renderNotificationSettings() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         const settings = this.settings.notifications || {};
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">Notification Settings</h3>
             
             <form id="notification-settings-form">
                 <div class="space-y-6">
-                    <div class="flex items-center justify-between p-4 bg-secondary rounded-lg">
-                        <div>
-                            <p class="font-medium">Email Notifications</p>
-                            <p class="text-secondary text-sm">Send email notifications to users</p>
-                        </div>
-                        <label class="toggle">
-                            <input type="checkbox" name="email_enabled" ${settings.email_enabled !== false ? 'checked' : ''}>
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
+
                     
                     <div class="flex items-center justify-between p-4 bg-secondary rounded-lg">
                         <div>
@@ -615,19 +606,19 @@ const SettingsPage = {
                 ${this.renderSaveButton('notifications')}
             </form>
         `;
-        
+
         this.setupFormHandler('notification-settings-form', 'notifications');
     },
-    
+
     /**
      * Render email settings
      */
     renderEmailSettings() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         const settings = this.settings.email || {};
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">Email Configuration</h3>
             
@@ -705,17 +696,17 @@ const SettingsPage = {
                 </div>
             </form>
         `;
-        
+
         this.setupFormHandler('email-settings-form', 'email');
     },
-    
+
     /**
      * Render backup settings
      */
     renderBackupSettings() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">Backup & Data Management</h3>
             
@@ -795,7 +786,7 @@ const SettingsPage = {
                 </div>
             </div>
         `;
-        
+
         // Setup file input handler
         const fileInput = document.getElementById('backup-file');
         if (fileInput) {
@@ -808,14 +799,14 @@ const SettingsPage = {
             });
         }
     },
-    
+
     /**
      * Render activity logs
      */
     async renderActivityLogs() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         container.innerHTML = `
             <div class="flex items-center justify-between mb-6">
                 <h3 class="font-semibold text-lg">Activity Logs</h3>
@@ -839,16 +830,16 @@ const SettingsPage = {
             
             <div id="logs-pagination" class="mt-6"></div>
         `;
-        
+
         await this.loadActivityLogs();
-        
+
         // Setup filter
         const filter = document.getElementById('log-filter');
         if (filter) {
             filter.addEventListener('change', () => this.loadActivityLogs(1, filter.value));
         }
     },
-    
+
     /**
      * Load activity logs
      * @param {number} page
@@ -857,17 +848,17 @@ const SettingsPage = {
     async loadActivityLogs(page = 1, filter = '') {
         const container = document.getElementById('logs-container');
         if (!container) return;
-        
+
         try {
             const params = { page, per_page: 20 };
             if (filter) params.action_pattern = filter;
-            
+
             const response = await API.system.logs(params);
-            
+
             if (response.success) {
                 this.activityLogs = response.data.data || response.data;
                 const pagination = response.data.pagination || { page: 1, total: this.activityLogs.length, per_page: 20 };
-                
+
                 if (this.activityLogs.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state py-8">
@@ -877,7 +868,7 @@ const SettingsPage = {
                     `;
                     return;
                 }
-                
+
                 container.innerHTML = `
                     <div class="table-container">
                         <table class="table">
@@ -911,7 +902,7 @@ const SettingsPage = {
                         </table>
                     </div>
                 `;
-                
+
                 // Render pagination
                 this.renderLogsPagination(pagination, filter);
             }
@@ -923,7 +914,7 @@ const SettingsPage = {
             `;
         }
     },
-    
+
     /**
      * Render logs pagination
      * @param {Object} pagination
@@ -932,15 +923,15 @@ const SettingsPage = {
     renderLogsPagination(pagination, filter) {
         const container = document.getElementById('logs-pagination');
         if (!container) return;
-        
+
         const { page, total, per_page } = pagination;
         const totalPages = Math.ceil(total / per_page);
-        
+
         if (totalPages <= 1) {
             container.innerHTML = `<p class="text-secondary text-sm">Showing ${total} log${total !== 1 ? 's' : ''}</p>`;
             return;
         }
-        
+
         container.innerHTML = `
             <div class="flex items-center justify-between">
                 <p class="text-secondary text-sm">Showing ${(page - 1) * per_page + 1} to ${Math.min(page * per_page, total)} of ${total} logs</p>
@@ -956,25 +947,25 @@ const SettingsPage = {
             </div>
         `;
     },
-    
+
     /**
      * Render system info
      */
     async renderSystemInfo() {
         const container = document.getElementById('settings-content');
         if (!container) return;
-        
+
         container.innerHTML = `
             <h3 class="font-semibold text-lg mb-6">System Information</h3>
             <div id="system-info-content">
                 ${Loading.skeleton('list', { items: 8, hasAvatar: false })}
             </div>
         `;
-        
+
         try {
             const response = await API.system.info();
             const info = response.success ? response.data : {};
-            
+
             document.getElementById('system-info-content').innerHTML = `
                 <div class="space-y-6">
                     <!-- Application Info -->
@@ -1082,7 +1073,7 @@ const SettingsPage = {
             `;
         }
     },
-    
+
     /**
      * Render save button
      * @param {string} section
@@ -1093,7 +1084,7 @@ const SettingsPage = {
         if (inline) {
             return `<button type="submit" class="btn btn-primary">Save Settings</button>`;
         }
-        
+
         return `
             <div class="flex justify-end mt-6 pt-6 border-t">
                 <button type="submit" class="btn btn-primary">
@@ -1102,7 +1093,7 @@ const SettingsPage = {
             </div>
         `;
     },
-    
+
     /**
      * Setup form handler
      * @param {string} formId
@@ -1111,13 +1102,13 @@ const SettingsPage = {
     setupFormHandler(formId, section) {
         const form = document.getElementById(formId);
         if (!form) return;
-        
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.saveSettings(section, Form.getData(form));
         });
     },
-    
+
     /**
      * Save settings
      * @param {string} section
@@ -1126,12 +1117,12 @@ const SettingsPage = {
     async saveSettings(section, data) {
         const form = document.getElementById(`${section}-settings-form`);
         const submitBtn = form?.querySelector('button[type="submit"]');
-        
+
         try {
             if (submitBtn) Loading.setButtonLoading(submitBtn, true, 'Saving...');
-            
+
             const response = await API.put(`/settings/${section}`, data);
-            
+
             if (response.success) {
                 Toast.success('Settings saved successfully');
                 this.settings[section] = { ...this.settings[section], ...data };
@@ -1142,21 +1133,21 @@ const SettingsPage = {
             if (submitBtn) Loading.setButtonLoading(submitBtn, false);
         }
     },
-    
+
     /**
      * Test email configuration
      */
     async testEmail() {
         const loadingModal = Modal.loading('Testing email connection...');
-        
+
         try {
             const form = document.getElementById('email-settings-form');
             const data = Form.getData(form);
-            
+
             const response = await API.post('/settings/email/test', data);
-            
+
             loadingModal.close();
-            
+
             if (response.success) {
                 Toast.success('Email test successful! Check your inbox.');
             } else {
@@ -1167,7 +1158,7 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to test email');
         }
     },
-    
+
     /**
      * Create backup
      */
@@ -1176,19 +1167,19 @@ const SettingsPage = {
             'This will create a backup of your entire database. The download will start automatically.',
             'Create Backup'
         );
-        
+
         if (!confirmed) return;
-        
+
         const loadingModal = Modal.loading('Creating backup...');
-        
+
         try {
             Toast.info('Preparing backup file...');
-            
+
             // This would typically trigger a download
             const response = await API.get('/backup/create');
-            
+
             loadingModal.close();
-            
+
             if (response.success && response.data.download_url) {
                 window.location.href = response.data.download_url;
                 Toast.success('Backup created successfully');
@@ -1198,7 +1189,7 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to create backup');
         }
     },
-    
+
     /**
      * Confirm restore
      * @param {File} file
@@ -1208,28 +1199,28 @@ const SettingsPage = {
             `Are you sure you want to restore from "${file.name}"? This will replace ALL current data and cannot be undone.`,
             'Restore Backup'
         );
-        
+
         if (!confirmed) {
             document.getElementById('backup-file').value = '';
             document.getElementById('selected-file').textContent = 'No file selected';
             return;
         }
-        
+
         // Double confirmation for safety
         const doubleConfirmed = await Modal.confirm(
             'This is your final warning. All current data will be permanently deleted. Are you absolutely sure?',
             'Final Confirmation'
         );
-        
+
         if (!doubleConfirmed) return;
-        
+
         const loadingModal = Modal.loading('Restoring backup...');
-        
+
         try {
             const response = await API.upload('/backup/restore', file, 'backup');
-            
+
             loadingModal.close();
-            
+
             if (response.success) {
                 Toast.success('Backup restored successfully. Reloading...');
                 setTimeout(() => window.location.reload(), 2000);
@@ -1239,17 +1230,17 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to restore backup');
         }
     },
-    
+
     /**
      * Export data
      * @param {string} type
      */
     async exportData(type) {
         Toast.info(`Exporting ${type}...`);
-        
+
         try {
             const response = await API.get(`/export/${type}`);
-            
+
             if (response.success && response.data.download_url) {
                 window.location.href = response.data.download_url;
                 Toast.success(`${Utils.capitalize(type)} exported successfully`);
@@ -1263,7 +1254,7 @@ const SettingsPage = {
             Toast.error(error.message || `Failed to export ${type}`);
         }
     },
-    
+
     /**
      * Convert array to CSV
      * @param {Array} data
@@ -1271,9 +1262,9 @@ const SettingsPage = {
      */
     convertToCSV(data) {
         if (!data || data.length === 0) return '';
-        
+
         const headers = Object.keys(data[0]);
-        const rows = data.map(row => 
+        const rows = data.map(row =>
             headers.map(header => {
                 const value = row[header];
                 // Escape quotes and wrap in quotes if contains comma
@@ -1283,19 +1274,19 @@ const SettingsPage = {
                 return value ?? '';
             }).join(',')
         );
-        
+
         return [headers.join(','), ...rows].join('\n');
     },
-    
+
     /**
      * Export logs
      */
     async exportLogs() {
         Toast.info('Exporting activity logs...');
-        
+
         try {
             const response = await API.system.logs({ per_page: 10000 });
-            
+
             if (response.success) {
                 const logs = response.data.data || response.data;
                 const csv = this.convertToCSV(logs);
@@ -1306,7 +1297,7 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to export logs');
         }
     },
-    
+
     /**
      * Clear logs
      */
@@ -1315,12 +1306,12 @@ const SettingsPage = {
             'This will permanently delete all activity logs. This action cannot be undone.',
             'Clear Activity Logs'
         );
-        
+
         if (!confirmed) return;
-        
+
         try {
             const response = await API.delete('/logs/clear');
-            
+
             if (response.success) {
                 Toast.success('Activity logs cleared');
                 this.renderActivityLogs();
@@ -1329,14 +1320,14 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to clear logs');
         }
     },
-    
+
     /**
      * Clear cache
      */
     async clearCache() {
         try {
             const response = await API.post('/system/clear-cache');
-            
+
             if (response.success) {
                 Toast.success('Cache cleared successfully');
             }
@@ -1344,7 +1335,7 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to clear cache');
         }
     },
-    
+
     /**
      * Reset system
      */
@@ -1353,12 +1344,12 @@ const SettingsPage = {
             'This will reset ALL settings to their default values. Your data will NOT be affected.',
             'Reset System'
         );
-        
+
         if (!confirmed) return;
-        
+
         try {
             const response = await API.post('/settings/reset');
-            
+
             if (response.success) {
                 Toast.success('Settings reset to defaults');
                 await this.loadSettings();
@@ -1368,13 +1359,13 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to reset settings');
         }
     },
-    
+
     /**
      * Add component styles
      */
     addStyles() {
         if (document.getElementById('settings-styles')) return;
-        
+
         const styles = document.createElement('style');
         styles.id = 'settings-styles';
         styles.textContent = `

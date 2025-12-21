@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 TITLE Catarman Dog Pound System
 echo 🔍 Searching for PHP...
 
@@ -10,10 +10,10 @@ if not exist "%PHP_BIN%" (
 echo ✅ Using PHP: %PHP_BIN%
 echo.
 echo 🚀 Starting Backend Server (Port 8000)...
-start "Backend Server" /MIN "%PHP_BIN%" -S localhost:8000 -t backend/public backend/public/index.php
+start "Backend Server" /MIN "%PHP_BIN%" -S 0.0.0.0:8000 -t backend/public backend/public/index.php
 
 echo 🚀 Starting Frontend Server (Port 3000)...
-start "Frontend Server" /MIN "%PHP_BIN%" -S localhost:3000 -t frontend
+start "Frontend Server" /MIN "%PHP_BIN%" -S 0.0.0.0:3000 -t frontend
 
 echo.
 echo ✨ Application Launched!

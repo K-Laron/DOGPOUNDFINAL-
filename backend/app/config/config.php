@@ -21,7 +21,7 @@ define('APP_VERSION', '1.0.0');
 // ============================================
 
 // Base URL for the API (update for your environment)
-define('BASE_URL', 'http://localhost:8000');
+define('BASE_URL', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8000'));
 
 // Frontend URL (for CORS)
 define('FRONTEND_URL', 'http://localhost:3000');

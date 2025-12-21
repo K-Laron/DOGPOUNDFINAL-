@@ -947,7 +947,7 @@ const Utils = {
 
             // User statuses
             'Active': 'badge-success',
-            'Inactive': 'badge-gray',
+            'Inactive': 'badge-warning',
             'Banned': 'badge-danger'
         };
 

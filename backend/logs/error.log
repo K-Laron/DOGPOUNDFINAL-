@@ -11800,3 +11800,2222 @@ Stack trace:
 (
 )
 
+[21-Dec-2025 14:10:14 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 14:10:14 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 14:10:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 14:10:16 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 14:10:16 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:08 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:08 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:40 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:40 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:05:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:05:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:06:00 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:06:00 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:06:09 Asia/Manila] DEBUG: Raw JSON Input: {"username":"staff","password":"password"}
+[21-Dec-2025 15:06:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => staff
+    [password] => password
+)
+
+[21-Dec-2025 15:06:19 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dale","password":"password"}
+[21-Dec-2025 15:06:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dale
+    [password] => password
+)
+
+[21-Dec-2025 15:06:23 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dale","password":"password1234"}
+[21-Dec-2025 15:06:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dale
+    [password] => password1234
+)
+
+[21-Dec-2025 15:06:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:06:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:06:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:06:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:10:14 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:10:14 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:10:14 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:10:14 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:10:15 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:10:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:10:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:10:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:11:50 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:11:50 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:11:50 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:11:50 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:11:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:11:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:11:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:11:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:11:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:11:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:12:42 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:12:42 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:12:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:12:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:12:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:12:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:13:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:13:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:13:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:13:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:13:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:13:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:13:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:13:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:13:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:13:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:13:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:13:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:14:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:14:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:14:08 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:14:08 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:14:15 Asia/Manila] DEBUG: Raw JSON Input: {"first_name":"Dale","last_name":"Bona","username":"dale","email":"bonadale@catarmandogpound.com","contact_number":"09123456789","address":"SAN ROQUE"}
+[21-Dec-2025 15:14:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [first_name] => Dale
+    [last_name] => Bona
+    [username] => dale
+    [email] => bonadale@catarmandogpound.com
+    [contact_number] => 09123456789
+    [address] => SAN ROQUE
+)
+
+[21-Dec-2025 15:14:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:14:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:14:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:14:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:18:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:18:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:18:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:18:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:18:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:18:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:20:19 Asia/Manila] DEBUG: Raw JSON Input: {"username":"testdel","first_name":"Test","last_name":"Laron","email":"test@test.com","password":"passtest","contact_number":"09990001111"}
+[21-Dec-2025 15:20:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => testdel
+    [first_name] => Test
+    [last_name] => Laron
+    [email] => test@test.com
+    [password] => passtest
+    [contact_number] => 09990001111
+)
+
+[21-Dec-2025 15:21:03 Asia/Manila] DEBUG: Raw JSON Input: {"username":"testdel","password":"passtest"}
+[21-Dec-2025 15:21:03 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => testdel
+    [password] => passtest
+)
+
+[21-Dec-2025 15:21:04 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:21:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:21:04 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:21:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:21:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:21:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:24:31 Asia/Manila] Application Error: syntax error, unexpected token "`" in C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\UserController.php on line 799
+[21-Dec-2025 15:25:02 Asia/Manila] DEBUG: Raw JSON Input: {"username":"testdel","password":"passtest"}
+[21-Dec-2025 15:25:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => testdel
+    [password] => passtest
+)
+
+[21-Dec-2025 15:25:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:25:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:25:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:25:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:25:06 Asia/Manila] Application Error: syntax error, unexpected token "`" in C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\UserController.php on line 799
+[21-Dec-2025 15:28:10 Asia/Manila] Application Error: syntax error, unexpected token "`" in C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\UserController.php on line 799
+[21-Dec-2025 15:28:23 Asia/Manila] DEBUG: Raw JSON Input: {"username":"testdel","password":"passtest"}
+[21-Dec-2025 15:28:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => testdel
+    [password] => passtest
+)
+
+[21-Dec-2025 15:28:23 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:28:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:28:23 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:28:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:28:26 Asia/Manila] Application Error: syntax error, unexpected token "`" in C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\UserController.php on line 799
+[21-Dec-2025 15:31:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:31:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:31:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:31:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:32:14 Asia/Manila] DEBUG: Raw JSON Input: {"password":"passtest"}
+[21-Dec-2025 15:32:14 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [password] => passtest
+)
+
+[21-Dec-2025 15:32:15 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:32:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:43:08 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dave","first_name":"Dave ","last_name":"Alumbres","email":"da@test.com","password":"password","contact_number":""}
+[21-Dec-2025 15:43:08 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dave
+    [first_name] => Dave 
+    [last_name] => Alumbres
+    [email] => da@test.com
+    [password] => password
+    [contact_number] => 
+)
+
+[21-Dec-2025 15:46:17 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dave","first_name":"dave","last_name":"alumbres","email":"da@test.com","password":"password","contact_number":""}
+[21-Dec-2025 15:46:17 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dave
+    [first_name] => dave
+    [last_name] => alumbres
+    [email] => da@test.com
+    [password] => password
+    [contact_number] => 
+)
+
+[21-Dec-2025 15:46:29 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dave","password":"password"}
+[21-Dec-2025 15:46:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dave
+    [password] => password
+)
+
+[21-Dec-2025 15:46:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:46:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:46:45 Asia/Manila] DEBUG: Raw JSON Input: {"animal_id":4}
+[21-Dec-2025 15:46:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [animal_id] => 4
+)
+
+[21-Dec-2025 15:46:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:46:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:46:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:46:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:46:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:46:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:46:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:07 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:07 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:17 Asia/Manila] DEBUG: Raw JSON Input: {"preferences":{"email_notifications":true,"adoption_notifications":true,"new_animal_notifications":false,"language":"en","date_format":"MM/DD/YYYY"}}
+[21-Dec-2025 15:47:17 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [preferences] => Array
+        (
+            [email_notifications] => 1
+            [adoption_notifications] => 1
+            [new_animal_notifications] => 
+            [language] => en
+            [date_format] => MM/DD/YYYY
+        )
+
+)
+
+[21-Dec-2025 15:47:20 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:20 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:35 Asia/Manila] DEBUG: Raw JSON Input: {"username":"System","password":"password"}
+[21-Dec-2025 15:47:35 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => System
+    [password] => password
+)
+
+[21-Dec-2025 15:47:38 Asia/Manila] DEBUG: Raw JSON Input: {"username":"System","password":"passsword"}
+[21-Dec-2025 15:47:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => System
+    [password] => passsword
+)
+
+[21-Dec-2025 15:47:44 Asia/Manila] DEBUG: Raw JSON Input: {"username":"System","password":"password"}
+[21-Dec-2025 15:47:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => System
+    [password] => password
+)
+
+[21-Dec-2025 15:47:48 Asia/Manila] DEBUG: Raw JSON Input: {"username":"system","password":"password"}
+[21-Dec-2025 15:47:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => system
+    [password] => password
+)
+
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Raw JSON Input: {"username":"Admin","password":"password"}
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => Admin
+    [password] => password
+)
+
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:47:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:47:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:48:54 Asia/Manila] DEBUG: Raw JSON Input: {"status":"Interview Scheduled","comments":"Interview Scheduled daw"}
+[21-Dec-2025 15:48:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [status] => Interview Scheduled
+    [comments] => Interview Scheduled daw
+)
+
+[21-Dec-2025 15:48:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:48:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:48:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:48:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:50:57 Asia/Manila] DEBUG: Raw JSON Input: {"status":"Rejected","comments":""}
+[21-Dec-2025 15:50:57 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [status] => Rejected
+    [comments] => 
+)
+
+[21-Dec-2025 15:50:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:50:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 15:50:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 15:50:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:47 Asia/Manila] DEBUG: Raw JSON Input: {"username":"admin","password":"password"}
+[21-Dec-2025 18:24:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => admin
+    [password] => password
+)
+
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:24:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:25:04 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:25:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:25:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:25:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:25:56 Asia/Manila] DEBUG: Raw JSON Input: {"first_name":"System","last_name":"Administrator","username":"Admin1","email":"admin@catarmandogpound.com","contact_number":"09170000001","address":""}
+[21-Dec-2025 18:25:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [first_name] => System
+    [last_name] => Administrator
+    [username] => Admin1
+    [email] => admin@catarmandogpound.com
+    [contact_number] => 09170000001
+    [address] => 
+)
+
+[21-Dec-2025 18:26:00 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:00 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:01 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:01 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:23 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:23 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:52 Asia/Manila] DEBUG: Raw JSON Input: {"amount_paid":"120","payment_method":"Cash","reference_number":"","invoice_id":12,"received_by_user_id":1}
+[21-Dec-2025 18:26:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [amount_paid] => 120
+    [payment_method] => Cash
+    [reference_number] => 
+    [invoice_id] => 12
+    [received_by_user_id] => 1
+)
+
+[21-Dec-2025 18:26:52 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:26:52 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:26:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:03 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:03 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:03 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:03 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:03 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:03 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:08 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:08 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:10 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:10 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:12 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:12 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:16 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:16 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:40 Asia/Manila] DEBUG: Raw JSON Input: {"preferences":{"email_notifications":false,"adoption_notifications":false,"new_animal_notifications":false,"language":"en","date_format":"MM/DD/YYYY"}}
+[21-Dec-2025 18:27:40 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [preferences] => Array
+        (
+            [email_notifications] => 
+            [adoption_notifications] => 
+            [new_animal_notifications] => 
+            [language] => en
+            [date_format] => MM/DD/YYYY
+        )
+
+)
+
+[21-Dec-2025 18:27:42 Asia/Manila] DEBUG: Raw JSON Input: {"preferences":{"email_notifications":false,"adoption_notifications":false,"new_animal_notifications":false,"language":"en","date_format":"MM/DD/YYYY"}}
+[21-Dec-2025 18:27:42 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [preferences] => Array
+        (
+            [email_notifications] => 
+            [adoption_notifications] => 
+            [new_animal_notifications] => 
+            [language] => en
+            [date_format] => MM/DD/YYYY
+        )
+
+)
+
+[21-Dec-2025 18:27:45 Asia/Manila] DEBUG: Raw JSON Input: {"preferences":{"email_notifications":false,"adoption_notifications":false,"new_animal_notifications":false,"language":"en","date_format":"DD/MM/YYYY"}}
+[21-Dec-2025 18:27:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [preferences] => Array
+        (
+            [email_notifications] => 
+            [adoption_notifications] => 
+            [new_animal_notifications] => 
+            [language] => en
+            [date_format] => DD/MM/YYYY
+        )
+
+)
+
+[21-Dec-2025 18:27:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:27:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:27:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:28:10 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:28:10 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:28:10 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:28:10 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:28:17 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:28:17 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:28:34 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:28:34 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:29:33 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dale","password":"password1234"}
+[21-Dec-2025 18:29:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dale
+    [password] => password1234
+)
+
+[21-Dec-2025 18:29:33 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:29:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:29:33 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:29:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:29:49 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:29:49 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:29:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:29:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:29:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:29:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:29:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:29:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:00 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:00 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:06 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:06 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:19 Asia/Manila] DEBUG: Raw JSON Input: {"animal_id":14}
+[21-Dec-2025 18:30:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [animal_id] => 14
+)
+
+[21-Dec-2025 18:30:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:28 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:28 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:37 Asia/Manila] DEBUG: Raw JSON Input: {"username":"admin","password":"paassword"}
+[21-Dec-2025 18:30:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => admin
+    [password] => paassword
+)
+
+[21-Dec-2025 18:30:43 Asia/Manila] DEBUG: Raw JSON Input: {"username":"admin","password":"password"}
+[21-Dec-2025 18:30:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => admin
+    [password] => password
+)
+
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Raw JSON Input: {"username":"admin1","password":"password"}
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => admin1
+    [password] => password
+)
+
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:50 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:53 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:53 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:30:53 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:30:53 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:11 Asia/Manila] DEBUG: Raw JSON Input: {"status":"Approved","comments":"goods"}
+[21-Dec-2025 18:31:11 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [status] => Approved
+    [comments] => goods
+)
+
+[21-Dec-2025 18:31:11 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:11 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:11 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:11 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:16 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:16 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:25 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dale","password":"password1234"}
+[21-Dec-2025 18:31:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dale
+    [password] => password1234
+)
+
+[21-Dec-2025 18:31:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:26 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:26 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:35 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:35 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:31:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:31:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Raw JSON Input: {"username":"juan","password":"password"}
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => juan
+    [password] => password
+)
+
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:32:53 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:32:53 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:04 Asia/Manila] DEBUG: Raw JSON Input: {"payer_user_id":8,"transaction_type":"Adoption Fee","total_amount":"150","issued_by_user_id":2}
+[21-Dec-2025 18:33:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [payer_user_id] => 8
+    [transaction_type] => Adoption Fee
+    [total_amount] => 150
+    [issued_by_user_id] => 2
+)
+
+[21-Dec-2025 18:33:04 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:04 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:19 Asia/Manila] DEBUG: Raw JSON Input: {"amount_paid":"150","payment_method":"Cash","reference_number":"","invoice_id":13,"received_by_user_id":2}
+[21-Dec-2025 18:33:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [amount_paid] => 150
+    [payment_method] => Cash
+    [reference_number] => 
+    [invoice_id] => 13
+    [received_by_user_id] => 2
+)
+
+[21-Dec-2025 18:33:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:26 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:26 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:38 Asia/Manila] DEBUG: Raw JSON Input: {"username":"admin1","password":"password"}
+[21-Dec-2025 18:33:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => admin1
+    [password] => password
+)
+
+[21-Dec-2025 18:33:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:42 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:42 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:51 Asia/Manila] DEBUG: Raw JSON Input: {"username":"dale","password":"password1234"}
+[21-Dec-2025 18:33:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => dale
+    [password] => password1234
+)
+
+[21-Dec-2025 18:33:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:52 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:33:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:33:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:34:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:34:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:34:19 Asia/Manila] DEBUG: Raw JSON Input: {"preferences":{"email_notifications":true,"adoption_notifications":true,"new_animal_notifications":false,"language":"fil","date_format":"MM/DD/YYYY"}}
+[21-Dec-2025 18:34:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [preferences] => Array
+        (
+            [email_notifications] => 1
+            [adoption_notifications] => 1
+            [new_animal_notifications] => 
+            [language] => fil
+            [date_format] => MM/DD/YYYY
+        )
+
+)
+
+[21-Dec-2025 18:34:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:34:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:34:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:34:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:34:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:34:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:34:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:34:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 18:34:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 18:34:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:01:37 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:01:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:01:37 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:01:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:01:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:01:42 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:01:42 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:07:35 Asia/Manila] DEBUG: Raw JSON Input: {"username":"Davaderds","first_name":"Daveee","last_name":"Dawww","email":"DD@d.com","password":"password","contact_number":""}
+[21-Dec-2025 22:07:35 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => Davaderds
+    [first_name] => Daveee
+    [last_name] => Dawww
+    [email] => DD@d.com
+    [password] => password
+    [contact_number] => 
+)
+
+[21-Dec-2025 22:07:45 Asia/Manila] DEBUG: Raw JSON Input: {"username":"DD@d.com","password":"password"}
+[21-Dec-2025 22:07:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => DD@d.com
+    [password] => password
+)
+
+[21-Dec-2025 22:07:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:07:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:07:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:07:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:12:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:12:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:12:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:12:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:12:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:12:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:13:36 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:13:36 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:13:37 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:13:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:13:37 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:13:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:14:13 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:14:13 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:14:14 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:14:14 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:14:14 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:14:14 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:41:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:41:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:41:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:41:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:41:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:41:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:43:21 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:43:21 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:43:21 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:43:21 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:43:22 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:43:22 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:44:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:44:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:44:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:44:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:44:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:44:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:51 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:51 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:52 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:45:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:45:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:46:03 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:46:03 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:46:16 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:46:16 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:46:17 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:46:17 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:48:57 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:48:57 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:48:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:48:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:48:59 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:48:59 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:00 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:49:00 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:07 Asia/Manila] DEBUG: Raw JSON Input: {"animal_id":14}
+[21-Dec-2025 22:49:07 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [animal_id] => 14
+)
+
+[21-Dec-2025 22:49:07 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:49:07 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:10 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:49:10 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:10 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:49:10 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:16 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:49:16 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:23 Asia/Manila] DEBUG: Raw JSON Input: {"first_name":"Daveee","last_name":"Dawww","username":"Davaderds","email":"DD@d.com","contact_number":"","address":"UEP"}
+[21-Dec-2025 22:49:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [first_name] => Daveee
+    [last_name] => Dawww
+    [username] => Davaderds
+    [email] => DD@d.com
+    [contact_number] => 
+    [address] => UEP
+)
+
+[21-Dec-2025 22:49:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:49:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:28 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 22:49:28 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 22:49:35 Asia/Manila] DEBUG: Raw JSON Input: {"preferences":{"email_notifications":true,"adoption_notifications":true,"new_animal_notifications":false,"language":"en","date_format":"MM/DD/YYYY"}}
+[21-Dec-2025 22:49:35 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [preferences] => Array
+        (
+            [email_notifications] => 1
+            [adoption_notifications] => 1
+            [new_animal_notifications] => 
+            [language] => en
+            [date_format] => MM/DD/YYYY
+        )
+
+)
+
+[21-Dec-2025 23:01:22 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:01:22 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:01:22 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:01:22 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:17:00 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:17:00 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:17:01 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:17:01 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:17:28 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:17:28 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:17:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:17:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:17:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:17:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:17:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:17:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:17:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:17:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:18:07 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:18:07 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:18:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:18:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:18:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:18:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:18:11 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:18:11 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:19:28 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:19:28 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:19:37 Asia/Manila] DEBUG: Raw JSON Input: {"username":"Admin","password":"password"}
+[21-Dec-2025 23:19:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => Admin
+    [password] => password
+)
+
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Raw JSON Input: {"username":"Admin1","password":"password"}
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => Admin1
+    [password] => password
+)
+
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:19:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:21:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:21:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:21:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:22:54 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:23:07 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:23:07 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:23:11 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:23:11 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:23:15 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:23:15 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:23:17 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:23:17 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:23:22 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:23:22 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:23:22 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:23:22 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:26:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:26:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:05 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:05 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:06 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:06 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:06 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:06 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:12 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:12 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:26 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:26 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:28 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:28 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:27:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:27:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:30:47 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:33:58 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:28 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:28 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:33 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:52 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:52 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:34:52 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:34:52 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:37 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:37 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:37 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:37 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:38 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:38 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:39 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:39 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:42 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:42 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:43 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:43 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:43 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:44 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:45 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:45 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:46 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:46 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:41:48 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:41:48 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:29 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:29 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:30 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:30 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:31 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:34 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:34 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:46:41 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:02 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:05 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:05 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:08 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:08 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:08 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:08 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[21-Dec-2025 23:48:11 Asia/Manila] DEBUG: Raw JSON Input: 
+[21-Dec-2025 23:48:11 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:16:04 Asia/Manila] DEBUG: Raw JSON Input: {"username":"Admin1","password":"password"}
+[22-Dec-2025 00:16:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => Admin1
+    [password] => password
+)
+
+[22-Dec-2025 00:16:04 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:16:04 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:16:05 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+

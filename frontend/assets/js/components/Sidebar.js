@@ -18,7 +18,14 @@ const Sidebar = {
                     label: 'Dashboard',
                     icon: 'home',
                     path: '/dashboard',
-                    roles: ['Admin', 'Staff', 'Veterinarian', 'Adopter']
+                    roles: ['Admin', 'Staff', 'Veterinarian']
+                },
+                {
+                    id: 'dashboard-adopter',
+                    label: 'Adoption Hub',
+                    icon: 'home',
+                    path: '/dashboard',
+                    roles: ['Adopter']
                 },
                 {
                     id: 'animals',

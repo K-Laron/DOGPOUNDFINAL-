@@ -46,6 +46,9 @@ $router->post('/profile/avatar', 'UserController@uploadAvatar', ['*']);
 // Remove avatar
 $router->delete('/profile/avatar', 'UserController@removeAvatar', ['*']);
 
+// Delete account
+$router->delete('/profile', 'UserController@deleteAccount', ['*']);
+
 // ============================================
 // ROLE ROUTES (Admin only)
 // ============================================

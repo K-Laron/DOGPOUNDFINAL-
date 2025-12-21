@@ -84,6 +84,13 @@ const ProfilePage = {
             if (response.success) {
                 this.user = response.data;
 
+                // Update global auth state to sync header/sidebar
+                try {
+                    Auth.updateUserProfile(this.user);
+                } catch (e) {
+                    console.warn('Failed to sync auth state:', e);
+                }
+
                 // DEBUG: Check if vet details exist
                 if (this.user.Role_Name === 'Veterinarian') {
                     if (this.user.veterinarian_details) {
@@ -99,6 +106,14 @@ const ProfilePage = {
             }
         } catch (error) {
             console.error('Failed to load profile:', error);
+
+            // If user is not found (404), likely deleted account
+            if (error.status === 404) {
+                Toast.error('Account not found. Logging out...');
+                setTimeout(() => Auth.logout(), 1500);
+                return;
+            }
+
             Toast.error('Failed to load profile');
         }
     },
@@ -649,16 +664,7 @@ const ProfilePage = {
                     <h4 class="font-semibold mb-4">Notifications</h4>
                     
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-medium">Email Notifications</p>
-                                <p class="text-secondary text-sm">Receive email updates about your account</p>
-                            </div>
-                            <label class="toggle">
-                                <input type="checkbox" name="email_notifications" ${preferences.email_notifications !== false ? 'checked' : ''}>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
+
                         
                         <div class="flex items-center justify-between">
                             <div>

@@ -184,8 +184,8 @@
 .sidebar {
     width: var(--sidebar-width);
     /* Floating dimensions */
-    height: calc(100vh - var(--space-8));
-    top: var(--space-4);
+    top: calc(var(--header-height) + var(--space-4));
+    height: calc(100vh - var(--header-height) - var(--space-8));
     left: var(--space-4);
 
     background-color: var(--bg-sidebar);
@@ -213,9 +213,12 @@
     display: flex;
     align-items: center;
     padding: 0 var(--space-6);
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: var(--z-sticky);
+    left: 0;
+    width: 100%;
+    z-index: 301;
+    justify-content: space-between;
 }
 
 .sidebar.collapsed {
@@ -230,6 +233,13 @@
     gap: var(--space-3);
     border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
+    transition: padding var(--transition-fast);
+}
+
+.sidebar.collapsed .sidebar-header {
+    padding: 0;
+    justify-content: center;
+    gap: 0;
 }
 
 .sidebar-logo {
@@ -370,6 +380,12 @@ body {
     gap: 0;
 }
 
+.sidebar.collapsed:hover .sidebar-link {
+    justify-content: flex-start;
+    padding: var(--space-3);
+    gap: var(--space-3);
+}
+
 .sidebar-footer {
     padding: var(--space-4);
     border-top: 1px solid var(--border-color);
@@ -421,6 +437,12 @@ body {
 .sidebar.collapsed:hover {
     width: var(--sidebar-width);
     box-shadow: var(--shadow-2xl);
+}
+
+.sidebar.collapsed:hover .sidebar-header {
+    padding: 0 var(--space-5);
+    justify-content: flex-start;
+    gap: var(--space-3);
 }
 
 /* Force show elements on hover */
@@ -501,6 +523,7 @@ body {
     /* Adjust margin for floating sidebar: Width + Left Margin + Right Gap */
     margin-left: calc(var(--sidebar-width) + var(--space-8));
     min-height: 100vh;
+    padding-top: var(--header-height);
     display: flex;
     flex-direction: column;
     transition: margin-left var(--transition-normal) var(--ease-out-expo);
@@ -524,19 +547,7 @@ body.no-sidebar .sidebar {
    HEADER
    ========================================== */
 
-.header {
-    height: var(--header-height);
-    background-color: var(--bg-sidebar);
-    backdrop-filter: blur(var(--blur-lg));
-    border-bottom: 1px solid var(--border-color);
-    padding: 0 var(--space-6);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: var(--z-sticky);
-}
+
 
 .header-left {
     display: flex;

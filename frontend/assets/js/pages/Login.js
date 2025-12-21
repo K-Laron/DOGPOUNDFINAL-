@@ -105,12 +105,7 @@ const LoginPage = {
                             </label>
                             <a href="#" onclick="LoginPage.showForgotPassword()" class="text-link" style="font-size: var(--text-sm);">Forgot password?</a>
                         </div>
-                    ` : `
-                        <label class="form-checkbox">
-                            <input type="checkbox" name="terms" required>
-                            <span>I agree to the <a href="#" class="text-link">Terms of Service</a> and <a href="#" class="text-link">Privacy Policy</a></span>
-                        </label>
-                    `}
+                    ` : ''}
                     
                     <button type="submit" class="btn btn-primary btn-lg w-full" style="margin-top: var(--space-4);">
                         ${this.mode === 'login' ? 'Sign In' : 'Create Account'}

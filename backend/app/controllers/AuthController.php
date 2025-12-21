@@ -95,7 +95,7 @@ class AuthController extends BaseController {
             'last_name' => 'required|max:50',
             'email' => 'required|email',
             'password' => 'required|min:8',
-            'contact_number' => 'required|phone'
+            'contact_number' => 'phone'
         ]);
         
         $email = $this->input('email');

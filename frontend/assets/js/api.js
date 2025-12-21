@@ -9,7 +9,7 @@ const API = {
     /**
      * Base URL for API requests
      */
-    baseURL: 'http://localhost:8000',
+    baseURL: `http://${window.location.hostname}:8000`,
 
     /**
      * Default headers

@@ -806,13 +806,50 @@ class UserController extends BaseController {
         
         Response::success(null, "Password changed successfully");
     }
-    
+
     /**
-     * Upload profile avatar
-     * POST /profile/avatar
+     * Delete own account
+     * DELETE /profile
      * 
      * @return void
      */
+    public function deleteAccount() {
+        // Validate password confirmation
+        $this->validate(['password' => 'required']);
+        
+        // Verify password
+        $stmt = $this->db->prepare("SELECT Password_Hash FROM Users WHERE UserID = :id");
+        $stmt->execute(['id' => $this->user['UserID']]);
+        $user = $stmt->fetch();
+        
+        if (!$user || !password_verify($this->input('password'), $user['Password_Hash'])) {
+            Response::error("Incorrect password", 400);
+        }
+        
+        // Prevent deletion if last admin (though UI shouldn't allow this for admin usually)
+        if ($this->user['Role_Name'] === 'Admin') {
+            $adminCount = $this->getAdminCount();
+            if ($adminCount <= 1) {
+                Response::error("Cannot delete the last administrator account", 400);
+            }
+        }
+        
+        // Soft delete
+        $stmt = $this->db->prepare("
+            UPDATE Users 
+            SET Is_Deleted = TRUE, 
+                Account_Status = 'Inactive',
+                Updated_At = NOW()
+            WHERE UserID = :id
+        ");
+        $stmt->execute(['id' => $this->user['UserID']]);
+        
+        // Log activity (before token invalidation effectively)
+        $this->logActivity('DELETE_ACCOUNT', "User deleted their own account");
+        
+        Response::success(null, "Account deleted successfully");
+    }
+    
     /**
      * Upload profile avatar
      * POST /profile/avatar

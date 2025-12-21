@@ -19,11 +19,12 @@ INSERT INTO Roles (Role_Name) VALUES
 -- =====================================================
 
 -- Admin User (Password: admin123)
-INSERT INTO Users (RoleID, FirstName, LastName, Email, Contact_Number, Password_Hash, Account_Status) 
+INSERT INTO Users (RoleID, FirstName, LastName, Username, Email, Contact_Number, Password_Hash, Account_Status) 
 VALUES (
     1, 
     'System', 
     'Administrator', 
+    'admin',
     'admin@catarmandogpound.com', 
     '09170000001', 
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 
@@ -31,11 +32,12 @@ VALUES (
 );
 
 -- Staff User (Password: staff123)
-INSERT INTO Users (RoleID, FirstName, LastName, Email, Contact_Number, Password_Hash, Account_Status) 
+INSERT INTO Users (RoleID, FirstName, LastName, Username, Email, Contact_Number, Password_Hash, Account_Status) 
 VALUES (
     2, 
     'Juan', 
     'Dela Cruz', 
+    'juan',
     'staff@catarmandogpound.com', 
     '09170000002', 
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 
@@ -43,11 +45,12 @@ VALUES (
 );
 
 -- Veterinarian User (Password: vet123)
-INSERT INTO Users (RoleID, FirstName, LastName, Email, Contact_Number, Password_Hash, Account_Status) 
+INSERT INTO Users (RoleID, FirstName, LastName, Username, Email, Contact_Number, Password_Hash, Account_Status) 
 VALUES (
     3, 
     'Maria', 
     'Santos', 
+    'maria',
     'vet@catarmandogpound.com', 
     '09170000003', 
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 
@@ -55,11 +58,12 @@ VALUES (
 );
 
 -- Adopter User (Password: adopter123)
-INSERT INTO Users (RoleID, FirstName, LastName, Email, Contact_Number, Password_Hash, Account_Status) 
+INSERT INTO Users (RoleID, FirstName, LastName, Username, Email, Contact_Number, Password_Hash, Account_Status) 
 VALUES (
     4, 
     'Pedro', 
     'Reyes', 
+    'pedro',
     'adopter@example.com', 
     '09170000004', 
     '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 

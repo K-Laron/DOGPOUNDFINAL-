@@ -35,6 +35,8 @@ const DashboardPage = {
      */
     async render() {
         if (Auth.isAdopter()) {
+            // Update header title
+            Store.setCurrentPage('dashboard', 'Adoption Hub');
             return this.renderAdopterView();
         }
 
@@ -169,9 +171,9 @@ const DashboardPage = {
         return `
             <div class="page-header">
                 <div>
-                    <h1 class="page-title">Welcome back!</h1>
-                    <p class="page-subtitle">Find your new best friend today.</p>
-                </div>
+                <h1 class="page-title">Explore!</h1>
+                <p class="page-subtitle">Find your new best friend today.</p>
+            </div>
             </div>
 
             <!-- Featured/Recent Animals -->
@@ -180,7 +182,7 @@ const DashboardPage = {
                     <h2 class="text-xl font-bold">Newest Arrivals</h2>
                     <a href="/animals" class="btn btn-ghost btn-sm">Browse All</a>
                 </div>
-                <div id="adopter-animals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div id="adopter-animals-grid" class="grid grid-cols-4 gap-6">
                     ${Loading.skeleton('card', { count: 4 })}
                 </div>
             </div>
@@ -317,7 +319,7 @@ const DashboardPage = {
             return;
         }
 
-        container.innerHTML = this.data.recentAnimals.map(animal => Card.animal(animal)).join('');
+        container.innerHTML = this.data.recentAnimals.map(animal => Card.animal(animal, { square: true })).join('');
     },
 
     /**

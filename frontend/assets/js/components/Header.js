@@ -211,5 +211,10 @@ Store.subscribe('pageTitle', (title) => {
     Header.updateTitle(title);
 });
 
+// Subscribe to user changes
+Store.subscribe('user', () => {
+    Header.render();
+});
+
 // Make Header globally available
 window.Header = Header;
