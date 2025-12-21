@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Catarman Dog Pound</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+    <link rel="stylesheet" href="../../assets/css/dashboard.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../../assets/images/logo.png" alt="Logo">
+                <h2>Dog Pound</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-link active">
+                    <span class="icon">📊</span> Dashboard
+                </a>
+                <a href="../animals/list.html" class="nav-link">
+                    <span class="icon">🐕</span> Animals
+                </a>
+                <a href="../medical/records.html" class="nav-link">
+                    <span class="icon">🏥</span> Medical Records
+                </a>
+                <a href="../adoptions/requests.html" class="nav-link">
+                    <span class="icon">❤️</span> Adoptions
+                </a>
+                <a href="../inventory/list.html" class="nav-link">
+                    <span class="icon">📦</span> Inventory
+                </a>
+                <a href="../billing/invoices.html" class="nav-link">
+                    <span class="icon">💰</span> Billing
+                </a>
+                <a href="users.html" class="nav-link admin-only">
+                    <span class="icon">👥</span> Users
+                </a>
+                <a href="activity-logs.html" class="nav-link admin-only">
+                    <span class="icon">📋</span> Activity Logs
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" onclick="Auth.logout()">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+                <h1>Dashboard</h1>
+                <div class="header-user">
+                    <span id="userName">Loading...</span>
+                    <span id="userRole" class="badge"></span>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Stats Cards -->
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be loaded here -->
+                </div>
+
+                <!-- Charts & Recent Activity -->
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Pending Adoptions</h3>
+                        </div>
+                        <div class="card-body" id="pendingAdoptions">
+                            Loading...
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Inventory Alerts</h3>
+                        </div>
+                        <div class="card-body" id="inventoryAlerts">
+                            Loading...
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Upcoming Treatments</h3>
+                        </div>
+                        <div class="card-body" id="upcomingTreatments">
+                            Loading...
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent Activity</h3>
+                        </div>
+                        <div class="card-body" id="recentActivity">
+                            Loading...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/config.js"></script>
+    <script src="../../assets/js/api.js"></script>
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/utils.js"></script>
+    <script src="../../assets/js/pages/dashboard.js"></script>
+    <script>
+        // Require authentication
+        if (!Auth.requireAuth()) {
+            // Will redirect to login
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+        });
+    </script>
+</body>
+</html>

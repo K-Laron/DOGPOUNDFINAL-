@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Catarman Dog Pound - Animal Shelter Management System">
+    <title>Catarman Dog Pound</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/variables.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/layouts.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <!-- Chart.js (for dashboard charts) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- jsPDF & AutoTable (for PDF exports) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Auth Container (Login/Register) -->
+    <div id="auth-container" class="auth-container hidden"></div>
+
+    <!-- Main App Container -->
+    <div id="main-container" class="main-container hidden">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <header id="header" class="header"></header>
+
+            <!-- Page Content -->
+            <div id="page-content" class="page-content"></div>
+        </main>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modal-container"></div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Core JS Files -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/store.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/router.js"></script>
+
+    <!-- Component JS Files -->
+    <script src="assets/js/components/Toast.js"></script>
+    <script src="assets/js/components/Modal.js"></script>
+    <script src="assets/js/components/Loading.js"></script>
+    <script src="assets/js/components/Sidebar.js"></script>
+    <script src="assets/js/components/Header.js"></script>
+    <script src="assets/js/components/Card.js"></script>
+    <script src="assets/js/components/DataTable.js"></script>
+    <script src="assets/js/components/Form.js"></script>
+    <script src="assets/js/components/Charts.js"></script>
+
+    <!-- Page JS Files -->
+    <script src="assets/js/pages/Login.js"></script>
+    <script src="assets/js/pages/Dashboard.js"></script>
+    <script src="assets/js/pages/Animals.js"></script>
+    <script src="assets/js/pages/AnimalDetail.js"></script>
+    <script src="assets/js/pages/Adoptions.js"></script>
+    <script src="assets/js/pages/Medical.js"></script>
+    <script src="assets/js/pages/Inventory.js"></script>
+    <script src="assets/js/pages/Billing.js"></script>
+    <script src="assets/js/pages/Users.js"></script>
+    <script src="assets/js/pages/Profile.js"></script>
+    <script src="assets/js/pages/Settings.js"></script>
+
+    <!-- App Initialization -->
+    <script src="assets/js/app.js"></script>
+</body>
+
+</html>

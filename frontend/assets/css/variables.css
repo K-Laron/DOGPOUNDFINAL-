@@ -1,0 +1,279 @@
+/**
+ * CSS Variables - Premium Design System
+ */
+
+:root {
+   /* ==========================================
+       COLOR PALETTE
+       ========================================== */
+
+   /* Primary Colors */
+   --color-primary: #007AFF;
+   --color-primary-light: #4DA2FF;
+   --color-primary-dark: #0056CC;
+   --color-primary-rgb: 0, 122, 255;
+
+   /* Secondary Colors */
+   --color-secondary: #5856D6;
+   --color-secondary-light: #7A79E0;
+   --color-secondary-dark: #4240A8;
+
+   /* Accent Colors */
+   --color-accent: #FF9500;
+   --color-accent-light: #FFAA33;
+   --color-accent-dark: #CC7700;
+
+   /* Semantic Colors */
+   --color-success: #34C759;
+   --color-success-light: #4CD964;
+   --color-success-dark: #248A3D;
+   --color-success-bg: rgba(52, 199, 89, 0.1);
+
+   --color-warning: #FF9500;
+   --color-warning-light: #FFAA33;
+   --color-warning-dark: #CC7700;
+   --color-warning-bg: rgba(255, 149, 0, 0.1);
+
+   --color-danger: #FF3B30;
+   --color-danger-light: #FF6961;
+   --color-danger-dark: #D70015;
+   --color-danger-bg: rgba(255, 59, 48, 0.1);
+
+   --color-info: #5AC8FA;
+   --color-info-light: #7DD5FB;
+   --color-info-dark: #32B5F1;
+   --color-info-bg: rgba(90, 200, 250, 0.1);
+
+   /* Backgrounds (Light Mode Default) */
+   --bg-primary: #FFFFFF;
+   --bg-secondary: #F3F4F6;
+   --bg-tertiary: #FFFFFF;
+   --bg-elevated: #FFFFFF;
+   --bg-sidebar: rgba(255, 255, 255, 0.75);
+   /* Translucent for Glassmorphism */
+
+   --bg-hover: rgba(0, 0, 0, 0.04);
+   --bg-active: rgba(0, 0, 0, 0.06);
+   --bg-overlay: rgba(0, 0, 0, 0.4);
+
+   /* Text Colors */
+   --text-primary: #1D1D1F;
+   --text-secondary: #86868B;
+   --text-tertiary: #AEAEB2;
+   --text-inverse: #FFFFFF;
+   --text-link: var(--color-primary);
+
+   /* Border Colors */
+   --border-color: rgba(0, 0, 0, 0.08);
+   --border-color-light: rgba(0, 0, 0, 0.04);
+   --border-color-dark: rgba(0, 0, 0, 0.12);
+
+   /* Gray Scale */
+   --color-gray-50: #F9FAFB;
+   --color-gray-100: #F3F4F6;
+   --color-gray-200: #E5E7EB;
+   --color-gray-300: #D1D5DB;
+   --color-gray-400: #9CA3AF;
+   --color-gray-500: #6B7280;
+   --color-gray-600: #4B5563;
+   --color-gray-700: #374151;
+   --color-gray-800: #1F2937;
+   --color-gray-900: #111827;
+
+   /* ==========================================
+       TYPOGRAPHY
+       ========================================== */
+
+   /* Font Families */
+   --font-primary: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+   --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', 'Roboto Mono', monospace;
+
+   /* Font Sizes */
+   --text-xs: 0.6875rem;
+   /* 11px */
+   --text-sm: 0.8125rem;
+   /* 13px */
+   --text-base: 0.9375rem;
+   /* 15px */
+   --text-md: 1rem;
+   /* 16px */
+   --text-lg: 1.125rem;
+   /* 18px */
+   --text-xl: 1.25rem;
+   /* 20px */
+   --text-2xl: 1.5rem;
+   /* 24px */
+   --text-3xl: 1.875rem;
+   /* 30px */
+   --text-4xl: 2.25rem;
+   /* 36px */
+   --text-5xl: 3rem;
+   /* 48px */
+
+   /* Font Weights */
+   --font-light: 300;
+   --font-regular: 400;
+   --font-medium: 500;
+   --font-semibold: 600;
+   --font-bold: 700;
+
+   /* Line Heights */
+   --leading-none: 1;
+   --leading-tight: 1.25;
+   --leading-snug: 1.375;
+   --leading-normal: 1.5;
+   --leading-relaxed: 1.625;
+   --leading-loose: 2;
+
+   /* Letter Spacing */
+   --tracking-tighter: -0.05em;
+   --tracking-tight: -0.025em;
+   --tracking-normal: 0;
+   --tracking-wide: 0.025em;
+   --tracking-wider: 0.05em;
+
+   /* ==========================================
+       SPACING
+       ========================================== */
+
+   --space-0: 0;
+   --space-1: 0.25rem;
+   --space-2: 0.5rem;
+   --space-3: 0.75rem;
+   --space-4: 1rem;
+   --space-5: 1.25rem;
+   --space-6: 1.5rem;
+   --space-8: 2rem;
+   --space-10: 2.5rem;
+   --space-12: 3rem;
+   --space-16: 4rem;
+   --space-20: 5rem;
+   --space-24: 6rem;
+
+   /* ==========================================
+       LAYOUT
+       ========================================== */
+
+   --sidebar-width: 260px;
+   --sidebar-collapsed-width: 72px;
+   --header-height: 64px;
+   --container-max-width: 1800px;
+   --content-max-width: 1600px;
+
+   /* ==========================================
+       BORDERS & RADIUS
+       ========================================== */
+
+   --radius-none: 0;
+   --radius-sm: 6px;
+   --radius-md: 10px;
+   --radius-lg: 14px;
+   --radius-xl: 20px;
+   --radius-2xl: 28px;
+   --radius-full: 9999px;
+
+   --border-width: 1px;
+   --border-width-2: 2px;
+
+   /* ==========================================
+       SHADOWS
+       ========================================== */
+
+   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+   --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.04);
+
+   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+   --shadow-modal: 0 32px 64px rgba(0, 0, 0, 0.2), 0 2px 21px rgba(0, 0, 0, 0.1);
+
+   /* ==========================================
+       TRANSITIONS
+       ========================================== */
+
+   --transition-fast: 150ms ease;
+   --transition-normal: 250ms ease;
+   --transition-slow: 350ms ease;
+   --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+   --ease-in-out-expo: cubic-bezier(0.87, 0, 0.13, 1);
+   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+   /* ==========================================
+       Z-INDEX SCALE
+       ========================================== */
+
+   --z-dropdown: 100;
+   --z-sticky: 200;
+   --z-fixed: 300;
+   --z-modal-backdrop: 400;
+   --z-modal: 500;
+   --z-popover: 600;
+   --z-tooltip: 700;
+   --z-toast: 800;
+   --z-max: 9999;
+
+   /* ==========================================
+       BLUR
+       ========================================== */
+
+   --blur-sm: 4px;
+   --blur-md: 8px;
+   --blur-lg: 16px;
+   --blur-xl: 24px;
+   --blur-2xl: 40px;
+}
+
+/* ==========================================
+   DARK MODE Overrides
+   ========================================== */
+
+@media (prefers-color-scheme: dark) {
+   :root {
+      --bg-primary: #1C1C1E;
+      --bg-secondary: #2C2C2E;
+      --bg-tertiary: #3A3A3C;
+      --bg-elevated: #2C2C2E;
+      --bg-sidebar: rgba(28, 28, 30, 0.75);
+      /* Dark Glassmorphism */
+
+      --bg-hover: rgba(255, 255, 255, 0.1);
+      --bg-active: rgba(255, 255, 255, 0.15);
+
+      --text-primary: #FFFFFF;
+      --text-secondary: #EBEBF5;
+      --text-tertiary: #EBEBF599;
+
+      --border-color: rgba(255, 255, 255, 0.12);
+      --border-color-light: rgba(255, 255, 255, 0.08);
+      --border-color-dark: rgba(255, 255, 255, 0.16);
+
+      --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-card-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
+   }
+}
+
+[data-theme="dark"] {
+   --bg-primary: #000000;
+   --bg-secondary: #1C1C1E;
+   --bg-tertiary: #2C2C2E;
+   --bg-elevated: #1C1C1E;
+   --bg-sidebar: rgba(28, 28, 30, 0.75);
+   /* Dark Glassmorphism */
+
+   --bg-hover: rgba(255, 255, 255, 0.08);
+   --bg-active: rgba(255, 255, 255, 0.12);
+
+   --text-primary: #F5F5F7;
+   --text-secondary: #A1A1A6;
+   --text-tertiary: #6E6E73;
+
+   --border-color: rgba(255, 255, 255, 0.1);
+   --border-color-light: rgba(255, 255, 255, 0.06);
+   --border-color-dark: rgba(255, 255, 255, 0.15);
+}
