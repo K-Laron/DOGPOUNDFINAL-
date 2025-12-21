@@ -14019,3 +14019,220 @@ Stack trace:
 (
 )
 
+[22-Dec-2025 00:19:31 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:19:31 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 00:19:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:17:44 Asia/Manila] Database Connection Error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[22-Dec-2025 07:17:44 Asia/Manila] Database initialization failed: Database connection failed. Please check configuration.
+[22-Dec-2025 07:17:59 Asia/Manila] Database Connection Error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[22-Dec-2025 07:17:59 Asia/Manila] Database initialization failed: Database connection failed. Please check configuration.
+[22-Dec-2025 07:18:12 Asia/Manila] DEBUG: Raw JSON Input: {"username":"Admin1","password":"password"}
+[22-Dec-2025 07:18:12 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [username] => Admin1
+    [password] => password
+)
+
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:13 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:14 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:14 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:19 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:19 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:21 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:21 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:22 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:22 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:23 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:24 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:26 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:26 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:26 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:26 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:55 Asia/Manila] DEBUG: Raw JSON Input: {"item_name":"Canned Dog Food","category":"Food","quantity_on_hand":"60","reorder_level":"30","expiration_date":"2025-12-24","supplier_name":"PetFood Distributor"}
+[22-Dec-2025 07:18:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+    [item_name] => Canned Dog Food
+    [category] => Food
+    [quantity_on_hand] => 60
+    [reorder_level] => 30
+    [expiration_date] => 2025-12-24
+    [supplier_name] => PetFood Distributor
+)
+
+[22-Dec-2025 07:18:55 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:55 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:18:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:18:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:19:11 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:19:11 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:19:23 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:19:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:19:23 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:19:23 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:19:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:19:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:19:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:19:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:19:25 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:19:25 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:19:32 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:19:32 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:23:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:23:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:23:09 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:23:09 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:24:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:24:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:24:56 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:24:56 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:26:27 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:26:27 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+
+[22-Dec-2025 07:26:28 Asia/Manila] DEBUG: Raw JSON Input: 
+[22-Dec-2025 07:26:28 Asia/Manila] DEBUG: Decoded Data: Array
+(
+)
+

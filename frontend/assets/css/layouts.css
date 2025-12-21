@@ -433,6 +433,54 @@ body {
     background-color: transparent;
 }
 
+/* Collapsed Sidebar Dropdown Styling */
+.sidebar.collapsed .sidebar-footer .dropdown-menu {
+    width: 48px;
+    /* Match icon width approximately */
+    min-width: unset;
+    padding: var(--space-2);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+}
+
+.sidebar.collapsed .sidebar-footer .dropdown-item {
+    padding: var(--space-2);
+    justify-content: center;
+    width: 100%;
+    border-radius: var(--radius-md);
+}
+
+.sidebar.collapsed .sidebar-footer .dropdown-item span {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-footer .dropdown-divider {
+    width: 100%;
+    margin: var(--space-1) 0;
+}
+
+/* Restore Dropdown on Sidebar Hover */
+.sidebar.collapsed:hover .sidebar-footer .dropdown-menu {
+    width: 100%;
+    min-width: 200px;
+    /* Default min-width */
+    left: 0;
+    transform: none;
+    align-items: stretch;
+}
+
+.sidebar.collapsed:hover .sidebar-footer .dropdown-item {
+    justify-content: flex-start;
+}
+
+.sidebar.collapsed:hover .sidebar-footer .dropdown-item span {
+    display: inline;
+}
+
 /* Sidebar Hover Expansion */
 .sidebar.collapsed:hover {
     width: var(--sidebar-width);
