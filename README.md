@@ -41,12 +41,7 @@ A comprehensive web-based application designed to streamline the operations of t
     *   Two terminal windows will open (Frontend & Backend servers) - keep them open.
     *   The application will automatically launch in your default browser at `http://localhost:3000`.
 
-## 🔑 Default Credentials
 
-*   **Admin**: `admin@catarmandogpound.com` / `password123`
-*   **Staff**: `staff@catarmandogpound.com` / `password123`
-*   **Vet**: `vet@catarmandogpound.com` / `password123`
-*   **Adopter**: `adopter@example.com` / `password123`
 
 ## 📂 Project Structure
 
