@@ -4,18 +4,23 @@
 Folder PATH listing for volume Acer
 Volume serial number is EA1A-CFA5
 C:.
-|   add_address_column.php
-|   add_preferences_column.php
-|   check_admin.php
-|   check_email_typo.php
-|   debug_adoptions.php
-|   fix_adoptions_data.php
+|   PROJECT_STRUCTURE.md
+|   README.md
 |   run_dev.ps1
 |   start.bat
-|   test_animals_db.php
-|   test_dashboard_api.php
-|   update_dates.php
 |   
++---_legacy
+|   |   add_address_column.php
+|   |   add_preferences_column.php
+|   |   check_admin.php
+|   |   check_email_typo.php
+|   |   debug_adoptions.php
+|   |   fix_adoptions_data.php
+|   |   structure.txt
+|   |   test_animals_db.php
+|   |   test_dashboard_api.php
+|   |   update_dates.php
+|   |   
 +---backend
 |   |   .htaccess
 |   |   debug_notifications.php
