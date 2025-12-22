@@ -43,6 +43,7 @@ const Auth = {
                 const response = await API.users.profile();
                 if (response.success) {
                     Store.setUser(response.data);
+                    this.setUser(response.data); // Update local storage
                     this.startRefreshTimer();
                     return true;
                 }

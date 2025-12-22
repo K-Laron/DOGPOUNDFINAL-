@@ -73,13 +73,18 @@ const API = {
 
         // Add query params for GET requests
         let requestUrl = url;
-        if (data && method.toUpperCase() === 'GET') {
+        if (method.toUpperCase() === 'GET') {
             const params = new URLSearchParams();
-            Object.entries(data).forEach(([key, value]) => {
-                if (value !== null && value !== undefined && value !== '') {
-                    params.append(key, value);
-                }
-            });
+            if (data) {
+                Object.entries(data).forEach(([key, value]) => {
+                    if (value !== null && value !== undefined && value !== '') {
+                        params.append(key, value);
+                    }
+                });
+            }
+            // Add cache busting
+            params.append('_t', new Date().getTime());
+
             const queryString = params.toString();
             if (queryString) {
                 requestUrl = `${url}?${queryString}`;

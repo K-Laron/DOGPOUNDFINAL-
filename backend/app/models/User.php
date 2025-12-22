@@ -43,8 +43,10 @@ class User {
                 u.Contact_Number,
                 u.Account_Status,
                 u.Is_Deleted,
+                u.Is_Deleted,
                 u.Created_At,
                 u.Updated_At,
+                u.Preferences,
                 r.Role_Name
             FROM {$this->table} u
             JOIN Roles r ON u.RoleID = r.RoleID

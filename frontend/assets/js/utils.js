@@ -269,6 +269,27 @@ const Utils = {
         const d = new Date(date);
         if (isNaN(d.getTime())) return '';
 
+        // Check for user preference if using default format
+        if (format === 'medium' && window.Auth && typeof window.Auth.currentUser === 'function') {
+            const user = window.Auth.currentUser();
+            const pref = user?.preferences?.date_format;
+
+            if (pref) {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+
+                if (pref === 'MM/DD/YYYY') return `${month}/${day}/${year}`;
+                if (pref === 'DD/MM/YYYY') return `${day}/${month}/${year}`;
+                if (pref === 'YYYY-MM-DD') return `${year}-${month}-${day}`;
+                if (pref === 'MMM DD, YYYY') return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                if (pref === 'MMMM DD, YYYY') return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            } else {
+                // Default preference
+                return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            }
+        }
+
         const options = {
             short: { month: 'short', day: 'numeric' },
             medium: { year: 'numeric', month: 'short', day: 'numeric' },

@@ -1192,6 +1192,7 @@ class UserController extends BaseController {
         'address' => $user['Address'] ?? null,
             'contact_number' => $user['Contact_Number'],
             'account_status' => $user['Account_Status'],
+            'preferences' => isset($user['Preferences']) ? json_decode($user['Preferences'], true) : [],
             'created_at' => $user['Created_At'],
             'updated_at' => $user['Updated_At']
         ];

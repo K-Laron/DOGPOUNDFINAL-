@@ -659,36 +659,7 @@ const ProfilePage = {
                     </div>
                 </div>
                 
-                <!-- Notifications -->
-                <div class="mb-8 pt-8 border-t">
-                    <h4 class="font-semibold mb-4">Notifications</h4>
-                    
-                    <div class="space-y-4">
 
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-medium">Adoption Updates</p>
-                                <p class="text-secondary text-sm">Get notified about adoption request status changes</p>
-                            </div>
-                            <label class="toggle">
-                                <input type="checkbox" name="adoption_notifications" ${preferences.adoption_notifications !== false ? 'checked' : ''}>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="font-medium">New Animals</p>
-                                <p class="text-secondary text-sm">Get notified when new animals are available for adoption</p>
-                            </div>
-                            <label class="toggle">
-                                <input type="checkbox" name="new_animal_notifications" ${preferences.new_animal_notifications ? 'checked' : ''}>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
                 
                 <!-- Regional Settings -->
                 <div class="mb-8 pt-8 border-t">
@@ -706,9 +677,11 @@ const ProfilePage = {
                         <div class="form-group">
                             <label class="form-label">Date Format</label>
                             <select name="date_format" class="form-select">
-                                <option value="MM/DD/YYYY" ${preferences.date_format === 'MM/DD/YYYY' ? 'selected' : ''}>MM/DD/YYYY</option>
-                                <option value="DD/MM/YYYY" ${preferences.date_format === 'DD/MM/YYYY' ? 'selected' : ''}>DD/MM/YYYY</option>
-                                <option value="YYYY-MM-DD" ${preferences.date_format === 'YYYY-MM-DD' ? 'selected' : ''}>YYYY-MM-DD</option>
+                                <option value="MMM DD, YYYY" ${preferences.date_format === 'MMM DD, YYYY' ? 'selected' : ''}>MMM DD, YYYY (Dec 21, 2025)</option>
+                                <option value="MMMM DD, YYYY" ${preferences.date_format === 'MMMM DD, YYYY' ? 'selected' : ''}>MMMM DD, YYYY (December 21, 2025)</option>
+                                <option value="MM/DD/YYYY" ${preferences.date_format === 'MM/DD/YYYY' ? 'selected' : ''}>MM/DD/YYYY (12/21/2025)</option>
+                                <option value="DD/MM/YYYY" ${preferences.date_format === 'DD/MM/YYYY' ? 'selected' : ''}>DD/MM/YYYY (21/12/2025)</option>
+                                <option value="YYYY-MM-DD" ${preferences.date_format === 'YYYY-MM-DD' ? 'selected' : ''}>YYYY-MM-DD (2025-12-21)</option>
                             </select>
                         </div>
                     </div>
@@ -728,6 +701,17 @@ const ProfilePage = {
         // Setup form handler
         const form = document.getElementById('preferences-form');
         if (form) {
+            // Populate form data
+            try {
+                const safePreferences = {
+                    language: preferences.language || 'en',
+                    date_format: preferences.date_format || 'MMM DD, YYYY'
+                };
+                Form.setData(form, safePreferences);
+            } catch (e) {
+                console.warn('Failed to populate preferences form:', e);
+            }
+
             // Theme change instant preview
             form.querySelectorAll('input[name="theme"]').forEach(radio => {
                 radio.addEventListener('change', (e) => {
@@ -1029,6 +1013,7 @@ const ProfilePage = {
             if (response.success) {
                 Toast.success('Preferences saved successfully');
                 this.user.preferences = preferences;
+                Auth.updateUserProfile({ preferences });
             }
         } catch (error) {
             Toast.error(error.message || 'Failed to save preferences');
