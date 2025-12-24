@@ -38,8 +38,12 @@ A comprehensive web-based application designed to streamline the operations of t
 
 4.  **Running the Application**
     *   Double-click `start.bat` in the root directory.
-    *   Two terminal windows will open (Frontend & Backend servers) - keep them open.
-    *   The application will automatically launch in your default browser at `http://localhost:3000`.
+    *   The application will launch in background mode (hidden windows).
+    *   The browser will automatically open at `http://localhost:3000`.
+
+5.  **Stopping the Application**
+    *   Double-click `stop.bat` to gracefully shut down the background servers.
+    *   **Note**: Closing the browser does NOT stop the servers. You must use `stop.bat`.
 
 
 
