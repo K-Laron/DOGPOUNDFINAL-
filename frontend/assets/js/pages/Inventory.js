@@ -91,10 +91,8 @@ const InventoryPage = {
             </div>
             
             <!-- Inventory Table -->
-            <div class="card">
-                <div id="inventory-container">
-                    ${Loading.skeleton('table', { rows: 5, cols: 7 })}
-                </div>
+            <div id="inventory-container">
+                ${Loading.skeleton('table', { rows: 5, cols: 6 })}
             </div>
         `;
     },

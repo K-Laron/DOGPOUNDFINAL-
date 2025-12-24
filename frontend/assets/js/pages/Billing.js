@@ -105,11 +105,9 @@ const BillingPage = {
                 </div>
             </div>
             
-            <!-- Content -->
-            <div class="card">
-                <div id="billing-content">
-                    ${Loading.skeleton('table', { rows: 5, cols: 6 })}
-                </div>
+            <!-- Invoices Table -->
+            <div id="billing-content">
+                ${Loading.skeleton('table', { rows: 5, cols: 7 })}
             </div>
         `;
     },
@@ -587,7 +585,7 @@ const BillingPage = {
                             </div>
                             
                             <!-- Details -->
-                            <div class="grid grid-cols-2 gap-4 p-4 bg-secondary rounded-lg">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-secondary rounded-lg">
                                 <div>
                                     <p class="text-tertiary text-sm">Transaction Type</p>
                                     <p class="font-medium">${invoice.Transaction_Type}</p>
@@ -670,7 +668,7 @@ const BillingPage = {
                         <p class="text-3xl font-bold text-success">${Utils.formatCurrency(payment.Amount_Paid)}</p>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <p class="text-tertiary text-sm">Invoice</p>
                             <p class="font-medium">#${String(payment.InvoiceID).padStart(5, '0')}</p>

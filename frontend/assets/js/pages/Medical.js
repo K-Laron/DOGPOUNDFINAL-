@@ -112,11 +112,9 @@ const MedicalPage = {
                 </div>
             </div>
             
-            <!-- Records -->
-            <div class="card">
-                <div id="records-container">
-                    ${Loading.skeleton('table', { rows: 5, cols: 7 })}
-                </div>
+            <!-- Medical Records Table -->
+            <div id="records-container">
+                ${Loading.skeleton('table', { rows: 5, cols: 6 })}
             </div>
         `;
     },
@@ -691,7 +689,7 @@ const MedicalPage = {
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <p class="text-tertiary text-sm">Type</p>
                             <p class="font-medium">${record.Diagnosis_Type}</p>

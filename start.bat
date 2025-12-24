@@ -10,20 +10,20 @@ if not exist "%PHP_BIN%" (
 echo ✅ Using PHP: %PHP_BIN%
 echo.
 echo 🚀 Starting Backend Server (Port 8000)...
-start "Backend Server" /MIN "%PHP_BIN%" -S 0.0.0.0:8000 -t backend/public backend/public/index.php
+powershell -Command "Start-Process '%PHP_BIN%' -ArgumentList '-S 0.0.0.0:8000 -t backend/public backend/public/index.php' -WindowStyle Hidden"
 
 echo 🚀 Starting Frontend Server (Port 3000)...
-start "Frontend Server" /MIN "%PHP_BIN%" -S 0.0.0.0:3000 -t frontend
+powershell -Command "Start-Process '%PHP_BIN%' -ArgumentList '-S 0.0.0.0:3000 -t frontend' -WindowStyle Hidden"
 
 echo.
-echo ✨ Application Launched!
+echo ✨ Application Launched in Background!
 echo.
 echo Opening Browser...
 timeout /t 2 >nul
 start http://localhost:3000
 
 echo.
-echo ⚠️  DO NOT CLOSE THIS WINDOW
-echo ⚠️  Close the other two black windows to stop the servers.
+echo ⚠️  Servers are running in the background (Hidden).
+echo ⚠️  Run 'stop.bat' to stop the servers.
 echo.
 pause

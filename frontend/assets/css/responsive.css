@@ -513,12 +513,7 @@
     }
 
     /* Tables */
-    .table-container {
-        border-radius: 0;
-        border-left: none;
-        border-right: none;
-        margin: 0 calc(var(--space-4) * -1);
-    }
+
 
     .table th,
     .table td {
@@ -574,6 +569,18 @@
     .header-right {
         gap: var(--space-2);
     }
+
+    /* Grid Overrides for Mobile */
+    .grid-cols-2,
+    .grid-cols-3,
+    .grid-cols-4 {
+        grid-template-columns: 1fr;
+    }
+
+    /* Allow specific overrides for small grids (e.g. 2 buttons) */
+    .grid-cols-2.mobile-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* Small Mobile */
@@ -614,6 +621,71 @@
     .sidebar-user {
         flex-direction: column;
         text-align: center;
+    }
+
+    /* Responsive Table (Scrollbar) */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-2);
+        /* Space for scrollbar */
+    }
+
+    .table {
+        min-width: 800px;
+        /* Force scroll on small screens */
+    }
+}
+
+/* Tablet (min-width: 768px) */
+@media (min-width: 768px) {
+    .md\:grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .md\:grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Large Screens (min-width: 1024px) */
+@media (min-width: 1024px) {
+    .lg\:grid-cols-1 {
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .lg\:grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .lg\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .lg\:grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .lg\:col-span-1 {
+        grid-column: span 1 / span 1;
+    }
+
+    .lg\:col-span-2 {
+        grid-column: span 2 / span 2;
+    }
+
+    .lg\:col-span-3 {
+        grid-column: span 3 / span 3;
+    }
+
+    .lg\:col-span-full {
+        grid-column: 1 / -1;
     }
 }
 

@@ -140,12 +140,12 @@ const DataTable = {
         return `
             <tr data-id="${rowId}" ${clickable} ${clickHandler}>
                 ${selectable ? `
-                    <td onclick="event.stopPropagation();">
+                    <td onclick="event.stopPropagation();" data-label="Select">
                         <input type="checkbox" class="row-select" data-id="${rowId}" onchange="DataTable.toggleRowSelect('${tableId}', ${rowId})">
                     </td>
                 ` : ''}
                 ${columns.map(col => this.renderCell(row, col)).join('')}
-                ${actions ? `<td onclick="event.stopPropagation();">${this.renderActions(tableId, row, actions)}</td>` : ''}
+                ${actions ? `<td onclick="event.stopPropagation();" data-label="Actions">${this.renderActions(tableId, row, actions)}</td>` : ''}
             </tr>
         `;
     },
@@ -203,7 +203,7 @@ const DataTable = {
         const align = column.align ? `text-align: ${column.align};` : '';
         const className = column.className || '';
 
-        return `<td style="${align}" class="${className}">${value ?? '-'}</td>`;
+        return `<td style="${align}" class="${className}" data-label="${column.label}">${value ?? '-'}</td>`;
     },
 
     /**

@@ -1,0 +1,5 @@
+backend/logs/*.log
+backend/public/uploads/*
+!backend/public/uploads/.gitkeep
+.gemini/
+gemini.md

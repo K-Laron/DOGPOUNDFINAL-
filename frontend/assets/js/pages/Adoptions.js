@@ -66,10 +66,8 @@ const AdoptionsPage = {
             </div>
             
             <!-- Adoptions Table -->
-            <div class="card">
-                <div id="adoptions-container">
-                    ${Loading.skeleton('table', { rows: 5, cols: 6 })}
-                </div>
+            <div id="adoptions-container">
+                ${Loading.skeleton('table', { rows: 5, cols: 6 })}
             </div>
         `;
     },
@@ -357,7 +355,7 @@ const AdoptionsPage = {
                             <!-- Applicant Info -->
                             <div>
                                 <h4 class="font-semibold mb-3">Applicant Information</h4>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-tertiary text-sm">Name</p>
                                         <p class="font-medium">${adoption.Adopter_FirstName} ${adoption.Adopter_LastName}</p>

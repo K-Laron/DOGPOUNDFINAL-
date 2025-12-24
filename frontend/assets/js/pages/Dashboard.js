@@ -126,7 +126,7 @@ const DashboardPage = {
                             <h3 class="card-title">Quick Actions</h3>
                         </div>
                         <div class="card-body">
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 ${Auth.isStaff() ? `
                                     <button class="btn btn-secondary" onclick="Router.navigate('/animals'); setTimeout(() => AnimalsPage.showAddModal(), 300)">
                                         Add Animal
@@ -182,7 +182,7 @@ const DashboardPage = {
                     <h2 class="text-xl font-bold">Newest Arrivals</h2>
                     <a href="/animals" class="btn btn-ghost btn-sm">Browse All</a>
                 </div>
-                <div id="adopter-animals-grid" class="grid grid-cols-4 gap-6">
+                <div id="adopter-animals-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     ${Loading.skeleton('card', { count: 4 })}
                 </div>
             </div>
@@ -243,7 +243,7 @@ const DashboardPage = {
             // Load stats
             const results = await Promise.allSettled([
                 API.dashboard.stats(),
-                API.animals.list({ per_page: 5, sort: 'date_desc' }),
+                API.animals.list({ per_page: 8, sort: 'date_desc' }),
                 API.dashboard.activity(10), // Fetch 10 so we can show "Show More"
                 API.dashboard.intake('week')
             ]);
@@ -529,7 +529,7 @@ const DashboardPage = {
         }
 
         // Determine which items to show
-        const limit = 4;
+        const limit = 2;
         const total = this.data.recentActivity.length;
         const showAll = this.data.showAllActivity;
 

@@ -53,17 +53,17 @@ const ProfilePage = {
                                 <button class="tab" data-tab="security">Security</button>
                                 ${!Auth.isAdopter() ? '<button class="tab" data-tab="activity">Activity</button>' : ''}
                                 <button class="tab" data-tab="preferences">Preferences</button>
-                                ${Auth.currentUser().role === 'Veterinarian' ? '<button class="tab" data-tab="veterinarian">Vet Profile</button>' : ''}
+                                ${Auth.currentUser()?.role === 'Veterinarian' ? '<button class="tab" data-tab="veterinarian">Vet Profile</button>' : ''}
                             </div>
                         </div>
                         
                         <div class="card-body" id="tab-content">
                             ${Loading.skeleton('text', { lines: 5 })}
                         </div>
-                    </div>
                 </div>
             </div>
-        `;
+        </div>
+    `;
     },
 
     /**
@@ -83,43 +83,32 @@ const ProfilePage = {
 
             if (response.success) {
                 this.user = response.data;
-
-                // Update global auth state to sync header/sidebar
-                try {
-                    Auth.updateUserProfile(this.user);
-                } catch (e) {
-                    console.warn('Failed to sync auth state:', e);
+                // Fix Casing
+                if (!this.user.role_name && this.user.Role_Name) {
+                    this.user.role_name = this.user.Role_Name;
                 }
-
-                // DEBUG: Check if vet details exist
-                if (this.user.Role_Name === 'Veterinarian') {
-                    if (this.user.veterinarian_details) {
-                        // console.log('Vet details loaded:', this.user.veterinarian_details);
-                    } else {
-                        Toast.warning('Debug: No veterinarian details found in profile response');
-                    }
-                }
-
-                this.renderProfileCard();
-                this.renderQuickStats();
-                this.renderPersonalInfoTab();
+            } else {
+                Toast.error(response.message || 'Failed to load profile');
             }
+
+            // Render whatever we have
+            this.renderProfileCard();
+            this.renderQuickStats();
+            this.renderPersonalInfoTab();
+
+            if (this.user) {
+                // Note: Auth.updateUserProfile caused re-render loop
+                // If needed, only update if specific fields changed
+            }
+
         } catch (error) {
-            console.error('Failed to load profile:', error);
-
-            // If user is not found (404), likely deleted account
-            if (error.status === 404) {
-                Toast.error('Account not found. Logging out...');
-                setTimeout(() => Auth.logout(), 1500);
-                return;
-            }
-
-            Toast.error('Failed to load profile');
+            Toast.error('Load Error: ' + error.message);
+            console.error(error);
         }
     },
 
     /**
-     * Render profile card
+     * Render profile card sidebar
      */
     renderProfileCard() {
         const container = document.getElementById('profile-card');
@@ -129,7 +118,6 @@ const ProfilePage = {
 
         container.innerHTML = `
             <div class="card-body text-center">
-                <!-- Avatar with upload option -->
                 <div class="relative inline-block mb-4">
                     <div class="avatar avatar-xl mx-auto" style="background: ${Utils.stringToColor(this.user.email)}; width: 100px; height: 100px; font-size: 36px;">
                         ${this.user.avatar_url
@@ -139,7 +127,7 @@ const ProfilePage = {
                     </div>
                     <button 
                         class="btn-icon" 
-                        style="position: absolute; bottom: 0; right: 0; background: var(--bg-primary); border: 2px solid var(--bg-primary); box-shadow: var(--shadow-md); width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;"
+                        style="position: absolute; bottom: 0; right: 0; background: var(--bg-primary); border: 2px solid var(--bg-primary); box-shadow: var(--shadow-md); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;"
                         onclick="ProfilePage.showAvatarUpload()"
                         title="Change photo"
                     >
@@ -148,8 +136,11 @@ const ProfilePage = {
                 </div>
                 
                 <h3 class="font-semibold text-xl mb-1">${fullName}</h3>
-                <p class="text-secondary mb-3">${this.user.email}</p>
-                <span class="badge ${this.getRoleBadgeClass(this.user.role)}">${this.user.role}</span>
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <span class="badge ${this.getRoleBadgeClass(this.user.role_name)}">
+                        ${this.user.role_name}
+                    </span>
+                </div>
                 
                 <div class="mt-6 pt-6 border-t">
                     <div class="flex justify-between text-sm mb-2">
@@ -182,7 +173,7 @@ const ProfilePage = {
 
         if (this.user.role === 'Adopter') {
             statsHtml = `
-                <div class="flex justify-between items-center py-3 border-b">
+                    <div class="flex justify-between items-center py-3 border-b">
                     <span class="text-secondary">Adoption Requests</span>
                     <span class="font-semibold">${this.user.stats?.adoption_requests || 0}</span>
                 </div>
@@ -194,13 +185,13 @@ const ProfilePage = {
                     <span class="text-secondary">Pending Requests</span>
                     <span class="font-semibold text-warning">${this.user.stats?.pending_requests || 0}</span>
                 </div>
-            `;
+`;
         } else if (this.user.role === 'Veterinarian') {
             statsHtml = `
-                <div class="flex justify-between items-center py-3 border-b">
+            <div class="flex justify-between items-center py-3 border-b">
                     <span class="text-secondary">Medical Records</span>
                     <span class="font-semibold">${this.user.stats?.medical_records || 0}</span>
-                </div>
+            </div>
                 <div class="flex justify-between items-center py-3 border-b">
                     <span class="text-secondary">Animals Treated</span>
                     <span class="font-semibold">${this.user.stats?.animals_treated || 0}</span>
@@ -209,13 +200,13 @@ const ProfilePage = {
                     <span class="text-secondary">This Month</span>
                     <span class="font-semibold text-primary">${this.user.stats?.records_this_month || 0}</span>
                 </div>
-            `;
+`;
         } else if (this.user.role === 'Staff' || this.user.role === 'Admin') {
             statsHtml = `
-                <div class="flex justify-between items-center py-3 border-b">
+            <div class="flex justify-between items-center py-3 border-b">
                     <span class="text-secondary">Animals Registered</span>
                     <span class="font-semibold">${this.user.stats?.animals_registered || 0}</span>
-                </div>
+            </div>
                 <div class="flex justify-between items-center py-3 border-b">
                     <span class="text-secondary">Adoptions Processed</span>
                     <span class="font-semibold">${this.user.stats?.adoptions_processed || 0}</span>
@@ -224,28 +215,28 @@ const ProfilePage = {
                     <span class="text-secondary">Invoices Created</span>
                     <span class="font-semibold">${this.user.stats?.invoices_created || 0}</span>
                 </div>
-            `;
+`;
         } else {
             statsHtml = `
-                <div class="flex justify-between items-center py-3 border-b">
+            <div class="flex justify-between items-center py-3 border-b">
                     <span class="text-secondary">Account Age</span>
                     <span class="font-semibold">${Utils.timeAgo(this.user.created_at)}</span>
-                </div>
-                <div class="flex justify-between items-center py-3">
-                    <span class="text-secondary">Profile Completion</span>
-                    <span class="font-semibold">${this.calculateProfileCompletion()}%</span>
-                </div>
-            `;
+            </div>
+    <div class="flex justify-between items-center py-3">
+        <span class="text-secondary">Profile Completion</span>
+        <span class="font-semibold">${this.calculateProfileCompletion()}%</span>
+    </div>
+`;
         }
 
         container.innerHTML = `
-            <div class="card-header">
-                <h3 class="card-title">Quick Stats</h3>
-            </div>
-            <div class="card-body">
-                ${statsHtml}
-            </div>
-        `;
+    <div class="card-header">
+        <h3 class="card-title">Quick Stats</h3>
+    </div>
+    <div class="card-body">
+        ${statsHtml}
+    </div>
+`;
     },
 
     /**
@@ -310,7 +301,8 @@ const ProfilePage = {
             <form id="personal-info-form">
                 <h4 class="font-semibold mb-4">Basic Information</h4>
                 
-                <div class="grid grid-cols-2 gap-4">
+               <div class="form-group">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="form-group">
                         <label class="form-label required" for="first_name">First Name</label>
                         <input type="text" id="first_name" name="first_name" class="form-input" 
@@ -357,7 +349,7 @@ const ProfilePage = {
                     </button>
                 </div>
             </form>
-        `;
+    `;
 
         // Setup form handler
         const form = document.getElementById('personal-info-form');
@@ -377,7 +369,7 @@ const ProfilePage = {
         if (!container) return;
 
         container.innerHTML = `
-            <!-- Change Password Section -->
+            <!--Change Password Section-->
             <div class="mb-8">
                 <h4 class="font-semibold mb-4">Change Password</h4>
                 <form id="password-form">
@@ -421,7 +413,7 @@ const ProfilePage = {
             
 
             
-            <!-- Active Sessions -->
+            <!--Active Sessions-->
             <div class="mb-8 pt-8 border-t">
                 <h4 class="font-semibold mb-4">Active Sessions</h4>
                 <div class="space-y-3">
@@ -445,18 +437,18 @@ const ProfilePage = {
                 </button>
             </div>
             
-            <!-- Danger Zone -->
-            <div class="pt-8 border-t">
-                <h4 class="font-semibold mb-2 text-danger">Danger Zone</h4>
-                <p class="text-secondary text-sm mb-4">
-                    Once you delete your account, there is no going back. Please be certain.
-                </p>
-                <button class="btn btn-outline" style="border-color: var(--color-danger); color: var(--color-danger);" 
-                        onclick="ProfilePage.showDeleteAccountModal()">
-                    Delete Account
-                </button>
-            </div>
-        `;
+            <!--Danger Zone-->
+    <div class="pt-8 border-t">
+        <h4 class="font-semibold mb-2 text-danger">Danger Zone</h4>
+        <p class="text-secondary text-sm mb-4">
+            Once you delete your account, there is no going back. Please be certain.
+        </p>
+        <button class="btn btn-outline" style="border-color: var(--color-danger); color: var(--color-danger);"
+            onclick="ProfilePage.showDeleteAccountModal()">
+            Delete Account
+        </button>
+    </div>
+`;
 
         // Setup password form handler
         const form = document.getElementById('password-form');
@@ -506,9 +498,9 @@ const ProfilePage = {
         const config = strengthConfig[strength] || strengthConfig[1];
 
         bar.style.width = config.width;
-        bar.className = `progress-bar ${config.color}`;
+        bar.className = `progress - bar ${config.color} `;
         label.textContent = config.label;
-        label.style.color = `var(--color-${config.color})`;
+        label.style.color = `var(--color - ${config.color})`;
     },
 
     /**
@@ -528,10 +520,10 @@ const ProfilePage = {
                     <option value="action">Actions</option>
                 </select>
             </div>
-            <div id="activity-list">
-                ${Loading.skeleton('list', { items: 5 })}
-            </div>
-        `;
+    <div id="activity-list">
+        ${Loading.skeleton('list', { items: 5 })}
+    </div>
+`;
 
         await this.loadActivityLog();
 
@@ -568,7 +560,7 @@ const ProfilePage = {
                             <div class="text-4xl mb-4">📋</div>
                             <p class="text-secondary">No activity recorded yet</p>
                         </div>
-                    `;
+    `;
                     return;
                 }
 
@@ -600,7 +592,7 @@ const ProfilePage = {
                             `).join('')}
                         </div>
                     </div>
-                `).join('');
+    `).join('');
             }
         } catch (error) {
             console.error('Load activity log error:', error);
@@ -609,7 +601,7 @@ const ProfilePage = {
                     <p class="text-secondary text-danger">Failed to load: ${error.message}</p>
                     <button class="btn btn-ghost btn-sm mt-2" onclick="ProfilePage.loadActivityLog()">Try Again</button>
                 </div>
-            `;
+    `;
         }
     },
 
@@ -624,13 +616,13 @@ const ProfilePage = {
 
         container.innerHTML = `
             <form id="preferences-form">
-                <!-- Appearance -->
+                <!--Appearance-->
                 <div class="mb-8">
                     <h4 class="font-semibold mb-4">Appearance</h4>
                     
                     <div class="form-group">
                         <label class="form-label">Theme</label>
-                        <div class="grid grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <label class="theme-option ${Store.get('theme') === 'light' ? 'active' : ''}">
                                 <input type="radio" name="theme" value="light" ${Store.get('theme') === 'light' ? 'checked' : ''}>
                                 <div class="theme-preview light">
@@ -661,11 +653,11 @@ const ProfilePage = {
                 
 
                 
-                <!-- Regional Settings -->
+                <!--Regional Settings-- >
                 <div class="mb-8 pt-8 border-t">
                     <h4 class="font-semibold mb-4">Regional Settings</h4>
                     
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="form-group">
                             <label class="form-label">Language</label>
                             <select name="language" class="form-select">
@@ -693,7 +685,7 @@ const ProfilePage = {
                     </button>
                 </div>
             </form>
-        `;
+    `;
 
         // Add theme preview styles
         this.addThemePreviewStyles();
@@ -807,57 +799,57 @@ const ProfilePage = {
 
         container.innerHTML = `
             <div class="mb-6 p-4 bg-secondary rounded-lg">
-                <div class="flex items-center gap-3">
-                    <div class="avatar" style="background: var(--color-success);">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    </div>
-                    <div>
-                        <p class="font-medium">Verified Veterinarian</p>
-                        <p class="text-secondary text-sm">Your professional credentials have been verified</p>
-                    </div>
-                </div>
+        <div class="flex items-center gap-3">
+            <div class="avatar" style="background: var(--color-success);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             </div>
-            
-            <form id="vet-info-form">
-                <h4 class="font-semibold mb-4">Professional Information</h4>
-                
-                <div class="form-group">
-                    <label class="form-label required" for="license_number">License Number</label>
-                    <input type="text" id="license_number" name="license_number" class="form-input" 
-                           value="${vetInfo.license_number || ''}" required placeholder="Enter your license number">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="specialization">Specialization</label>
-                    <input type="text" id="specialization" name="specialization" class="form-input" 
-                           value="${vetInfo.specialization || ''}" placeholder="e.g., Surgery, Internal Medicine, Dermatology">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="years_experience">Years of Experience</label>
-                    <input type="number" id="years_experience" name="years_experience" class="form-input" 
-                           value="${vetInfo.years_experience || ''}" min="0" placeholder="0">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="clinic_name">Clinic/Hospital Name</label>
-                    <input type="text" id="clinic_name" name="clinic_name" class="form-input" 
-                           value="${vetInfo.clinic_name || ''}" placeholder="Enter clinic or hospital name">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="bio">Professional Bio</label>
-                    <textarea id="bio" name="bio" class="form-textarea" rows="4" 
-                              placeholder="Brief description of your experience and expertise">${vetInfo.bio || ''}</textarea>
-                </div>
-                
-                <div class="flex justify-end mt-6 pt-6 border-t">
-                    <button type="submit" class="btn btn-primary">
-                        Save Changes
-                    </button>
-                </div>
-            </form>
-        `;
+            <div>
+                <p class="font-medium">Verified Veterinarian</p>
+                <p class="text-secondary text-sm">Your professional credentials have been verified</p>
+            </div>
+        </div>
+            </div>
+
+    <form id="vet-info-form">
+        <h4 class="font-semibold mb-4">Professional Information</h4>
+
+        <div class="form-group">
+            <label class="form-label required" for="license_number">License Number</label>
+            <input type="text" id="license_number" name="license_number" class="form-input"
+                value="${vetInfo.license_number || ''}" required placeholder="Enter your license number">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="specialization">Specialization</label>
+            <input type="text" id="specialization" name="specialization" class="form-input"
+                value="${vetInfo.specialization || ''}" placeholder="e.g., Surgery, Internal Medicine, Dermatology">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="years_experience">Years of Experience</label>
+            <input type="number" id="years_experience" name="years_experience" class="form-input"
+                value="${vetInfo.years_experience || ''}" min="0" placeholder="0">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="clinic_name">Clinic/Hospital Name</label>
+            <input type="text" id="clinic_name" name="clinic_name" class="form-input"
+                value="${vetInfo.clinic_name || ''}" placeholder="Enter clinic or hospital name">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="bio">Professional Bio</label>
+            <textarea id="bio" name="bio" class="form-textarea" rows="4"
+                placeholder="Brief description of your experience and expertise">${vetInfo.bio || ''}</textarea>
+        </div>
+
+        <div class="flex justify-end mt-6 pt-6 border-t">
+            <button type="submit" class="btn btn-primary">
+                Save Changes
+            </button>
+        </div>
+    </form>
+`;
 
         // Setup form handler
         const form = document.getElementById('vet-info-form');
@@ -1057,11 +1049,11 @@ const ProfilePage = {
                     
                     <p class="text-tertiary text-xs mt-4">JPG, PNG or GIF. Max 2MB.</p>
                 </div>
-            `,
+`,
             footer: `
                 <button class="btn btn-secondary" data-action="cancel">Cancel</button>
                 <button class="btn btn-primary" id="save-avatar-btn" disabled onclick="ProfilePage.saveAvatar()">Save</button>
-            `
+`
         });
 
         // Setup file input handler
@@ -1090,7 +1082,7 @@ const ProfilePage = {
                                 <div class="avatar avatar-xl mx-auto" style="width: 120px; height: 120px; overflow: hidden;">
                                     <img src="${e.target.result}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                                 </div>
-                            `;
+`;
                             document.getElementById('save-avatar-btn').disabled = false;
                         };
                         reader.readAsDataURL(file);
@@ -1221,11 +1213,11 @@ const ProfilePage = {
                     <label class="form-label">Enter your password</label>
                     <input type="password" id="delete-password" class="form-input" placeholder="Your password">
                 </div>
-            `,
+`,
             footer: `
                 <button class="btn btn-secondary" data-action="cancel">Cancel</button>
                 <button class="btn btn-danger" onclick="ProfilePage.deleteAccount()">Delete Account</button>
-            `
+`
         });
     },
 

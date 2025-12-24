@@ -603,34 +603,26 @@ class UserController extends BaseController {
         if (!$user) {
             Response::notFound("User profile not found");
         }
-        
-        $response = $this->formatUserResponse($user);
 
-        // Get user statistics based on role
-        if ($user['Role_Name'] === 'Staff' || $user['Role_Name'] === 'Admin') {
-            $response['stats'] = $this->getUserStats($user['UserID']);
-        } elseif ($user['Role_Name'] === 'Adopter') {
-            $response['stats'] = $this->getAdopterStats($user['UserID']);
-        }
+        $response = $this->formatUserResponse($user);
         
+        // Add stats based on role
+        if ($user['Role_Name'] === 'Adopter') {
+            $response['stats'] = $this->getAdopterStats($user['UserID']);
+        } else {
+            $response['stats'] = $this->getUserStats($user['UserID']);
+        }
+
         // Add veterinarian details if applicable
         if ($user['Role_Name'] === 'Veterinarian') {
-            $vetDetails = $this->getVeterinarianDetails($user['UserID']);
-            if ($vetDetails) {
-                $response['veterinarian_details'] = [
-                    'vet_id' => (int)$vetDetails['VetID'],
-                    'license_number' => $vetDetails['License_Number'],
-                    'specialization' => $vetDetails['Specialization'],
-                    'years_experience' => (int)$vetDetails['Years_Experience'],
-                    'clinic_name' => $vetDetails['Clinic_Name'] ?? null,
-                    'bio' => $vetDetails['Bio'] ?? null
-                ];
-            }
+            $response['veterinarian_details'] = $this->getVeterinarianDetails($user['UserID']);
         }
         
         // Add activity summary for own profile
         $response['activity_summary'] = $this->getUserActivitySummary($this->user['UserID']);
-        
+
+        error_log("DEBUG: UserController::profile returning success. Stats count: " . (isset($response['stats']) ? count($response['stats']) : 'none'));
+
         Response::success($response, "Profile retrieved successfully");
     }
     

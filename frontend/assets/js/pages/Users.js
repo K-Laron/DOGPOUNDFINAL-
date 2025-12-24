@@ -78,10 +78,8 @@ const UsersPage = {
             </div>
             
             <!-- Users Table -->
-            <div class="card">
-                <div id="users-container">
-                    ${Loading.skeleton('table', { rows: 5, cols: 6 })}
-                </div>
+            <div id="users-container">
+                ${Loading.skeleton('table', { rows: 5, cols: 5 })}
             </div>
         `;
     },
@@ -435,7 +433,7 @@ const UsersPage = {
                             </div>
                             
                             <!-- Details -->
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <p class="text-tertiary text-sm">User ID</p>
                                     <p class="font-medium">#${user.id}</p>
@@ -474,7 +472,7 @@ const UsersPage = {
                             ${user.role_name === 'Veterinarian' && user.veterinarian ? `
                                 <div class="p-4 bg-secondary rounded-lg">
                                     <h4 class="font-semibold mb-3">Veterinarian Info</h4>
-                                    <div class="grid grid-cols-2 gap-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <p class="text-tertiary text-sm">License Number</p>
                                             <p class="font-medium">${user.veterinarian.License_Number}</p>
