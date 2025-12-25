@@ -245,6 +245,79 @@ const Modal = {
     },
 
     /**
+     * Show confirmation dialog
+     * @param {Object} options - Confirmation options
+     * @returns {Promise<boolean>}
+     */
+    confirm(options = {}) {
+        return new Promise((resolve) => {
+            const {
+                title = 'Confirm Action',
+                message = 'Are you sure you want to proceed?',
+                confirmText = 'Confirm',
+                cancelText = 'Cancel',
+                type = 'default', // 'default', 'danger', 'warning'
+                icon = null
+            } = options;
+
+            const icons = {
+                danger: `<div class="confirm-icon confirm-icon-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>`,
+                warning: `<div class="confirm-icon confirm-icon-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>`,
+                default: `<div class="confirm-icon confirm-icon-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>`
+            };
+
+            const btnClass = type === 'danger' ? 'btn-danger' : 'btn-primary';
+
+            this.open({
+                title: false,
+                size: 'sm',
+                content: `
+                    <div class="confirm-dialog">
+                        ${icon || icons[type] || icons.default}
+                        <h3 class="confirm-title">${title}</h3>
+                        <p class="confirm-message">${message}</p>
+                    </div>
+                `,
+                footer: `
+                    <button class="btn btn-secondary" data-action="cancel">${cancelText}</button>
+                    <button class="btn ${btnClass}" data-action="confirm">${confirmText}</button>
+                `,
+                onConfirm: () => {
+                    resolve(true);
+                    return true;
+                },
+                onCancel: () => {
+                    resolve(false);
+                },
+                onClose: () => {
+                    resolve(false);
+                }
+            });
+        });
+    },
+
+    /**
+     * Show delete confirmation dialog
+     * @param {string} itemName - Name of item being deleted
+     * @returns {Promise<boolean>}
+     */
+    confirmDelete(itemName = 'this item') {
+        return this.confirm({
+            title: 'Delete Confirmation',
+            message: `Are you sure you want to delete ${itemName}? This action cannot be undone.`,
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            type: 'danger'
+        });
+    },
+
+    /**
      * Set modal content
      * @param {string} id
      * @param {string} content

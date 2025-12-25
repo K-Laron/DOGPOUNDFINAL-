@@ -909,13 +909,19 @@ const BillingPage = {
 
                 try {
                     const response = await API.billing.report(data);
-                    if (response.success) {
+                    
+                    if (response.success && response.data) {
                         // Download or display report
                         Toast.success('Report generated successfully');
                         this.generatePDF(response.data);
                         return true;
+                    } else {
+                        Toast.error('Invalid response from server');
+                        console.error('Invalid response:', response);
+                        return false;
                     }
                 } catch (error) {
+                    console.error('Report generation error:', error);
                     Toast.error(error.message || 'Failed to generate report');
                     return false;
                 }
@@ -933,7 +939,19 @@ const BillingPage = {
             return;
         }
 
-        const { date_range, invoices, payments, daily_breakdown } = data;
+        // Handle case where data might be nested in response
+        if (data.data) {
+            data = data.data;
+        }
+
+        const { date_range, report_type = 'summary' } = data;
+
+        // Validate date_range exists
+        if (!date_range || !date_range.from || !date_range.to) {
+            Toast.error('Invalid report data - missing date range');
+            console.error('Invalid report data:', data);
+            return;
+        }
 
         try {
             const { jsPDF } = window.jspdf;
@@ -946,7 +964,15 @@ const BillingPage = {
 
             doc.setFontSize(14);
             doc.setTextColor(127, 140, 141); // Gray
-            doc.text('Financial Report', 14, 32);
+            
+            // Different title based on report type
+            if (report_type === 'unpaid') {
+                doc.text('Unpaid Invoices Report', 14, 32);
+            } else if (report_type === 'detailed') {
+                doc.text('Detailed Financial Report', 14, 32);
+            } else {
+                doc.text('Financial Report', 14, 32);
+            }
 
             // Date Range & Meta
             doc.setFontSize(10);
@@ -964,56 +990,170 @@ const BillingPage = {
             doc.setDrawColor(200);
             doc.line(14, 55, 196, 55);
 
-            doc.setFontSize(12);
-            doc.setTextColor(44, 62, 80);
-            doc.text('Summary', 14, yPos);
-            yPos += 10;
+            // Handle different report types
+            if (report_type === 'unpaid') {
+                // Unpaid Invoices Report
+                doc.setFontSize(12);
+                doc.setTextColor(44, 62, 80);
+                doc.text('Unpaid Invoices Summary', 14, yPos);
+                yPos += 10;
 
-            const summaryData = [
-                ['Total Invoices Generated', invoices.invoice_count, 'Total Amount Billed', Utils.formatCurrency(invoices.total_billed || 0)],
-                ['Total Amount Collected', Utils.formatCurrency(payments.total_collected || 0), 'Outstanding Balance', Utils.formatCurrency(invoices.total_unpaid_invoices || 0)]
-            ];
+                const unpaid_invoices = data.unpaid_invoices || [];
+                const total_unpaid = data.total_unpaid || 0;
+                const invoice_count = data.invoice_count || unpaid_invoices.length || 0;
 
-            doc.autoTable({
-                startY: yPos,
-                body: summaryData,
-                theme: 'plain',
-                styles: { fontSize: 10, cellPadding: 2 },
-                columnStyles: {
-                    0: { fontStyle: 'bold', cellWidth: 50 },
-                    2: { fontStyle: 'bold', cellWidth: 50 }
-                }
-            });
+                const summaryData = [
+                    ['Total Unpaid Invoices', invoice_count, 'Total Outstanding', Utils.formatCurrency(total_unpaid)]
+                ];
 
-            yPos = doc.lastAutoTable.finalY + 15;
-
-            // Daily Breakdown Table
-            doc.text('Daily Breakdown', 14, yPos);
-            yPos += 5;
-
-            const tableColumn = ["Date", "Transaction Count", "Collected Amount"];
-            const tableRows = [];
-
-            if (daily_breakdown && Array.isArray(daily_breakdown)) {
-                daily_breakdown.forEach(row => {
-                    const rowData = [
-                        Utils.formatDate(row.date),
-                        row.payment_count,
-                        Utils.formatCurrency(row.total_collected)
-                    ];
-                    tableRows.push(rowData);
+                doc.autoTable({
+                    startY: yPos,
+                    body: summaryData,
+                    theme: 'plain',
+                    styles: { fontSize: 10, cellPadding: 2 },
+                    columnStyles: {
+                        0: { fontStyle: 'bold', cellWidth: 50 },
+                        2: { fontStyle: 'bold', cellWidth: 50 }
+                    }
                 });
-            }
 
-            doc.autoTable({
-                head: [tableColumn],
-                body: tableRows,
-                startY: yPos,
-                theme: 'grid',
-                styles: { fontSize: 9, cellPadding: 3 },
-                headStyles: { fillColor: [44, 62, 80], textColor: 255 },
-                alternateRowStyles: { fillColor: [245, 247, 250] }
-            });
+                yPos = doc.lastAutoTable.finalY + 15;
+
+                // Unpaid Invoices Table
+                doc.text('Invoice Details', 14, yPos);
+                yPos += 5;
+
+                const tableColumn = ["Invoice #", "Customer", "Type", "Amount", "Paid", "Balance", "Date"];
+                const tableRows = [];
+
+                if (unpaid_invoices && Array.isArray(unpaid_invoices)) {
+                    unpaid_invoices.forEach(inv => {
+                        const rowData = [
+                            `#${String(inv.InvoiceID).padStart(5, '0')}`,
+                            `${inv.Payer_FirstName} ${inv.Payer_LastName}`,
+                            inv.Transaction_Type,
+                            Utils.formatCurrency(inv.Total_Amount),
+                            Utils.formatCurrency(inv.Amount_Paid || 0),
+                            Utils.formatCurrency(inv.Balance || (inv.Total_Amount - (inv.Amount_Paid || 0))),
+                            Utils.formatDate(inv.Created_At)
+                        ];
+                        tableRows.push(rowData);
+                    });
+                }
+
+                if (tableRows.length === 0) {
+                    tableRows.push(['No unpaid invoices found', '', '', '', '', '', '']);
+                }
+
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: yPos,
+                    theme: 'grid',
+                    styles: { fontSize: 8, cellPadding: 2 },
+                    headStyles: { fillColor: [220, 53, 69], textColor: 255 }, // Red header for unpaid
+                    alternateRowStyles: { fillColor: [255, 245, 245] }
+                });
+
+            } else {
+                // Summary or Detailed Report
+                const invoices = data.invoices || {};
+                const payments = data.payments || {};
+                const daily_breakdown = data.daily_breakdown || [];
+                const invoice_list = data.invoice_list || [];
+
+                doc.setFontSize(12);
+                doc.setTextColor(44, 62, 80);
+                doc.text('Summary', 14, yPos);
+                yPos += 10;
+
+                const summaryData = [
+                    ['Total Invoices Generated', invoices.invoice_count || 0, 'Total Amount Billed', Utils.formatCurrency(invoices.total_billed || 0)],
+                    ['Total Amount Collected', Utils.formatCurrency(payments.total_collected || 0), 'Outstanding Balance', Utils.formatCurrency(invoices.total_unpaid_invoices || 0)]
+                ];
+
+                doc.autoTable({
+                    startY: yPos,
+                    body: summaryData,
+                    theme: 'plain',
+                    styles: { fontSize: 10, cellPadding: 2 },
+                    columnStyles: {
+                        0: { fontStyle: 'bold', cellWidth: 50 },
+                        2: { fontStyle: 'bold', cellWidth: 50 }
+                    }
+                });
+
+                yPos = doc.lastAutoTable.finalY + 15;
+
+                // Daily Breakdown Table
+                doc.text('Daily Breakdown', 14, yPos);
+                yPos += 5;
+
+                const tableColumn = ["Date", "Transaction Count", "Collected Amount"];
+                const tableRows = [];
+
+                if (daily_breakdown && Array.isArray(daily_breakdown)) {
+                    daily_breakdown.forEach(row => {
+                        const rowData = [
+                            Utils.formatDate(row.date),
+                            row.payment_count,
+                            Utils.formatCurrency(row.total_collected)
+                        ];
+                        tableRows.push(rowData);
+                    });
+                }
+
+                if (tableRows.length === 0) {
+                    tableRows.push(['No transactions in this period', '', '']);
+                }
+
+                doc.autoTable({
+                    head: [tableColumn],
+                    body: tableRows,
+                    startY: yPos,
+                    theme: 'grid',
+                    styles: { fontSize: 9, cellPadding: 3 },
+                    headStyles: { fillColor: [44, 62, 80], textColor: 255 },
+                    alternateRowStyles: { fillColor: [245, 247, 250] }
+                });
+
+                // For detailed report, add invoice list
+                if (report_type === 'detailed' && invoice_list && invoice_list.length > 0) {
+                    yPos = doc.lastAutoTable.finalY + 15;
+                    
+                    // Check if we need a new page
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+
+                    doc.setFontSize(12);
+                    doc.setTextColor(44, 62, 80);
+                    doc.text('Invoice Details', 14, yPos);
+                    yPos += 5;
+
+                    const invoiceColumns = ["Invoice #", "Customer", "Type", "Amount", "Paid", "Status", "Date"];
+                    const invoiceRows = invoice_list.map(inv => [
+                        `#${String(inv.InvoiceID).padStart(5, '0')}`,
+                        `${inv.Payer_FirstName} ${inv.Payer_LastName}`,
+                        inv.Transaction_Type,
+                        Utils.formatCurrency(inv.Total_Amount),
+                        Utils.formatCurrency(inv.Amount_Paid || 0),
+                        inv.Status,
+                        Utils.formatDate(inv.Created_At)
+                    ]);
+
+                    doc.autoTable({
+                        head: [invoiceColumns],
+                        body: invoiceRows,
+                        startY: yPos,
+                        theme: 'grid',
+                        styles: { fontSize: 8, cellPadding: 2 },
+                        headStyles: { fillColor: [44, 62, 80], textColor: 255 },
+                        alternateRowStyles: { fillColor: [245, 247, 250] }
+                    });
+                }
+            }
 
             // Footer
             const pageCount = doc.internal.getNumberOfPages();
@@ -1031,7 +1171,8 @@ const BillingPage = {
             Toast.success('Report downloaded');
         } catch (error) {
             console.error('PDF generation failed:', error);
-            Toast.error('Failed to generate PDF');
+            console.error('Data received:', data);
+            Toast.error('Failed to generate PDF: ' + (error.message || 'Unknown error'));
         }
     }
 };

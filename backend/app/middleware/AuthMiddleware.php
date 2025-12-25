@@ -340,7 +340,7 @@ class AuthMiddleware {
      * @param array $allowedRoles Roles that can access
      * @return bool
      */
-    public function requireOwnerOrRole($resourceUserId, $allowedRoles = ['Admin']) {
+    public function requireOwnerOrRole($resourceUserId, $allowedRoles = ['Admin']): bool {
         if (!$this->user) {
             $this->authenticate();
         }
@@ -354,5 +354,6 @@ class AuthMiddleware {
         }
 
         Response::error("Access denied. You can only access your own resources.", 403);
+        return false;
     }
 }

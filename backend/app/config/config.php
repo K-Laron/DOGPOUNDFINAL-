@@ -49,8 +49,8 @@ define('ALLOWED_ORIGINS', [
     'http://localhost:8080',
     'http://127.0.0.1',
     'http://127.0.0.1:5500',
-    FRONTEND_URL,
-    '*' // Allow all - REMOVE IN PRODUCTION
+    FRONTEND_URL
+    // In production, add your actual domain here and remove localhost entries
 ]);
 
 // ============================================
@@ -112,13 +112,9 @@ date_default_timezone_set('Asia/Manila');
 // ERROR HANDLING
 // ============================================
 
-if (APP_ENV === 'development') {
-    error_reporting(E_ALL);
-    ini_set('display_errors', 0); // Don't display, but log
-} else {
-    error_reporting(0);
-    ini_set('display_errors', 0);
-}
+$isDev = APP_ENV === 'development';
+error_reporting($isDev ? E_ALL : 0);
+ini_set('display_errors', 0); // Don't display errors directly
 
 ini_set('log_errors', 1);
 ini_set('error_log', BASE_PATH . '/logs/error.log');

@@ -621,8 +621,6 @@ class UserController extends BaseController {
         // Add activity summary for own profile
         $response['activity_summary'] = $this->getUserActivitySummary($this->user['UserID']);
 
-        error_log("DEBUG: UserController::profile returning success. Stats count: " . (isset($response['stats']) ? count($response['stats']) : 'none'));
-
         Response::success($response, "Profile retrieved successfully");
     }
     

@@ -419,14 +419,74 @@ const Form = {
      */
     showError(field, message) {
         field.classList.add('error');
+        field.classList.remove('success');
 
         const formGroup = field.closest('.form-group');
         if (formGroup) {
+            formGroup.classList.add('has-error');
+            formGroup.classList.remove('has-success');
+            
+            // Remove existing error
+            formGroup.querySelector('.form-error')?.remove();
+            formGroup.querySelector('.validation-icon')?.remove();
+            
             const errorEl = document.createElement('p');
             errorEl.className = 'form-error';
-            errorEl.textContent = message;
+            errorEl.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                ${message}
+            `;
             formGroup.appendChild(errorEl);
+
+            // Add validation icon inside field
+            this.addValidationIcon(field, 'error');
         }
+    },
+
+    /**
+     * Show field success
+     * @param {HTMLElement} field
+     */
+    showSuccess(field) {
+        field.classList.add('success');
+        field.classList.remove('error');
+
+        const formGroup = field.closest('.form-group');
+        if (formGroup) {
+            formGroup.classList.add('has-success');
+            formGroup.classList.remove('has-error');
+            
+            // Remove existing error
+            formGroup.querySelector('.form-error')?.remove();
+
+            // Add validation icon inside field
+            this.addValidationIcon(field, 'success');
+        }
+    },
+
+    /**
+     * Add validation icon to field
+     * @param {HTMLElement} field
+     * @param {string} type - 'error' or 'success'
+     */
+    addValidationIcon(field, type) {
+        const formGroup = field.closest('.form-group');
+        if (!formGroup) return;
+
+        // Remove existing icon
+        formGroup.querySelector('.validation-icon')?.remove();
+
+        const icon = document.createElement('span');
+        icon.className = `validation-icon validation-${type}`;
+        
+        if (type === 'success') {
+            icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        } else {
+            icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+        }
+
+        // Insert after the input
+        field.parentNode.insertBefore(icon, field.nextSibling);
     },
 
     /**
@@ -435,7 +495,97 @@ const Form = {
      */
     clearErrors(form) {
         form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+        form.querySelectorAll('.success').forEach(el => el.classList.remove('success'));
         form.querySelectorAll('.form-error').forEach(el => el.remove());
+        form.querySelectorAll('.validation-icon').forEach(el => el.remove());
+        form.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
+        form.querySelectorAll('.has-success').forEach(el => el.classList.remove('has-success'));
+    },
+
+    /**
+     * Add character counter to field
+     * @param {HTMLElement|string} field
+     * @param {number} maxLength
+     */
+    addCharCounter(field, maxLength) {
+        if (typeof field === 'string') {
+            field = document.querySelector(field);
+        }
+
+        if (!field) return;
+
+        const formGroup = field.closest('.form-group');
+        if (!formGroup) return;
+
+        // Remove existing counter
+        formGroup.querySelector('.char-counter')?.remove();
+
+        const counter = document.createElement('span');
+        counter.className = 'char-counter';
+        
+        const updateCounter = () => {
+            const currentLength = field.value.length;
+            counter.textContent = `${currentLength}/${maxLength}`;
+            counter.classList.toggle('warning', currentLength > maxLength * 0.8);
+            counter.classList.toggle('error', currentLength > maxLength);
+        };
+
+        field.addEventListener('input', updateCounter);
+        updateCounter();
+
+        formGroup.appendChild(counter);
+    },
+
+    /**
+     * Enable live validation on form
+     * @param {HTMLFormElement|string} form
+     * @param {Object} rules
+     */
+    enableLiveValidation(form, rules = {}) {
+        if (typeof form === 'string') {
+            form = document.querySelector(form);
+        }
+
+        if (!form) return;
+
+        // Add validation on blur and input
+        Object.entries(rules).forEach(([fieldName, fieldRules]) => {
+            const field = form.elements[fieldName];
+            if (!field) return;
+
+            const validate = () => {
+                const data = this.getData(form);
+                const value = data[fieldName];
+                const ruleList = fieldRules.split('|');
+
+                for (const rule of ruleList) {
+                    const [ruleName, ruleParam] = rule.split(':');
+                    const error = this.checkRule(ruleName, value, ruleParam, data);
+
+                    if (error) {
+                        this.showError(field, error);
+                        return;
+                    }
+                }
+
+                // If no errors and has value, show success
+                if (value && value.toString().trim()) {
+                    this.showSuccess(field);
+                } else {
+                    // Clear validation state
+                    field.classList.remove('error', 'success');
+                    const formGroup = field.closest('.form-group');
+                    if (formGroup) {
+                        formGroup.classList.remove('has-error', 'has-success');
+                        formGroup.querySelector('.form-error')?.remove();
+                        formGroup.querySelector('.validation-icon')?.remove();
+                    }
+                }
+            };
+
+            field.addEventListener('blur', validate);
+            field.addEventListener('input', Utils.debounce(validate, 500));
+        });
     },
 
     /**

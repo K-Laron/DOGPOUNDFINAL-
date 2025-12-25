@@ -309,3 +309,112 @@ strong {
 .overflow-auto { overflow: auto; }
 .overflow-y-auto { overflow-y: auto; }
 .overflow-x-auto { overflow-x: auto; }
+
+/* ==========================================
+   MOBILE & TOUCH ENHANCEMENTS
+   ========================================== */
+
+/* Safe area insets for notched devices */
+@supports (padding: env(safe-area-inset-top)) {
+    .header {
+        padding-top: env(safe-area-inset-top);
+    }
+    
+    .sidebar {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .modal-footer {
+        padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom));
+    }
+    
+    .page-content {
+        padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+    }
+}
+
+/* Touch-friendly tap targets */
+@media (pointer: coarse) {
+    .btn,
+    .btn-icon,
+    .dropdown-item,
+    .sidebar-link,
+    .tab,
+    .pagination-btn {
+        min-height: 44px;
+    }
+    
+    .form-checkbox input,
+    .form-radio input {
+        width: 24px;
+        height: 24px;
+    }
+    
+    /* Larger touch targets for links */
+    .sidebar-link {
+        padding: var(--space-3) var(--space-4);
+    }
+    
+    .dropdown-item {
+        padding: var(--space-4) var(--space-5);
+    }
+}
+
+/* Prevent text selection on interactive elements */
+.btn,
+.btn-icon,
+.sidebar-link,
+.tab,
+.dropdown-item,
+.pagination-btn {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling for touch devices */
+.sidebar-nav,
+.modal-body,
+.table-container,
+.tabs {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Body scroll lock when sidebar is open */
+body.sidebar-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+}
+
+/* Prevent pull-to-refresh on mobile when not needed */
+.main-content {
+    overscroll-behavior: contain;
+}
+
+/* Mobile-friendly focus styles */
+@media (hover: none) {
+    :focus-visible {
+        outline: none;
+    }
+    
+    .btn:focus,
+    .form-input:focus,
+    .form-select:focus {
+        outline: none;
+    }
+}
+
+/* Hide scrollbar on mobile while keeping functionality */
+@media (max-width: 768px) {
+    .sidebar-nav::-webkit-scrollbar,
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .sidebar-nav,
+    .tabs {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}

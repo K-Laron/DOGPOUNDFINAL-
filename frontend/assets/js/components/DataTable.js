@@ -45,7 +45,6 @@ const DataTable = {
 
         // Store table config
         this.tables[id] = { ...options };
-        console.log(`DataTable: Registered table ${id}`, Object.keys(options));
 
         if (loading) {
             return `
@@ -355,11 +354,9 @@ const DataTable = {
      * @param {string} key
      */
     sort(tableId, key) {
-        console.log(`DataTable: Sort ${key} for table ${tableId}`);
         const table = this.tables[tableId];
         if (!table) return;
         if (!table.onSort) {
-            console.warn(`DataTable: No onSort handler for table ${tableId}`);
             return;
         }
 
@@ -391,10 +388,8 @@ const DataTable = {
      * @param {*} rowId
      */
     action(tableId, action, rowId) {
-        console.log(`DataTable: Action ${action} on row ${rowId} for table ${tableId}`);
         const table = this.tables[tableId];
         if (!table) {
-            console.error(`DataTable: Table ${tableId} not found in registry`, this.tables);
             return;
         }
 
@@ -460,8 +455,73 @@ const DataTable = {
         const checkboxes = document.querySelectorAll(`#${tableId} .row-select:checked`);
         const selectedIds = Array.from(checkboxes).map(cb => cb.dataset.id);
 
+        // Update row visual state
+        document.querySelectorAll(`#${tableId} tbody tr`).forEach(row => {
+            const checkbox = row.querySelector('.row-select');
+            if (checkbox) {
+                row.classList.toggle('selected', checkbox.checked);
+            }
+        });
+
+        // Show/hide bulk actions bar
+        this.updateBulkActionsBar(tableId, selectedIds);
+
         if (table.onSelectionChange) {
             table.onSelectionChange(selectedIds);
+        }
+    },
+
+    /**
+     * Show/hide bulk actions bar
+     * @param {string} tableId
+     * @param {Array} selectedIds
+     */
+    updateBulkActionsBar(tableId, selectedIds) {
+        const table = this.tables[tableId];
+        const container = document.getElementById(`${tableId}-container`);
+        if (!container || !table.bulkActions) return;
+
+        let bar = container.querySelector('.bulk-actions-bar');
+
+        if (selectedIds.length > 0) {
+            if (!bar) {
+                bar = document.createElement('div');
+                bar.className = 'bulk-actions-bar';
+                container.insertBefore(bar, container.firstChild);
+            }
+
+            const actionsHtml = table.bulkActions.map(action => `
+                <button class="btn btn-sm" onclick="DataTable.executeBulkAction('${tableId}', '${action.action}')">
+                    ${action.icon || ''} ${action.label}
+                </button>
+            `).join('');
+
+            bar.innerHTML = `
+                <span class="selected-count">${selectedIds.length} selected</span>
+                ${actionsHtml}
+                <button class="btn btn-sm btn-close" onclick="DataTable.clearSelection('${tableId}')" aria-label="Clear selection">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            `;
+        } else if (bar) {
+            bar.remove();
+        }
+    },
+
+    /**
+     * Execute bulk action
+     * @param {string} tableId
+     * @param {string} action
+     */
+    executeBulkAction(tableId, action) {
+        const table = this.tables[tableId];
+        if (!table || !table.bulkActions) return;
+
+        const selectedIds = this.getSelected(tableId);
+        const bulkAction = table.bulkActions.find(a => a.action === action);
+
+        if (bulkAction && bulkAction.handler) {
+            bulkAction.handler(selectedIds);
         }
     },
 
@@ -484,7 +544,24 @@ const DataTable = {
         const checkboxes = document.querySelectorAll(`#${tableId} .row-select`);
 
         if (selectAll) selectAll.checked = false;
-        checkboxes.forEach(cb => cb.checked = false);
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+            cb.closest('tr')?.classList.remove('selected');
+        });
+
+        // Hide bulk actions bar
+        this.updateBulkActionsBar(tableId, []);
+    },
+
+    /**
+     * Enable sticky headers
+     * @param {string} tableId
+     */
+    enableStickyHeaders(tableId) {
+        const container = document.querySelector(`#${tableId}-container .table-container`);
+        if (container) {
+            container.classList.add('sticky-header');
+        }
     },
 
     /**
@@ -501,6 +578,11 @@ const DataTable = {
         const container = document.getElementById(`${tableId}-container`);
         if (container) {
             container.outerHTML = this.render(table);
+            
+            // Re-enable sticky headers if needed
+            if (table.stickyHeader) {
+                this.enableStickyHeaders(tableId);
+            }
         }
     }
 };

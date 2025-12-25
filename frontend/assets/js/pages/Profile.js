@@ -29,9 +29,9 @@ const ProfilePage = {
                 </div>
             </div>
             
-            <div class="grid gap-6" style="grid-template-columns: 300px 1fr;">
+            <div class="profile-layout">
                 <!-- Left Sidebar -->
-                <div class="flex flex-col gap-6">
+                <div class="profile-sidebar flex flex-col gap-6">
                     <!-- Profile Card -->
                     <div class="card" id="profile-card">
                         ${Loading.skeleton('card', { hasImage: false, lines: 4 })}
@@ -44,7 +44,7 @@ const ProfilePage = {
                 </div>
                 
                 <!-- Main Content -->
-                <div class="flex flex-col gap-6">
+                <div class="profile-main flex flex-col gap-6">
                     <!-- Tabs Card -->
                     <div class="card">
                         <div class="card-header" style="border-bottom: none;">
@@ -173,59 +173,114 @@ const ProfilePage = {
 
         if (this.user.role === 'Adopter') {
             statsHtml = `
-                    <div class="flex justify-between items-center py-3 border-b">
-                    <span class="text-secondary">Adoption Requests</span>
-                    <span class="font-semibold">${this.user.stats?.adoption_requests || 0}</span>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Adoption Requests</span>
+                        <span class="quick-stat-value" style="color: var(--color-primary);">${this.user.stats?.adoption_requests || 0}</span>
+                    </div>
                 </div>
-                <div class="flex justify-between items-center py-3 border-b">
-                    <span class="text-secondary">Completed Adoptions</span>
-                    <span class="font-semibold text-success">${this.user.stats?.completed_adoptions || 0}</span>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(52, 199, 89, 0.15); color: var(--color-success);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Completed Adoptions</span>
+                        <span class="quick-stat-value" style="color: var(--color-success);">${this.user.stats?.completed_adoptions || 0}</span>
+                    </div>
                 </div>
-                <div class="flex justify-between items-center py-3">
-                    <span class="text-secondary">Pending Requests</span>
-                    <span class="font-semibold text-warning">${this.user.stats?.pending_requests || 0}</span>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(255, 159, 10, 0.15); color: var(--color-warning);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Pending Requests</span>
+                        <span class="quick-stat-value" style="color: var(--color-warning);">${this.user.stats?.pending_requests || 0}</span>
+                    </div>
                 </div>
 `;
         } else if (this.user.role === 'Veterinarian') {
             statsHtml = `
-            <div class="flex justify-between items-center py-3 border-b">
-                    <span class="text-secondary">Medical Records</span>
-                    <span class="font-semibold">${this.user.stats?.medical_records || 0}</span>
-            </div>
-                <div class="flex justify-between items-center py-3 border-b">
-                    <span class="text-secondary">Animals Treated</span>
-                    <span class="font-semibold">${this.user.stats?.animals_treated || 0}</span>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(175, 82, 222, 0.15); color: #AF52DE;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Medical Records</span>
+                        <span class="quick-stat-value" style="color: #AF52DE;">${this.user.stats?.medical_records || 0}</span>
+                    </div>
                 </div>
-                <div class="flex justify-between items-center py-3">
-                    <span class="text-secondary">This Month</span>
-                    <span class="font-semibold text-primary">${this.user.stats?.records_this_month || 0}</span>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(52, 199, 89, 0.15); color: var(--color-success);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5M14.267 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5M8 14v.5M16 14v.5M11.25 16.25h1.5L12 17l-.75-.75z"></path><path d="M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5c.78 0 1.5.108 2.161.306"></path></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Animals Treated</span>
+                        <span class="quick-stat-value" style="color: var(--color-success);">${this.user.stats?.animals_treated || 0}</span>
+                    </div>
+                </div>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">This Month</span>
+                        <span class="quick-stat-value" style="color: var(--color-primary);">${this.user.stats?.records_this_month || 0}</span>
+                    </div>
                 </div>
 `;
         } else if (this.user.role === 'Staff' || this.user.role === 'Admin') {
             statsHtml = `
-            <div class="flex justify-between items-center py-3 border-b">
-                    <span class="text-secondary">Animals Registered</span>
-                    <span class="font-semibold">${this.user.stats?.animals_registered || 0}</span>
-            </div>
-                <div class="flex justify-between items-center py-3 border-b">
-                    <span class="text-secondary">Adoptions Processed</span>
-                    <span class="font-semibold">${this.user.stats?.adoptions_processed || 0}</span>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5M14.267 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5M8 14v.5M16 14v.5M11.25 16.25h1.5L12 17l-.75-.75z"></path><path d="M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5c.78 0 1.5.108 2.161.306"></path></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Animals Registered</span>
+                        <span class="quick-stat-value" style="color: var(--color-primary);">${this.user.stats?.animals_registered || 0}</span>
+                    </div>
                 </div>
-                <div class="flex justify-between items-center py-3">
-                    <span class="text-secondary">Invoices Created</span>
-                    <span class="font-semibold">${this.user.stats?.invoices_created || 0}</span>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(52, 199, 89, 0.15); color: var(--color-success);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Adoptions Processed</span>
+                        <span class="quick-stat-value" style="color: var(--color-success);">${this.user.stats?.adoptions_processed || 0}</span>
+                    </div>
+                </div>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(255, 159, 10, 0.15); color: var(--color-warning);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Invoices Created</span>
+                        <span class="quick-stat-value" style="color: var(--color-warning);">${this.user.stats?.invoices_created || 0}</span>
+                    </div>
                 </div>
 `;
         } else {
             statsHtml = `
-            <div class="flex justify-between items-center py-3 border-b">
-                    <span class="text-secondary">Account Age</span>
-                    <span class="font-semibold">${Utils.timeAgo(this.user.created_at)}</span>
-            </div>
-    <div class="flex justify-between items-center py-3">
-        <span class="text-secondary">Profile Completion</span>
-        <span class="font-semibold">${this.calculateProfileCompletion()}%</span>
-    </div>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Account Age</span>
+                        <span class="quick-stat-value" style="color: var(--color-primary);">${Utils.timeAgo(this.user.created_at)}</span>
+                    </div>
+                </div>
+                <div class="quick-stat-item">
+                    <div class="quick-stat-icon" style="background: rgba(52, 199, 89, 0.15); color: var(--color-success);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div class="quick-stat-info">
+                        <span class="quick-stat-label">Profile Completion</span>
+                        <span class="quick-stat-value" style="color: var(--color-success);">${this.calculateProfileCompletion()}%</span>
+                    </div>
+                </div>
 `;
         }
 
@@ -233,7 +288,7 @@ const ProfilePage = {
     <div class="card-header">
         <h3 class="card-title">Quick Stats</h3>
     </div>
-    <div class="card-body">
+    <div class="card-body quick-stats-grid">
         ${statsHtml}
     </div>
 `;
@@ -515,9 +570,10 @@ const ProfilePage = {
                 <h4 class="font-semibold">Recent Activity</h4>
                 <select class="form-select" id="activity-filter" style="width: auto;">
                     <option value="all">All Activity</option>
-                    <option value="login">Logins</option>
+                    <option value="login">Login/Logout</option>
+                    <option value="create">Created Records</option>
                     <option value="update">Updates</option>
-                    <option value="action">Actions</option>
+                    <option value="process">Processing</option>
                 </select>
             </div>
     <div id="activity-list">
@@ -653,7 +709,7 @@ const ProfilePage = {
                 
 
                 
-                <!--Regional Settings-- >
+                <!-- Regional Settings -->
                 <div class="mb-8 pt-8 border-t">
                     <h4 class="font-semibold mb-4">Regional Settings</h4>
                     

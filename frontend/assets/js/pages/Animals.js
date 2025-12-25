@@ -48,9 +48,10 @@ const AnimalsPage = {
                 <div class="card-body">
                     <div class="flex flex-wrap items-center gap-4">
                         <div class="flex-1" style="min-width: 200px;">
-                            <div class="input-wrapper">
+                            <div class="input-wrapper search-input-wrapper">
                                 <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                 <input type="text" class="form-input search-input" placeholder="Search animals..." id="search-input" value="${this.state.filters.search}">
+                                <span class="search-keyboard-hint"><kbd>/</kbd></span>
                             </div>
                         </div>
                         

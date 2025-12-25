@@ -604,6 +604,52 @@ class BillingController extends BaseController {
         
         $dateFrom = $this->query('date_from');
         $dateTo = $this->query('date_to');
+        $reportType = $this->query('report_type') ?? 'summary';
+
+        // If report type is 'unpaid', return list of unpaid invoices
+        if ($reportType === 'unpaid') {
+            $stmt = $this->db->prepare("
+                SELECT i.*, 
+                       payer.FirstName as Payer_FirstName, 
+                       payer.LastName as Payer_LastName, 
+                       payer.Email as Payer_Email,
+                       payer.Contact_Number as Payer_Contact,
+                       staff.FirstName as Staff_FirstName, 
+                       staff.LastName as Staff_LastName,
+                       a.Name as Animal_Name,
+                       COALESCE((SELECT SUM(Amount_Paid) FROM Payments WHERE InvoiceID = i.InvoiceID), 0) as Amount_Paid
+                FROM Invoices i
+                JOIN Users payer ON i.Payer_UserID = payer.UserID
+                JOIN Users staff ON i.Issued_By_UserID = staff.UserID
+                LEFT JOIN Animals a ON i.Related_AnimalID = a.AnimalID
+                WHERE i.Is_Deleted = FALSE 
+                AND i.Status = 'Unpaid'
+                AND DATE(i.Created_At) BETWEEN :date_from AND :date_to
+                ORDER BY i.Created_At DESC
+            ");
+            $stmt->execute(['date_from' => $dateFrom, 'date_to' => $dateTo]);
+            $unpaidInvoices = $stmt->fetchAll();
+
+            // Calculate balance for each invoice
+            foreach ($unpaidInvoices as &$invoice) {
+                $invoice['Balance'] = $invoice['Total_Amount'] - $invoice['Amount_Paid'];
+            }
+
+            // Get totals
+            $totalUnpaid = array_sum(array_column($unpaidInvoices, 'Balance'));
+
+            Response::success([
+                'report_type' => 'unpaid',
+                'date_range' => [
+                    'from' => $dateFrom,
+                    'to' => $dateTo
+                ],
+                'unpaid_invoices' => $unpaidInvoices,
+                'total_unpaid' => $totalUnpaid,
+                'invoice_count' => count($unpaidInvoices)
+            ], "Unpaid invoices report generated");
+            return;
+        }
         
         // Invoices in range
         $stmt = $this->db->prepare("
@@ -643,15 +689,34 @@ class BillingController extends BaseController {
         ");
         $stmt->execute(['date_from' => $dateFrom, 'date_to' => $dateTo]);
         $dailyBreakdown = $stmt->fetchAll();
+
+        // For detailed report, include invoice list
+        $invoiceList = [];
+        if ($reportType === 'detailed') {
+            $stmt = $this->db->prepare("
+                SELECT i.InvoiceID, i.Transaction_Type, i.Total_Amount, i.Status, i.Created_At,
+                       payer.FirstName as Payer_FirstName, payer.LastName as Payer_LastName,
+                       COALESCE((SELECT SUM(Amount_Paid) FROM Payments WHERE InvoiceID = i.InvoiceID), 0) as Amount_Paid
+                FROM Invoices i
+                JOIN Users payer ON i.Payer_UserID = payer.UserID
+                WHERE i.Is_Deleted = FALSE
+                AND DATE(i.Created_At) BETWEEN :date_from AND :date_to
+                ORDER BY i.Created_At DESC
+            ");
+            $stmt->execute(['date_from' => $dateFrom, 'date_to' => $dateTo]);
+            $invoiceList = $stmt->fetchAll();
+        }
         
         Response::success([
+            'report_type' => $reportType,
             'date_range' => [
                 'from' => $dateFrom,
                 'to' => $dateTo
             ],
             'invoices' => $invoiceSummary,
             'payments' => $paymentSummary,
-            'daily_breakdown' => $dailyBreakdown
+            'daily_breakdown' => $dailyBreakdown,
+            'invoice_list' => $invoiceList
         ], "Financial report generated");
     }
 }

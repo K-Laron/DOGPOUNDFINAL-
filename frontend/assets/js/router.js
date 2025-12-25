@@ -394,7 +394,12 @@ const Router = {
             const mainContainer = Utils.$('#main-container');
             const pageContent = Utils.$('#page-content');
 
-
+            // Add exit transition class
+            if (pageContent) {
+                pageContent.classList.add('page-exit');
+                await Utils.wait(150); // Wait for exit animation
+                pageContent.classList.remove('page-exit');
+            }
 
             // Switch layout
             if (route.layout === 'auth') {
@@ -404,6 +409,11 @@ const Router = {
                 // Render auth page
                 if (route.component && typeof route.component.render === 'function') {
                     authContainer.innerHTML = await route.component.render(params);
+                    // Add enter transition
+                    authContainer.classList.add('page-enter');
+                    requestAnimationFrame(() => {
+                        authContainer.classList.remove('page-enter');
+                    });
                     if (typeof route.component.afterRender === 'function') {
                         await route.component.afterRender(params);
                     }
@@ -415,9 +425,21 @@ const Router = {
                 // Render sidebar and header if not already rendered
                 this.renderLayout(route.layout);
 
+                // Show skeleton while loading
+                if (pageContent) {
+                    pageContent.innerHTML = this.getSkeletonHTML(route.page);
+                }
+
                 // Render page content
                 if (route.component && typeof route.component.render === 'function') {
-                    pageContent.innerHTML = await route.component.render(params);
+                    const content = await route.component.render(params);
+                    pageContent.innerHTML = content;
+                    
+                    // Add enter transition
+                    pageContent.classList.add('page-enter');
+                    requestAnimationFrame(() => {
+                        pageContent.classList.remove('page-enter');
+                    });
                     if (typeof route.component.afterRender === 'function') {
                         await route.component.afterRender(params);
                     }
@@ -430,6 +452,40 @@ const Router = {
         } finally {
             Store.setLoading(false);
         }
+    },
+
+    /**
+     * Get skeleton HTML for page
+     * @param {string} pageName - The page name
+     * @returns {string} - Skeleton HTML
+     */
+    getSkeletonHTML(pageName) {
+        const skeletons = {
+            dashboard: `
+                <div class="skeleton-grid">
+                    <div class="skeleton-card skeleton-animate"></div>
+                    <div class="skeleton-card skeleton-animate"></div>
+                    <div class="skeleton-card skeleton-animate"></div>
+                    <div class="skeleton-card skeleton-animate"></div>
+                </div>
+                <div class="skeleton-table skeleton-animate"></div>
+            `,
+            animals: `
+                <div class="skeleton-header skeleton-animate"></div>
+                <div class="skeleton-filters skeleton-animate"></div>
+                <div class="skeleton-table skeleton-animate"></div>
+            `,
+            adoptions: `
+                <div class="skeleton-header skeleton-animate"></div>
+                <div class="skeleton-table skeleton-animate"></div>
+            `,
+            default: `
+                <div class="skeleton-header skeleton-animate"></div>
+                <div class="skeleton-content skeleton-animate"></div>
+            `
+        };
+
+        return `<div class="skeleton-container">${skeletons[pageName] || skeletons.default}</div>`;
     },
 
     /**

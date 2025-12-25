@@ -417,6 +417,12 @@ class DashboardController extends BaseController {
             $params['action_type'] = $this->query('action_type');
         }
         
+        // Support action_pattern for LIKE matching
+        if ($this->query('action_pattern')) {
+            $where[] = "al.Action_Type LIKE :action_pattern";
+            $params['action_pattern'] = '%' . strtoupper($this->query('action_pattern')) . '%';
+        }
+        
         if ($this->query('date_from')) {
             $where[] = "DATE(al.Log_Date) >= :date_from";
             $params['date_from'] = $this->query('date_from');
@@ -559,21 +565,40 @@ class DashboardController extends BaseController {
             }
             
             // Get total count
-            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM Activity_Logs WHERE UserID = :user_id");
-            $countStmt->execute(['user_id' => $userId]);
+            $whereClause = "UserID = :user_id";
+            $countParams = ['user_id' => $userId];
+            
+            // Filter by action pattern if provided
+            $actionPattern = $_GET['action_pattern'] ?? '';
+            if (!empty($actionPattern)) {
+                $whereClause .= " AND Action_Type LIKE :action_pattern";
+                $countParams['action_pattern'] = '%' . strtoupper($actionPattern) . '%';
+            }
+            
+            $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM Activity_Logs WHERE {$whereClause}");
+            $countStmt->execute($countParams);
             $total = $countStmt->fetch()['total'];
             
             // Get logs
             $offset = ($page - 1) * $perPage;
-            $stmt = $this->db->prepare("
+            $sql = "
                 SELECT al.*
                 FROM Activity_Logs al
                 WHERE al.UserID = :user_id
-                ORDER BY al.Log_Date DESC
-                LIMIT :limit OFFSET :offset
-            ");
+            ";
+            
+            if (!empty($actionPattern)) {
+                $sql .= " AND al.Action_Type LIKE :action_pattern";
+            }
+            
+            $sql .= " ORDER BY al.Log_Date DESC LIMIT :limit OFFSET :offset";
+            
+            $stmt = $this->db->prepare($sql);
             
             $stmt->bindValue(':user_id', $userId);
+            if (!empty($actionPattern)) {
+                $stmt->bindValue(':action_pattern', '%' . strtoupper($actionPattern) . '%');
+            }
             $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();

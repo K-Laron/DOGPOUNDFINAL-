@@ -1,5 +1,56 @@
+# =============
+# Logs
+# =============
 backend/logs/*.log
-backend/public/uploads/*
-!backend/public/uploads/.gitkeep
+*.log
+
+# =============
+# Uploads (user-generated content)
+# =============
+backend/public/uploads/animals/*
+backend/public/uploads/avatars/*
+!backend/public/uploads/animals/.gitkeep
+!backend/public/uploads/avatars/.gitkeep
+
+# =============
+# IDE / Editor
+# =============
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# =============
+# OS generated
+# =============
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =============
+# AI / Gemini
+# =============
 .gemini/
 gemini.md
+
+# =============
+# Environment / Secrets
+# =============
+.env
+.env.local
+.env.production
+*.env
+
+# =============
+# Dependencies (if any added later)
+# =============
+node_modules/
+vendor/
+composer.lock
+
+# =============
+# Temp Files
+# =============
+*.tmp
+*.temp
+*.bak

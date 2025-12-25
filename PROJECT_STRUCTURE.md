@@ -1,161 +1,144 @@
-# Project Structure
+# 📁 Project Structure
 
-```text
-Folder PATH listing for volume Acer
-Volume serial number is EA1A-CFA5
-C:.
-|   PROJECT_STRUCTURE.md
-|   README.md
-|   run_dev.ps1
-|   start.bat
-|   
-+---_legacy
-|   |   add_address_column.php
-|   |   add_preferences_column.php
-|   |   check_admin.php
-|   |   check_email_typo.php
-|   |   debug_adoptions.php
-|   |   fix_adoptions_data.php
-|   |   structure.txt
-|   |   test_animals_db.php
-|   |   test_dashboard_api.php
-|   |   update_dates.php
-|   |   
-+---backend
-|   |   .htaccess
-|   |   debug_notifications.php
-|   |   update_db.php
-|   |   
-|   +---app
-|   |   |   bootstrap.php
-|   |   |   
-|   |   +---api
-|   |   |       adoptions.php
-|   |   |       animals.php
-|   |   |       auth.php
-|   |   |       billing.php
-|   |   |       dashboard.php
-|   |   |       inventory.php
-|   |   |       medical.php
-|   |   |       notifications.php
-|   |   |       users.php
-|   |   |       
-|   |   +---config
-|   |   |       config.php
-|   |   |       database.php
-|   |   |       
-|   |   +---controllers
-|   |   |       AdoptionController.php
-|   |   |       AnimalController.php
-|   |   |       AuthController.php
-|   |   |       BaseController.php
-|   |   |       BillingController.php
-|   |   |       DashboardController.php
-|   |   |       InventoryController.php
-|   |   |       MedicalController.php
-|   |   |       NotificationController.php
-|   |   |       UserController.php
-|   |   |       
-|   |   +---middleware
-|   |   |       AuthMiddleware.php
-|   |   |       
-|   |   +---models
-|   |   |       ActivityLog.php
-|   |   |       AdoptionRequest.php
-|   |   |       Animal.php
-|   |   |       FeedingRecord.php
-|   |   |       ImpoundRecord.php
-|   |   |       Inventory.php
-|   |   |       Invoice.php
-|   |   |       MedicalRecord.php
-|   |   |       Payment.php
-|   |   |       Role.php
-|   |   |       User.php
-|   |   |       Veterinarian.php
-|   |   |       
-|   |   \---utils
-|   |           JWT.php
-|   |           Response.php
-|   |           Router.php
-|   |           Validator.php
-|   |           
-|   +---logs
-|   |       error.log
-|   |       
-|   \---public
-|       |   .htaccess
-|       |   add_username_column.php
-|       |   check_db_users.php
-|       |   check_seed_counts.php
-|       |   debug_overdue.php
-|       |   debug_overdue_2.php
-|       |   debug_profile_manual.php
-|       |   debug_user_find.php
-|       |   describe_users.php
-|       |   index.php
-|       |   update_usernames.php
-|       |   
-|       \---uploads
-|           +---animals
-|           \---avatars
-|                   
-+---database
-|       schema.sql
-|       seeders.sql
-|       
-\---frontend
-    |   index.html
-    |   
-    +---assets
-    |   +---css
-    |   |       animations.css
-    |   |       components.css
-    |   |       layouts.css
-    |   |       main.css
-    |   |       responsive.css
-    |   |       variables.css
-    |   |       
-    |   +---images
-    |   +---js
-    |   |   |   api.js
-    |   |   |   app.js
-    |   |   |   auth.js
-    |   |   |   router.js
-    |   |   |   store.js
-    |   |   |   utils.js
-    |   |   |   
-    |   |   +---components
-    |   |   |       Card.js
-    |   |   |       Charts.js
-    |   |   |       DataTable.js
-    |   |   |       Form.js
-    |   |   |       Header.js
-    |   |   |       Loading.js
-    |   |   |       Modal.js
-    |   |   |       Sidebar.js
-    |   |   |       Toast.js
-    |   |   |       
-    |   |   \---pages
-    |   |           Adoptions.js
-    |   |           AnimalDetail.js
-    |   |           Animals.js
-    |   |           Billing.js
-    |   |           Dashboard.js
-    |   |           Inventory.js
-    |   |           Login.js
-    |   |           Medical.js
-    |   |           Profile.js
-    |   |           Settings.js
-    |   |           Users.js
-    |   |           
-    |   \---pages
-    |       +---admin
-    |       |       dashboard.html
-    |       |       
-    |       +---auth
-    |       |       login.html
-    |       |       
-    |       \---components
-    \---public
-        \---uploads
+## Catarman Dog Pound Management System
+
 ```
+dogpound/
+├── 📄 README.md              # Project documentation
+├── 📄 PROJECT_STRUCTURE.md   # This file
+├── 🚀 start.bat              # Start development servers
+├── 🛑 stop.bat               # Stop development servers
+│
+├── 🗄️ database/
+│   ├── schema.sql            # Database structure & tables
+│   └── seeders.sql           # Sample/test data
+│
+├── ⚙️ backend/
+│   ├── .htaccess             # Apache URL rewriting
+│   │
+│   ├── app/
+│   │   ├── bootstrap.php     # Application bootstrap
+│   │   │
+│   │   ├── api/              # API Endpoints
+│   │   │   ├── adoptions.php
+│   │   │   ├── animals.php
+│   │   │   ├── auth.php
+│   │   │   ├── billing.php
+│   │   │   ├── dashboard.php
+│   │   │   ├── inventory.php
+│   │   │   ├── medical.php
+│   │   │   ├── notifications.php
+│   │   │   └── users.php
+│   │   │
+│   │   ├── config/           # Configuration
+│   │   │   ├── config.php    # App settings, JWT, CORS
+│   │   │   └── database.php  # Database connection
+│   │   │
+│   │   ├── controllers/      # Business Logic
+│   │   │   ├── BaseController.php
+│   │   │   ├── AdoptionController.php
+│   │   │   ├── AnimalController.php
+│   │   │   ├── AuthController.php
+│   │   │   ├── BillingController.php
+│   │   │   ├── DashboardController.php
+│   │   │   ├── InventoryController.php
+│   │   │   ├── MedicalController.php
+│   │   │   ├── NotificationController.php
+│   │   │   └── UserController.php
+│   │   │
+│   │   ├── middleware/       # Request Middleware
+│   │   │   └── AuthMiddleware.php
+│   │   │
+│   │   ├── models/           # Database Models
+│   │   │   ├── ActivityLog.php
+│   │   │   ├── AdoptionRequest.php
+│   │   │   ├── Animal.php
+│   │   │   ├── FeedingRecord.php
+│   │   │   ├── ImpoundRecord.php
+│   │   │   ├── Inventory.php
+│   │   │   ├── Invoice.php
+│   │   │   ├── MedicalRecord.php
+│   │   │   ├── Payment.php
+│   │   │   ├── Role.php
+│   │   │   ├── User.php
+│   │   │   └── Veterinarian.php
+│   │   │
+│   │   └── utils/            # Utilities
+│   │       ├── JWT.php       # Token handling
+│   │       ├── Response.php  # JSON responses
+│   │       ├── Router.php    # URL routing
+│   │       └── Validator.php # Input validation
+│   │
+│   ├── logs/                 # Error logs (gitignored)
+│   │
+│   └── public/               # Web entry point
+│       ├── .htaccess         # Public URL rewriting
+│       ├── index.php         # API router entry
+│       └── uploads/          # User uploads (gitignored)
+│           ├── animals/      # Animal images
+│           └── avatars/      # User avatars
+│
+└── 🎨 frontend/
+    ├── index.html            # SPA entry point
+    │
+    └── assets/
+        ├── css/              # Stylesheets
+        │   ├── variables.css # CSS custom properties
+        │   ├── main.css      # Core styles
+        │   ├── components.css# UI components
+        │   ├── layouts.css   # Page layouts
+        │   ├── animations.css# Transitions & effects
+        │   └── responsive.css# Media queries
+        │
+        ├── images/           # Static images
+        │
+        ├── js/               # JavaScript
+        │   ├── app.js        # Main application
+        │   ├── api.js        # API client
+        │   ├── auth.js       # Authentication
+        │   ├── router.js     # SPA routing
+        │   ├── store.js      # State management
+        │   ├── utils.js      # Helper functions
+        │   │
+        │   ├── components/   # Reusable UI Components
+        │   │   ├── Card.js
+        │   │   ├── Charts.js
+        │   │   ├── DataTable.js
+        │   │   ├── Form.js
+        │   │   ├── Header.js
+        │   │   ├── Loading.js
+        │   │   ├── Modal.js
+        │   │   ├── Sidebar.js
+        │   │   └── Toast.js
+        │   │
+        │   └── pages/        # Page Controllers
+        │       ├── Dashboard.js
+        │       ├── Animals.js
+        │       ├── AnimalDetail.js
+        │       ├── Adoptions.js
+        │       ├── Medical.js
+        │       ├── Inventory.js
+        │       ├── Billing.js
+        │       ├── Users.js
+        │       ├── Profile.js
+        │       ├── Settings.js
+        │       └── Login.js
+        │
+        └── pages/            # HTML Templates
+            ├── admin/
+            │   └── dashboard.html
+            └── auth/
+                └── login.html
+```
+
+## 🔑 Key Files
+
+| File | Purpose |
+|------|---------|
+| `start.bat` | Starts PHP & frontend servers |
+| `stop.bat` | Stops all background servers |
+| `backend/app/config/config.php` | JWT secret, CORS, app settings |
+| `backend/app/config/database.php` | MySQL connection settings |
+| `database/schema.sql` | Full database schema |
+| `frontend/index.html` | SPA entry point |
+| `frontend/assets/js/app.js` | Main application bootstrap |

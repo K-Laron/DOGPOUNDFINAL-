@@ -299,13 +299,21 @@ const Store = {
     },
     
     /**
-     * Set theme
+     * Set theme with smooth transition
      * @param {string} theme
      */
     setTheme(theme) {
+        // Add transition class for smooth color change
+        document.documentElement.classList.add('theme-transitioning');
+        
         this.set('theme', theme);
         document.documentElement.setAttribute('data-theme', theme);
         Utils.setStorage('theme', theme);
+
+        // Remove transition class after animation completes
+        setTimeout(() => {
+            document.documentElement.classList.remove('theme-transitioning');
+        }, 300);
     },
     
     /**

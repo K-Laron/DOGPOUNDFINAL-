@@ -764,6 +764,15 @@ const Utils = {
     },
 
     /**
+     * Wait alias for sleep
+     * @param {number} ms
+     * @returns {Promise}
+     */
+    wait(ms) {
+        return this.sleep(ms);
+    },
+
+    /**
      * ==========================================
      * FILE UTILITIES
      * ==========================================
@@ -843,6 +852,37 @@ const Utils = {
         ];
 
         return colors[Math.abs(hash) % colors.length];
+    },
+
+    /**
+     * Generate gradient from string (for enhanced avatars)
+     * @param {string} str
+     * @returns {string}
+     */
+    stringToGradient(str) {
+        if (!str) return 'linear-gradient(135deg, #007AFF, #5856D6)';
+
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        const gradients = [
+            'linear-gradient(135deg, #FF3B30, #FF9500)',
+            'linear-gradient(135deg, #FF9500, #FFCC00)',
+            'linear-gradient(135deg, #34C759, #00C7BE)',
+            'linear-gradient(135deg, #00C7BE, #30B0C7)',
+            'linear-gradient(135deg, #32ADE6, #007AFF)',
+            'linear-gradient(135deg, #007AFF, #5856D6)',
+            'linear-gradient(135deg, #5856D6, #AF52DE)',
+            'linear-gradient(135deg, #AF52DE, #FF2D55)',
+            'linear-gradient(135deg, #FF2D55, #FF3B30)',
+            'linear-gradient(135deg, #A2845E, #8E8E93)',
+            'linear-gradient(135deg, #30B0C7, #5856D6)',
+            'linear-gradient(135deg, #34C759, #007AFF)'
+        ];
+
+        return gradients[Math.abs(hash) % gradients.length];
     },
 
     /**
@@ -973,6 +1013,99 @@ const Utils = {
         };
 
         return statusMap[status] || 'badge-gray';
+    },
+
+    /**
+     * Announce message for screen readers
+     * @param {string} message - Message to announce
+     * @param {string} priority - 'polite' or 'assertive'
+     */
+    announce(message, priority = 'polite') {
+        const announcer = document.getElementById('announcements');
+        if (!announcer) return;
+
+        announcer.setAttribute('aria-live', priority);
+        announcer.textContent = message;
+
+        // Clear after announcement
+        setTimeout(() => {
+            announcer.textContent = '';
+        }, 1000);
+    },
+
+    /**
+     * Create filter chips HTML
+     * @param {Object} filters - Active filters object
+     * @param {Function} onRemove - Callback when filter is removed
+     * @returns {string}
+     */
+    renderFilterChips(filters, containerId = 'filter-chips') {
+        const entries = Object.entries(filters).filter(([key, value]) => value && value !== '' && value !== 'all');
+        
+        if (entries.length === 0) return '';
+
+        const chips = entries.map(([key, value]) => `
+            <span class="filter-chip" data-filter="${key}">
+                <span class="filter-chip-label">${this.formatFilterLabel(key)}: ${value}</span>
+                <button class="filter-chip-remove" onclick="Utils.removeFilterChip('${containerId}', '${key}')" aria-label="Remove ${key} filter">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </span>
+        `).join('');
+
+        return `
+            <div class="filter-chips-container" id="${containerId}">
+                ${chips}
+                <button class="btn btn-sm btn-ghost clear-all-filters" onclick="Utils.clearAllFilters('${containerId}')">
+                    Clear all
+                </button>
+            </div>
+        `;
+    },
+
+    /**
+     * Format filter key to label
+     * @param {string} key
+     * @returns {string}
+     */
+    formatFilterLabel(key) {
+        return key
+            .replace(/_/g, ' ')
+            .replace(/([A-Z])/g, ' $1')
+            .trim()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    },
+
+    /**
+     * Remove a single filter chip
+     * @param {string} containerId
+     * @param {string} filterKey
+     */
+    removeFilterChip(containerId, filterKey) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        // Dispatch custom event for page to handle
+        container.dispatchEvent(new CustomEvent('filterRemoved', {
+            detail: { key: filterKey },
+            bubbles: true
+        }));
+    },
+
+    /**
+     * Clear all filter chips
+     * @param {string} containerId
+     */
+    clearAllFilters(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        // Dispatch custom event for page to handle
+        container.dispatchEvent(new CustomEvent('filtersCleared', {
+            bubbles: true
+        }));
     }
 };
 

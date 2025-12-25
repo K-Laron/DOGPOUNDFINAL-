@@ -46,9 +46,7 @@ abstract class BaseController {
         // Handle JSON content type
         if (strpos($contentType, 'application/json') !== false) {
             $json = file_get_contents('php://input');
-            error_log("DEBUG: Raw JSON Input: " . $json);
             $data = json_decode($json, true) ?? [];
-            error_log("DEBUG: Decoded Data: " . print_r($data, true));
             return array_merge($_GET, $data);
         }
         
