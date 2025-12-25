@@ -62,15 +62,7 @@ A comprehensive web-based application designed to streamline the operations of t
     *   Double-click `stop.bat` to gracefully shut down the background servers
     *   **Note**: Closing the browser does NOT stop the servers. You must use `stop.bat`
 
-## 👤 Default Login Credentials
-
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | admin@dogpound.com | password123 |
-| Staff | staff@dogpound.com | password123 |
-| Veterinarian | vet@dogpound.com | password123 |
-
-## 📂 Project Structure
+##  Project Structure
 
 ```
 ├── backend/
