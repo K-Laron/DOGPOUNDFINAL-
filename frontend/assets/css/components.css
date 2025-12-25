@@ -384,13 +384,18 @@
     box-shadow: var(--shadow-card);
     overflow: hidden;
     transition: all var(--transition-normal);
-    border: 1px solid var(--border-color-light);
+    border: 2px solid var(--border-color-light);
+}
+
+.card:hover {
+    border-color: var(--hover-accent-color, #FF5CFF);
+    box-shadow: 0 0 0 1px var(--hover-accent-color, #FF5CFF), var(--shadow-card-hover);
 }
 
 .card-hover:hover {
-    box-shadow: var(--shadow-card-hover);
+    box-shadow: 0 0 0 1px var(--hover-accent-color, #FF5CFF), var(--shadow-card-hover);
     transform: translateY(-3px);
-    border-color: var(--border-color);
+    border-color: var(--hover-accent-color, #FF5CFF);
 }
 
 .card-header {
@@ -822,13 +827,14 @@
     border-radius: var(--radius-xl);
     padding: var(--space-6);
     box-shadow: var(--shadow-card);
-    border: 1px solid var(--border-color-light);
+    border: 2px solid var(--border-color-light);
     transition: all var(--transition-normal);
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 0 0 1px var(--hover-accent-color, #FF5CFF), var(--shadow-lg);
+    border-color: var(--hover-accent-color, #FF5CFF);
 }
 
 .stat-card-icon {

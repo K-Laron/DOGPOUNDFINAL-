@@ -46,7 +46,7 @@
 
    /* Backgrounds (Light Mode Default) */
    --bg-primary: #FFFFFF;
-   --bg-secondary: #F3F4F6;
+   --bg-secondary: #f3f0eb;
    --bg-tertiary: #FFFFFF;
    --bg-elevated: #FFFFFF;
    --bg-sidebar: rgba(255, 255, 255, 0.75);
@@ -67,6 +67,9 @@
    --border-color: rgba(0, 0, 0, 0.08);
    --border-color-light: rgba(0, 0, 0, 0.04);
    --border-color-dark: rgba(0, 0, 0, 0.12);
+
+   /* Hover Accent Color */
+   --hover-accent-color: #FF5CFF;
 
    /* Gray Scale */
    --color-gray-50: #F9FAFB;
@@ -235,11 +238,11 @@
 
 @media (prefers-color-scheme: dark) {
    :root {
-      --bg-primary: #1C1C1E;
-      --bg-secondary: #2C2C2E;
-      --bg-tertiary: #3A3A3C;
-      --bg-elevated: #2C2C2E;
-      --bg-sidebar: rgba(28, 28, 30, 0.75);
+      --bg-primary: #181818;
+      --bg-secondary: #121212;
+      --bg-tertiary: #282828;
+      --bg-elevated: #181818;
+      --bg-sidebar: rgba(18, 18, 18, 0.9);
       /* Dark Glassmorphism */
 
       --bg-hover: rgba(255, 255, 255, 0.1);
@@ -255,15 +258,18 @@
 
       --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
       --shadow-card-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
+
+      /* Hover Accent Color - Spotify Green */
+      --hover-accent-color: #1DB954;
    }
 }
 
 [data-theme="dark"] {
-   --bg-primary: #000000;
-   --bg-secondary: #1C1C1E;
-   --bg-tertiary: #2C2C2E;
-   --bg-elevated: #1C1C1E;
-   --bg-sidebar: rgba(28, 28, 30, 0.75);
+   --bg-primary: #181818;
+   --bg-secondary: #121212;
+   --bg-tertiary: #282828;
+   --bg-elevated: #181818;
+   --bg-sidebar: rgba(18, 18, 18, 0.9);
    /* Dark Glassmorphism */
 
    --bg-hover: rgba(255, 255, 255, 0.08);
@@ -276,4 +282,7 @@
    --border-color: rgba(255, 255, 255, 0.1);
    --border-color-light: rgba(255, 255, 255, 0.06);
    --border-color-dark: rgba(255, 255, 255, 0.15);
+
+   /* Hover Accent Color - Spotify Green */
+   --hover-accent-color: #1DB954;
 }

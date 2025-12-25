@@ -34,6 +34,11 @@ desktop.ini
 gemini.md
 
 # =============
+# Personal / Defense
+# =============
+DEFENSE_GUIDE.md
+
+# =============
 # Environment / Secrets
 # =============
 .env
