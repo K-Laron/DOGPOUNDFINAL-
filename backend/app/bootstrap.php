@@ -87,6 +87,12 @@ class App {
      * Handle CORS (Cross-Origin Resource Sharing) headers
      */
     private function handleCors() {
+        // Apply global rate limiting (if enabled)
+        if (defined('RATE_LIMIT_ENABLED') && RATE_LIMIT_ENABLED) {
+            require_once APP_PATH . '/utils/RateLimiter.php';
+            RateLimiter::checkGlobal();
+        }
+        
         // Get the origin header
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
         

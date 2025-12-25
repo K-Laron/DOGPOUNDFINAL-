@@ -93,6 +93,24 @@ define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOCKOUT_TIME', 900); // 15 minutes in seconds
 
 // ============================================
+// RATE LIMITING SETTINGS
+// ============================================
+
+// Enable/disable rate limiting (set to false to disable)
+define('RATE_LIMIT_ENABLED', true);
+
+// Login rate limiting
+define('RATE_LIMIT_LOGIN_MAX', 10);        // Max login attempts per window
+define('RATE_LIMIT_LOGIN_WINDOW', 60);     // Window in seconds (60 = 1 minute)
+
+// API rate limiting (general requests)
+define('RATE_LIMIT_API_MAX', 100);         // Max API requests per window
+define('RATE_LIMIT_API_WINDOW', 60);       // Window in seconds
+
+// Rate limit storage directory
+define('RATE_LIMIT_STORAGE', BASE_PATH . '/logs/rate_limits/');
+
+// ============================================
 // FEE CONFIGURATION
 // ============================================
 

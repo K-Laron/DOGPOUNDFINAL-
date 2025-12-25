@@ -43,25 +43,43 @@ abstract class BaseController {
     protected function getRequestData() {
         $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
         
+        // Sanitization helper function
+        $sanitize = function($data) {
+            // Load Sanitizer if not already loaded
+            if (!class_exists('Sanitizer')) {
+                $sanitizerPath = APP_PATH . '/utils/Sanitizer.php';
+                if (file_exists($sanitizerPath)) {
+                    require_once $sanitizerPath;
+                }
+            }
+            
+            // Sanitize if Sanitizer class is available
+            if (class_exists('Sanitizer')) {
+                return Sanitizer::request($data);
+            }
+            
+            return $data;
+        };
+        
         // Handle JSON content type
         if (strpos($contentType, 'application/json') !== false) {
             $json = file_get_contents('php://input');
             $data = json_decode($json, true) ?? [];
-            return array_merge($_GET, $data);
+            return $sanitize(array_merge($_GET, $data));
         }
         
         // Handle form data
         if (strpos($contentType, 'multipart/form-data') !== false) {
-            return array_merge($_POST, $_FILES);
+            return array_merge($sanitize($_POST), $_FILES);
         }
         
         // Handle URL encoded form data
         if (strpos($contentType, 'application/x-www-form-urlencoded') !== false) {
-            return $_POST;
+            return $sanitize($_POST);
         }
         
         // Default: merge GET and POST
-        return array_merge($_GET, $_POST);
+        return $sanitize(array_merge($_GET, $_POST));
     }
     
     /**

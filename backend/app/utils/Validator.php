@@ -557,7 +557,15 @@ class Validator {
         }
         
         if (is_string($value)) {
-            return htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
+            // Use Sanitizer class if available for comprehensive sanitization
+            if (class_exists('Sanitizer')) {
+                return Sanitizer::string($value);
+            }
+            
+            // Fallback: Remove control characters and escape HTML
+            $value = trim($value);
+            $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value);
+            return htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         }
         
         return $value;
@@ -569,11 +577,19 @@ class Validator {
      * @return array
      */
     public function getAllSanitized() {
+        // Use Sanitizer class if available
+        if (class_exists('Sanitizer')) {
+            return Sanitizer::request($this->data);
+        }
+        
+        // Fallback sanitization
         $sanitized = [];
         
         foreach ($this->data as $key => $value) {
             if (is_string($value)) {
-                $sanitized[$key] = htmlspecialchars(trim($value), ENT_QUOTES, 'UTF-8');
+                $value = trim($value);
+                $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value);
+                $sanitized[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
             } else {
                 $sanitized[$key] = $value;
             }

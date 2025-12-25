@@ -65,11 +65,14 @@ dogpound/
 │   │   │
 │   │   └── utils/            # Utilities
 │   │       ├── JWT.php       # Token handling
+│   │       ├── RateLimiter.php # Rate limiting (API & login)
 │   │       ├── Response.php  # JSON responses
 │   │       ├── Router.php    # URL routing
+│   │       ├── Sanitizer.php # Input sanitization (XSS prevention)
 │   │       └── Validator.php # Input validation
 │   │
 │   ├── logs/                 # Error logs (gitignored)
+│   │   └── rate_limits/      # Rate limit tracking data
 │   │
 │   └── public/               # Web entry point
 │       ├── .htaccess         # Public URL rewriting
@@ -137,8 +140,10 @@ dogpound/
 |------|---------|
 | `start.bat` | Starts PHP & frontend servers |
 | `stop.bat` | Stops all background servers |
-| `backend/app/config/config.php` | JWT secret, CORS, app settings |
+| `backend/app/config/config.php` | JWT secret, CORS, rate limits, app settings |
 | `backend/app/config/database.php` | MySQL connection settings |
+| `backend/app/utils/RateLimiter.php` | Rate limiting for API & login protection |
+| `backend/app/utils/Sanitizer.php` | Input sanitization for XSS prevention |
 | `database/schema.sql` | Full database schema |
 | `frontend/index.html` | SPA entry point |
 | `frontend/assets/js/app.js` | Main application bootstrap |

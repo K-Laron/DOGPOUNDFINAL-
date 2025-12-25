@@ -15,6 +15,14 @@ class AuthController extends BaseController {
      * POST /auth/login
      */
     public function login() {
+        // Apply strict rate limiting for login attempts
+        if (defined('RATE_LIMIT_ENABLED') && RATE_LIMIT_ENABLED) {
+            if (!class_exists('RateLimiter')) {
+                require_once APP_PATH . '/utils/RateLimiter.php';
+            }
+            RateLimiter::checkLogin();
+        }
+        
         // Validate input - allow 'username' or 'email'
         $rules = [
             'password' => 'required'

@@ -27,6 +27,8 @@ A comprehensive web-based application designed to streamline the operations of t
 *   PDO prepared statements for all database queries
 *   Role-based access control middleware
 *   CORS protection with whitelisted origins
+*   **Rate Limiting**: Configurable limits for login attempts (10/min) and API requests (100/min)
+*   **Input Sanitization**: Automatic XSS prevention on all incoming request data
 
 ## ⚙️ Installation & Setup
 
@@ -72,8 +74,8 @@ A comprehensive web-based application designed to streamline the operations of t
 │   │   ├── controllers/  # Business logic
 │   │   ├── middleware/   # Auth middleware
 │   │   ├── models/       # Database models
-│   │   └── utils/        # JWT, Router, Validator
-│   ├── logs/             # Error logs
+│   │   └── utils/        # JWT, Router, Validator, RateLimiter, Sanitizer
+│   ├── logs/             # Error logs & rate limit data
 │   └── public/           # Entry point & uploads
 ├── frontend/
 │   ├── assets/
@@ -101,6 +103,17 @@ A comprehensive web-based application designed to streamline the operations of t
 | `/api/billing` | Invoices & payments |
 | `/api/dashboard` | Statistics & activity logs |
 | `/api/notifications` | User notifications |
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Complete project implementation plan |
+| [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | Detailed directory structure |
+| [BACKEND_DOCUMENTATION.md](BACKEND_DOCUMENTATION.md) | Backend code documentation |
+| [FRONTEND_DOCUMENTATION.md](FRONTEND_DOCUMENTATION.md) | Frontend code documentation |
+| [DATABASE_DOCUMENTATION.md](DATABASE_DOCUMENTATION.md) | Database schema & queries |
+| [DEFENSE_GUIDE.md](DEFENSE_GUIDE.md) | Project defense preparation guide |
 
 ## 📄 License
 

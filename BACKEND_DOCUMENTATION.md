@@ -18,8 +18,9 @@ backend/
 │   ├── controllers/       # Business logic handlers
 │   ├── middleware/        # Request interceptors
 │   ├── models/            # Database entity classes
-│   └── utils/             # Helper utilities
-├── logs/                  # Error logs
+│   └── utils/             # Helper utilities (JWT, RateLimiter, Sanitizer, etc.)
+├── logs/                  # Error logs & rate limit data
+│   └── rate_limits/       # Rate limiting tracking files
 └── public/
     ├── .htaccess          # Public URL rewriting
     ├── index.php          # Single entry point
@@ -110,6 +111,11 @@ HTTP Request → index.php → bootstrap.php → App class → Router → Contro
 | `PASSWORD_MIN_LENGTH` | Minimum password | `8` |
 | `MAX_LOGIN_ATTEMPTS` | Before lockout | `5` |
 | `LOCKOUT_TIME` | Lockout duration | `900` (15 minutes) |
+| `RATE_LIMIT_ENABLED` | Enable/disable rate limiting | `true` |
+| `RATE_LIMIT_LOGIN_MAX` | Max login attempts per window | `10` |
+| `RATE_LIMIT_LOGIN_WINDOW` | Login rate limit window | `60` (1 minute) |
+| `RATE_LIMIT_API_MAX` | Max API requests per window | `100` |
+| `RATE_LIMIT_API_WINDOW` | API rate limit window | `60` (1 minute) |
 | `ADOPTION_FEE_DOG` | Dog adoption fee | `500.00` |
 | `ADOPTION_FEE_CAT` | Cat adoption fee | `300.00` |
 
@@ -312,6 +318,87 @@ if ($validator->fails()) {
 | `alpha` | Letters only | `'name' => 'alpha'` |
 | `alphanumeric` | Letters and numbers | `'username' => 'alphanumeric'` |
 | `unique:table,column` | Unique in database | `'email' => 'unique:Users,Email'` |
+
+---
+
+### `app/utils/RateLimiter.php`
+**Purpose**: Rate limiting utility to prevent brute force attacks and API abuse
+
+**Features**:
+- File-based storage (no database required)
+- Configurable limits per endpoint type
+- IP-based tracking for unauthenticated requests
+- Automatic cleanup of expired entries
+
+**Methods**:
+
+| Method | Purpose |
+|--------|---------|
+| `check($type, $id, $max, $window)` | Check and enforce rate limit |
+| `checkGlobal()` | Apply global API rate limiting |
+| `checkLogin($identifier)` | Apply stricter login rate limiting |
+| `getRemaining($type, $id, $max, $window)` | Get remaining attempts |
+| `reset($type, $identifier)` | Reset rate limit for identifier |
+| `cleanup($maxAge)` | Clear expired rate limit data |
+
+**Usage**:
+```php
+// Check login rate limit (10 attempts per 60 seconds)
+RateLimiter::checkLogin();
+
+// Custom rate limit
+RateLimiter::check('api', $userId, 100, 60);
+```
+
+**Response on Limit Exceeded** (HTTP 429):
+```json
+{
+  "success": false,
+  "message": "Rate limit exceeded. Please try again in 45 seconds.",
+  "retry_after": 45
+}
+```
+
+---
+
+### `app/utils/Sanitizer.php`
+**Purpose**: Input sanitization utility to prevent XSS and injection attacks
+
+**Features**:
+- Automatic HTML entity escaping
+- Control character removal
+- Recursive array sanitization
+- Type-specific sanitization (email, integer, URL, filename)
+- Password field preservation (not sanitized)
+
+**Methods**:
+
+| Method | Purpose |
+|--------|---------|
+| `string($value, $allowHtml)` | Sanitize string, escape HTML |
+| `email($value)` | Validate and normalize email |
+| `integer($value, $default)` | Extract integer value |
+| `float($value, $default)` | Extract decimal value |
+| `boolean($value, $default)` | Parse boolean value |
+| `url($value)` | Validate and sanitize URL |
+| `stripTags($value, $allowed)` | Remove HTML tags |
+| `stripDangerousTags($value)` | Remove only dangerous HTML |
+| `filename($value)` | Sanitize filename (prevent traversal) |
+| `array($data, $options)` | Recursively sanitize array |
+| `request($data)` | Sanitize entire request data |
+
+**Usage**:
+```php
+// Sanitize entire request automatically (done in BaseController)
+$data = Sanitizer::request($_POST);
+
+// Sanitize specific value
+$name = Sanitizer::string($input['name']);
+$email = Sanitizer::email($input['email']);
+$id = Sanitizer::integer($input['id']);
+```
+
+**Note**: The `Sanitizer` is automatically applied to all request data in `BaseController::getRequestData()`.
 
 ---
 
@@ -625,11 +712,12 @@ Defines notification routes
 | Password Storage | `password_hash()` with bcrypt |
 | Authentication | JWT tokens (HS256) |
 | SQL Injection | PDO prepared statements |
-| XSS Prevention | JSON output (no HTML) |
+| XSS Prevention | `Sanitizer` class auto-sanitizes all input |
 | CORS | Whitelist of allowed origins |
-| Rate Limiting | Login attempt tracking |
+| Rate Limiting | `RateLimiter` class (10 login/min, 100 API/min) |
 | Session Security | Stateless (JWT-based) |
-| Input Validation | Validator class |
+| Input Validation | `Validator` class with comprehensive rules |
+| Input Sanitization | `Sanitizer` class (HTML escaping, control char removal) |
 
 ---
 
