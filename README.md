@@ -5,7 +5,7 @@ A comprehensive web-based application designed to streamline the operations of t
 ## 🚀 Features
 
 *   **User Management**: Role-based access control (Admin, Staff, Veterinarian, Adopter) with secure JWT authentication and profile management.
-*   **Animal Management**: Complete lifecycle tracking from intake to adoption, including image uploads and status updates.
+*   **Animal Management**: Complete lifecycle tracking from intake to adoption, including image uploads, unique type-specific placeholders, and status updates.
 *   **Adoption Portal**: All authenticated users can browse and adopt animals, with staff/admin approval workflow.
 *   **Medical Records**: Detailed veterinary logs for each animal, with PDF export and preview.
 *   **Billing System**: Invoice generation, payment tracking, individual invoice printing, and PDF reports with preview before download.
@@ -93,27 +93,35 @@ A comprehensive web-based application designed to streamline the operations of t
 
 ## 📝 API Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `/api/auth` | Authentication (login, register, refresh) |
-| `/api/users` | User management |
-| `/api/animals` | Animal CRUD operations |
-| `/api/adoptions` | Adoption requests & processing |
-| `/api/medical` | Medical records |
-| `/api/inventory` | Inventory management |
-| `/api/billing` | Invoices & payments |
-| `/api/dashboard` | Statistics & activity logs |
-| `/api/notifications` | User notifications |
+```
+┌────────────────────┬───────────────────────────────────────────┐
+│ Endpoint           │ Description                               │
+├────────────────────┼───────────────────────────────────────────┤
+│ /api/auth          │ Authentication (login, register, refresh) │
+│ /api/users         │ User management                           │
+│ /api/animals       │ Animal CRUD operations                    │
+│ /api/adoptions     │ Adoption requests & processing            │
+│ /api/medical       │ Medical records                           │
+│ /api/inventory     │ Inventory management                      │
+│ /api/billing       │ Invoices & payments                       │
+│ /api/dashboard     │ Statistics & activity logs                │
+│ /api/notifications │ User notifications                        │
+└────────────────────┴───────────────────────────────────────────┘
+```
 
 ## 📚 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Complete project implementation plan |
-| [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | Detailed directory structure |
-| [BACKEND_DOCUMENTATION.md](BACKEND_DOCUMENTATION.md) | Backend code documentation |
-| [FRONTEND_DOCUMENTATION.md](FRONTEND_DOCUMENTATION.md) | Frontend code documentation |
-| [DATABASE_DOCUMENTATION.md](DATABASE_DOCUMENTATION.md) | Database schema & queries |
+```
+┌───────────────────────────┬──────────────────────────────────────┐
+│ Document                  │ Description                          │
+├───────────────────────────┼──────────────────────────────────────┤
+│ IMPLEMENTATION_PLAN.md    │ Complete project implementation plan │
+│ PROJECT_STRUCTURE.md      │ Detailed directory structure         │
+│ BACKEND_DOCUMENTATION.md  │ Backend code documentation           │
+│ FRONTEND_DOCUMENTATION.md │ Frontend code documentation          │
+│ DATABASE_DOCUMENTATION.md │ Database schema & queries            │
+└───────────────────────────┴──────────────────────────────────────┘
+```
 
 ## 📄 License
 

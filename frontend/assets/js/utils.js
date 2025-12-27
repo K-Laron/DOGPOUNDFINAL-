@@ -1041,7 +1041,7 @@ const Utils = {
      */
     renderFilterChips(filters, containerId = 'filter-chips') {
         const entries = Object.entries(filters).filter(([key, value]) => value && value !== '' && value !== 'all');
-        
+
         if (entries.length === 0) return '';
 
         const chips = entries.map(([key, value]) => `
@@ -1106,6 +1106,20 @@ const Utils = {
         container.dispatchEvent(new CustomEvent('filtersCleared', {
             bubbles: true
         }));
+    },
+
+    /**
+     * Get placeholder image for animal based on type
+     * @param {string} type - Animal type (Dog, Cat, Other)
+     * @returns {string} - Path to placeholder image
+     */
+    getAnimalPlaceholder(type) {
+        const typeMap = {
+            'Dog': 'assets/images/placeholder-dog.svg',
+            'Cat': 'assets/images/placeholder-cat.svg',
+            'Other': 'assets/images/placeholder-other.svg'
+        };
+        return typeMap[type] || 'assets/images/placeholder-other.svg';
     }
 };
 

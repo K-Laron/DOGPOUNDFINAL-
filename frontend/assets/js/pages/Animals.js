@@ -216,15 +216,18 @@ const AnimalsPage = {
                 id: 'animals-table',
                 columns: [
                     {
-                        key: 'Name', label: 'Name', render: (val, row) => `
+                        key: 'Name', label: 'Name', render: (val, row) => {
+                            const placeholder = Utils.getAnimalPlaceholder(row.Type);
+                            return `
                         <div class="flex items-center gap-3">
-                            <img src="${row.Image_URL || 'assets/images/placeholder-animal.svg'}" 
+                            <img src="${row.Image_URL || placeholder}" 
                                  alt="${val}" 
                                  style="width: 40px; height: 40px; border-radius: var(--radius-md); object-fit: cover;"
-                                 onerror="this.src='assets/images/placeholder-animal.svg'">
+                                 onerror="this.src='${placeholder}'">
                             <span class="font-semibold">${val}</span>
                         </div>
-                    `},
+                    `}
+                    },
                     { key: 'Type', label: 'Type' },
                     { key: 'Breed', label: 'Breed', render: val => val || '-' },
                     { key: 'Gender', label: 'Gender' },

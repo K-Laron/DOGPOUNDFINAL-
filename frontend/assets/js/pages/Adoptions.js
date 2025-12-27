@@ -246,18 +246,20 @@ const AdoptionsPage = {
                 {
                     key: 'Animal_Name',
                     label: 'Animal',
-                    render: (val, row) => `
+                    render: (val, row) => {
+                        const placeholder = Utils.getAnimalPlaceholder(row.Animal_Type);
+                        return `
                         <div class="flex items-center gap-3">
-                            <img src="${row.Image_URL || 'assets/images/placeholder-animal.svg'}" 
+                            <img src="${row.Image_URL || placeholder}" 
                                  alt="${val}" 
                                  style="width: 40px; height: 40px; border-radius: var(--radius-md); object-fit: cover;"
-                                 onerror="this.src='assets/images/placeholder-animal.svg'">
+                                 onerror="this.src='${placeholder}'">
                             <div>
                                 <p class="font-semibold">${val}</p>
                                 <p class="text-tertiary text-xs">${row.Animal_Type} • ${row.Breed || ''}</p>
                             </div>
                         </div>
-                    `
+                    `}
                 },
                 ...(isStaff ? [{
                     key: 'FirstName',
@@ -333,6 +335,7 @@ const AdoptionsPage = {
             if (response.success) {
                 const adoption = response.data;
                 const statusClass = Utils.getStatusBadgeClass(adoption.Status);
+                const placeholder = Utils.getAnimalPlaceholder(adoption.Animal_Type);
 
                 Modal.open({
                     title: 'Adoption Request Details',
@@ -341,10 +344,10 @@ const AdoptionsPage = {
                         <div class="space-y-6">
                             <!-- Animal Info -->
                             <div class="flex items-center gap-4 p-4 bg-secondary rounded-lg">
-                                <img src="${adoption.Image_URL || 'assets/images/placeholder-animal.svg'}" 
+                                <img src="${adoption.Image_URL || placeholder}" 
                                      alt="${adoption.Animal_Name}"
                                      style="width: 80px; height: 80px; border-radius: var(--radius-lg); object-fit: cover;"
-                                     onerror="this.src='assets/images/placeholder-animal.svg'">
+                                     onerror="this.src='${placeholder}'">
                                 <div>
                                     <h3 class="font-semibold text-lg">${adoption.Animal_Name}</h3>
                                     <p class="text-secondary">${adoption.Animal_Type} • ${adoption.Breed || 'Unknown breed'}</p>

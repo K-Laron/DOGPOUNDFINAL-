@@ -18,7 +18,8 @@ frontend/
     │   ├── components.css     # UI component styles
     │   ├── layouts.css        # Page layouts
     │   ├── animations.css     # Transitions & effects
-    │   └── responsive.css     # Media queries
+    │   ├── responsive.css     # Media queries
+    │   └── enhancements.css   # Enhanced UI features
     │
     ├── images/                # Static images
     │
@@ -59,6 +60,40 @@ frontend/
 
 ---
 
+
+## 🏗️ Frontend Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                   SINGLE PAGE APPLICATION                 │
+└────────────────────────────┬─────────────────────────────┘
+                             │
+     ┌───────────────────────▼───────────────────────┐
+     │                  main.js                      │
+     │         (Bootstrap & Initialization)          │
+     └───────────┬───────────────────────┬───────────┘
+                 │                       │
+      ┌──────────▼─────────┐   ┌─────────▼──────────┐
+      │     Router         │   │      Store         │
+      │ (URL Management)   │   │ (State Management) │
+      └──────────┬─────────┘   └─────────┬──────────┘
+                 │                       │
+      ┌──────────▼───────────────────────▼──────────┐
+      │               Page Components               │
+      │   (Dashboard, Animals, Adoptions, etc.)     │
+      └──────────────────────┬──────────────────────┘
+                             │
+                  ┌──────────▼──────────┐
+                  │       API Client    │
+                  │   (Fetch Wrapper)   │
+                  └──────────┬──────────┘
+                             │
+                             ▼
+                    Backend API (JSON)
+```
+
+---
+
 ## 🏠 Entry Point
 
 ### `index.html`
@@ -79,6 +114,7 @@ frontend/
    <link rel="stylesheet" href="assets/css/layouts.css">
    <link rel="stylesheet" href="assets/css/animations.css">
    <link rel="stylesheet" href="assets/css/responsive.css">
+   <link rel="stylesheet" href="assets/css/enhancements.css">
    ```
 
 3. **External Libraries**:
@@ -113,24 +149,32 @@ frontend/
 **Purpose**: Main application bootstrap and initialization
 
 **Properties**:
-| Property | Purpose |
-|----------|---------|
-| `version` | Application version ('1.0.0') |
-| `debug` | Debug mode flag (false for production) |
+```
+┌─────────────┬────────────────────────────────────────┐
+│ Property    │ Purpose                                │
+├─────────────┼────────────────────────────────────────┤
+│ version     │ Application version ('1.0.0')          │
+│ debug       │ Debug mode flag (false for production) │
+└─────────────┴────────────────────────────────────────┘
+```
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `init()` | Initialize entire application |
-| `showLoading()` | Show loading screen |
-| `hideLoading()` | Hide loading screen |
-| `setupEventListeners()` | Global event handlers |
-| `setupErrorHandlers()` | Catch unhandled errors |
-| `initScrollToTop()` | Scroll-to-top button |
-| `initPullToRefresh()` | Mobile pull-to-refresh |
-| `initOnboarding()` | New user onboarding |
-| `log()` | Debug logging |
+```
+┌─────────────────────────┬────────────────────────┐
+│ Method                  │ Purpose                │
+├─────────────────────────┼────────────────────────┤
+│ init()                  │ Initialize entire app  │
+│ showLoading()           │ Show loading screen    │
+│ hideLoading()           │ Hide loading screen    │
+│ setupEventListeners()   │ Global event handlers  │
+│ setupErrorHandlers()    │ Catch unhandled errors │
+│ initScrollToTop()       │ Scroll-to-top button   │
+│ initPullToRefresh()     │ Mobile pull-to-refresh │
+│ initOnboarding()        │ New user onboarding    │
+│ log()                   │ Debug logging          │
+└─────────────────────────┴────────────────────────┘
+```
 
 **Initialization Flow**:
 ```
@@ -157,30 +201,38 @@ defaultHeaders: { 'Content-Type': 'application/json' }
 
 **Core Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `request(method, endpoint, data, options)` | Base HTTP request |
-| `get(endpoint, params)` | GET request |
-| `post(endpoint, data)` | POST request |
-| `put(endpoint, data)` | PUT request |
-| `delete(endpoint)` | DELETE request |
-| `patch(endpoint, data)` | PATCH request |
-| `upload(endpoint, formData)` | File upload |
-| `handleError(response, data)` | Error handler |
+```
+┌─────────────────────────────────────────────┬───────────────────┐
+│ Method                                      │ Purpose           │
+├─────────────────────────────────────────────┼───────────────────┤
+│ request(method, endpoint, data, options)    │ Base HTTP request │
+│ get(endpoint, params)                       │ GET request       │
+│ post(endpoint, data)                        │ POST request      │
+│ put(endpoint, data)                         │ PUT request       │
+│ delete(endpoint)                            │ DELETE request    │
+│ patch(endpoint, data)                       │ PATCH request     │
+│ upload(endpoint, formData)                  │ File upload       │
+│ handleError(response, data)                 │ Error handler     │
+└─────────────────────────────────────────────┴───────────────────┘
+```
 
 **API Namespaces**:
 
-| Namespace | Endpoints |
-|-----------|-----------|
-| `API.auth` | login, register, refresh, logout |
-| `API.users` | profile, list, create, update, delete |
-| `API.animals` | list, get, create, update, delete, upload |
-| `API.adoptions` | list, get, create, update, approve, reject |
-| `API.medical` | list, get, create, update, delete |
-| `API.inventory` | list, get, create, update, adjust |
-| `API.billing` | invoices, payments, reports |
-| `API.dashboard` | stats, activities, charts |
-| `API.notifications` | list, markRead, delete |
+```
+┌─────────────────────┬────────────────────────────────────────────┐
+│ Namespace           │ Endpoints                                  │
+├─────────────────────┼────────────────────────────────────────────┤
+│ API.auth            │ login, register, refresh, logout           │
+│ API.users           │ profile, list, create, update, delete      │
+│ API.animals         │ list, get, create, update, delete, upload  │
+│ API.adoptions       │ list, get, create, update, approve, reject │
+│ API.medical         │ list, get, create, update, delete          │
+│ API.inventory       │ list, get, create, update, adjust          │
+│ API.billing         │ invoices, payments, reports                │
+│ API.dashboard       │ stats, activities, charts                  │
+│ API.notifications   │ list, markRead, delete                     │
+└─────────────────────┴────────────────────────────────────────────┘
+```
 
 **Usage Example**:
 ```javascript
@@ -216,24 +268,28 @@ USER_KEY: 'user'
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `init()` | Initialize auth, validate existing session |
-| `login(username, password)` | User login |
-| `register(data)` | User registration |
-| `logout()` | Clear session, redirect to login |
-| `refreshToken()` | Refresh access token |
-| `getToken()` | Get access token from storage |
-| `setToken(token)` | Save access token |
-| `getUser()` | Get current user data |
-| `setUser(user)` | Save user data |
-| `clearSession()` | Clear all auth data |
-| `isAuthenticated()` | Check if logged in |
-| `currentUser()` | Get current user object |
-| `isAdmin()` | Check if user is Admin |
-| `isStaff()` | Check if Admin or Staff |
-| `isVeterinarian()` | Check if Veterinarian |
-| `isAdopter()` | Check if Adopter |
+```
+┌─────────────────────────────┬────────────────────────────────────────┐
+│ Method                      │ Purpose                                │
+├─────────────────────────────┼────────────────────────────────────────┤
+│ init()                      │ Initialize auth, validate session      │
+│ login(username, password)   │ User login                             │
+│ register(data)              │ User registration                      │
+│ logout()                    │ Clear session, redirect to login       │
+│ refreshToken()              │ Refresh access token                   │
+│ getToken()                  │ Get access token from storage          │
+│ setToken(token)             │ Save access token                      │
+│ getUser()                   │ Get current user data                  │
+│ setUser(user)               │ Save user data                         │
+│ clearSession()              │ Clear all auth data                    │
+│ isAuthenticated()           │ Check if logged in                     │
+│ currentUser()               │ Get current user object                │
+│ isAdmin()                   │ Check if user is Admin                 │
+│ isStaff()                   │ Check if Admin or Staff                │
+│ isVeterinarian()            │ Check if Veterinarian                  │
+│ isAdopter()                 │ Check if Adopter                       │
+└─────────────────────────────┴────────────────────────────────────────┘
+```
 
 **Route Guards**:
 ```javascript
@@ -267,34 +323,42 @@ Auth.requireStaff()   // Must be Admin or Staff
 
 **Registered Routes**:
 
-| Path | Component | Guard | Layout |
-|------|-----------|-------|--------|
-| `/login` | LoginPage | Guest | auth |
-| `/register` | LoginPage | Guest | auth |
-| `/` | DashboardPage | Auth | default |
-| `/dashboard` | DashboardPage | Auth | default |
-| `/animals` | AnimalsPage | Auth | default |
-| `/animals/:id` | AnimalDetailPage | Auth | default |
-| `/adoptions` | AdoptionsPage | Auth | default |
-| `/medical` | MedicalPage | Staff | default |
-| `/inventory` | InventoryPage | Staff | default |
-| `/billing` | BillingPage | Staff | default |
-| `/users` | UsersPage | Admin | default |
-| `/profile` | ProfilePage | Auth | default |
-| `/settings` | SettingsPage | Auth | default |
+```
+┌────────────────┬───────────────────┬───────┬──────────┐
+│ Path           │ Component         │ Guard │ Layout   │
+├────────────────┼───────────────────┼───────┼──────────┤
+│ /login         │ LoginPage         │ Guest │ auth     │
+│ /register      │ LoginPage         │ Guest │ auth     │
+│ /              │ DashboardPage     │ Auth  │ default  │
+│ /dashboard     │ DashboardPage     │ Auth  │ default  │
+│ /animals       │ AnimalsPage       │ Auth  │ default  │
+│ /animals/:id   │ AnimalDetailPage  │ Auth  │ default  │
+│ /adoptions     │ AdoptionsPage     │ Auth  │ default  │
+│ /medical       │ MedicalPage       │ Staff │ default  │
+│ /inventory     │ InventoryPage     │ Staff │ default  │
+│ /billing       │ BillingPage       │ Staff │ default  │
+│ /users         │ UsersPage         │ Admin │ default  │
+│ /profile       │ ProfilePage       │ Auth  │ default  │
+│ /settings      │ SettingsPage      │ Auth  │ default  │
+└────────────────┴───────────────────┴───────┴──────────┘
+```
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `init()` | Initialize router, handle current URL |
-| `register(path, config)` | Register a route |
-| `navigate(path, replace)` | Navigate to route |
-| `handleRoute(path)` | Process route change |
-| `back()` | Go to previous page |
-| `getCurrentPath()` | Get current URL path |
-| `getParams()` | Get route parameters |
-| `refresh()` | Re-render current page |
+```
+┌─────────────────────────┬──────────────────────┐
+│ Method                  │ Purpose              │
+├─────────────────────────┼──────────────────────┤
+│ init()                  │ Initialize/handle URL│
+│ register(path, config)  │ Register a route     │
+│ navigate(path, replace) │ Navigate to route    │
+│ handleRoute(path)       │ Process route change │
+│ back()                  │ Go to previous page  │
+│ getCurrentPath()        │ Get current URL path │
+│ getParams()             │ Get route parameters │
+│ refresh()               │ Re-render page       │
+└─────────────────────────┴──────────────────────┘
+```
 
 **Navigation Flow**:
 ```
@@ -337,28 +401,40 @@ Auth.requireStaff()   // Must be Admin or Staff
 
 **Core Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `get(key)` | Get state value (supports dot notation) |
-| `set(key, value)` | Set state value |
-| `update(updates)` | Update multiple values |
-| `reset(keys)` | Reset to initial values |
+```
+┌───────────────────┬───────────────────────────────────────┐
+│ Method            │ Purpose                               │
+├───────────────────┼───────────────────────────────────────┤
+│ get(key)          │ Get state value (supports dot notation)│
+│ set(key, value)   │ Set state value                       │
+│ update(updates)   │ Update multiple values                │
+│ reset(keys)       │ Reset to initial values               │
+└───────────────────┴───────────────────────────────────────┘
+```
 
 **Subscription Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `subscribe(key, callback)` | Subscribe to state changes |
-| `unsubscribe(key, callback)` | Remove subscription |
-| `notify(key, value, oldValue)` | Notify subscribers |
+```
+┌──────────────────────────────┬────────────────────────────┐
+│ Method                       │ Purpose                    │
+├──────────────────────────────┼────────────────────────────┤
+│ subscribe(key, callback)     │ Subscribe to state changes │
+│ unsubscribe(key, callback)   │ Remove subscription        │
+│ notify(key, value, oldValue) │ Notify subscribers         │
+└──────────────────────────────┴────────────────────────────┘
+```
 
 **Persistence Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `persist(keys)` | Save to localStorage |
-| `loadPersistedState()` | Load from localStorage |
-| `clearCache()` | Clear all cached data |
+```
+┌──────────────────────┬────────────────────────┐
+│ Method               │ Purpose                │
+├──────────────────────┼────────────────────────┤
+│ persist(keys)        │ Save to localStorage   │
+│ loadPersistedState() │ Load from localStorage │
+│ clearCache()         │ Clear all cached data  │
+└──────────────────────┴────────────────────────┘
+```
 
 **Usage Example**:
 ```javascript
@@ -382,73 +458,102 @@ Store.subscribe('user', (newUser, oldUser) => {
 
 **DOM Utilities**:
 
-| Method | Purpose |
-|--------|---------|
-| `$(selector)` | Query single element |
-| `$$(selector)` | Query multiple elements |
-| `createElement(tag, attrs, children)` | Create DOM element |
-| `parseHTML(html)` | Parse HTML string |
-| `empty(element)` | Clear element contents |
-| `show(element)` | Show element |
-| `hide(element)` | Hide element |
-| `toggle(element)` | Toggle visibility |
+```
+┌──────────────────────────────────────┬──────────────────────┐
+│ Method                               │ Purpose              │
+├──────────────────────────────────────┼──────────────────────┤
+│ $(selector)                          │ Query single element │
+│ $$(selector)                         │ Query multiple       │
+│ createElement(tag, attrs, children)  │ Create DOM element   │
+│ parseHTML(html)                      │ Parse HTML string    │
+│ empty(element)                       │ Clear contents       │
+│ show(element)                        │ Show element         │
+│ hide(element)                        │ Hide element         │
+│ toggle(element)                      │ Toggle visibility    │
+└──────────────────────────────────────┴──────────────────────┘
+```
 
 **String Utilities**:
 
-| Method | Purpose |
-|--------|---------|
-| `capitalize(str)` | Capitalize first letter |
-| `titleCase(str)` | Title Case String |
-| `truncate(str, length)` | Truncate with ellipsis |
-| `slugify(str)` | URL-friendly slug |
-| `randomString(length)` | Random alphanumeric |
-| `uuid()` | Generate UUID |
+```
+┌────────────────────────┬──────────────────────┐
+│ Method                 │ Purpose              │
+├────────────────────────┼──────────────────────┤
+│ capitalize(str)        │ Capitalize 1st letter│
+│ titleCase(str)         │ Title Case String    │
+│ truncate(str, length)  │ Truncate w/ ellipsis │
+│ slugify(str)           │ URL-friendly slug    │
+│ randomString(length)   │ Random alphanumeric  │
+│ uuid()                 │ Generate UUID        │
+└────────────────────────┴──────────────────────┘
+```
 
 **Number/Currency**:
 
-| Method | Purpose |
-|--------|---------|
-| `formatNumber(num)` | Format with commas |
-| `formatCurrency(amount)` | Format as ₱1,234.00 |
-| `formatPercent(value)` | Format as percentage |
+```
+┌────────────────────────┬──────────────────────┐
+│ Method                 │ Purpose              │
+├────────────────────────┼──────────────────────┤
+│ formatNumber(num)      │ Format with commas   │
+│ formatCurrency(amount) │ Format as ₱1,234.00  │
+│ formatPercent(value)   │ Format as percentage │
+└────────────────────────┴──────────────────────┘
+```
 
 **Date/Time**:
 
-| Method | Purpose |
-|--------|---------|
-| `formatDate(date)` | Format as Dec 25, 2025 |
-| `formatDateTime(date)` | Format with time |
-| `formatRelativeTime(date)` | "2 hours ago" |
-| `daysBetween(date1, date2)` | Days between dates |
+```
+┌────────────────────────────┬──────────────────────┐
+│ Method                     │ Purpose              │
+├────────────────────────────┼──────────────────────┤
+│ formatDate(date)           │ Format as Dec 25     │
+│ formatDateTime(date)       │ Format with time     │
+│ formatRelativeTime(date)   │ "2 hours ago"        │
+│ daysBetween(date1, date2)  │ Days between dates   │
+└────────────────────────────┴──────────────────────┘
+```
 
 **Object Utilities**:
 
-| Method | Purpose |
-|--------|---------|
-| `get(obj, path)` | Get nested property |
-| `set(obj, path, value)` | Set nested property |
-| `clone(obj)` | Deep clone object |
-| `isEmpty(value)` | Check if empty |
-| `debounce(fn, wait)` | Debounce function |
-| `throttle(fn, wait)` | Throttle function |
+```
+┌────────────────────────┬──────────────────────┐
+│ Method                 │ Purpose              │
+├────────────────────────┼──────────────────────┤
+│ get(obj, path)         │ Get nested property  │
+│ set(obj, path, value)  │ Set nested property  │
+│ clone(obj)             │ Deep clone object    │
+│ isEmpty(value)         │ Check if empty       │
+│ debounce(fn, wait)     │ Debounce function    │
+│ throttle(fn, wait)     │ Throttle function    │
+└────────────────────────┴──────────────────────┘
+```
 
 **Validation**:
 
-| Method | Purpose |
-|--------|---------|
-| `isEmail(str)` | Validate email |
-| `isPhone(str)` | Validate phone |
-| `isURL(str)` | Validate URL |
+```
+┌──────────────┬────────────────┐
+│ Method       │ Purpose        │
+├──────────────┼────────────────┤
+│ isEmail(str) │ Validate email │
+│ isPhone(str) │ Validate phone │
+│ isURL(str)   │ Validate URL   │
+└──────────────┴────────────────┘
+```
 
 **UI Helpers**:
 
-| Method | Purpose |
-|--------|---------|
-| `getStatusBadgeClass(status)` | Status CSS class |
-| `getInitials(name)` | Get "JD" from "John Doe" |
-| `stringToColor(str)` | Generate color from string |
-| `sleep(ms)` | Async delay |
-| `announce(message)` | Screen reader announcement |
+```
+┌─────────────────────────────┬────────────────────────────────────┐
+│ Method                      │ Purpose                            │
+├─────────────────────────────┼────────────────────────────────────┤
+│ getStatusBadgeClass(status) │ Status CSS class                   │
+│ getInitials(name)           │ Get "JD" from "John Doe"           │
+│ stringToColor(str)          │ Generate color from string         │
+│ getAnimalPlaceholder(type)  │ Get placeholder image path         │
+│ sleep(ms)                   │ Async delay                        │
+│ announce(message)           │ Screen reader announcement         │
+└─────────────────────────────┴────────────────────────────────────┘
+```
 
 ---
 
@@ -471,12 +576,16 @@ Toast.dismissAll()
 ```
 
 **Options**:
-| Option | Default | Purpose |
-|--------|---------|---------|
-| `duration` | 4000 | Auto-dismiss time (ms) |
-| `position` | 'top-right' | Toast position |
-| `closable` | true | Show close button |
-| `pauseOnHover` | true | Pause timer on hover |
+```
+┌──────────────┬─────────────┬────────────────────────┐
+│ Option       │ Default     │ Purpose                │
+├──────────────┼─────────────┼────────────────────────┤
+│ duration     │ 4000        │ Auto-dismiss time (ms) │
+│ position     │ 'top-right' │ Toast position         │
+│ closable     │ true        │ Show close button      │
+│ pauseOnHover │ true        │ Pause timer on hover   │
+└──────────────┴─────────────┴────────────────────────┘
+```
 
 ---
 
@@ -495,12 +604,16 @@ Modal.alert({ title, message })
 **Sizes**: `sm`, `default`, `lg`, `xl`, `full`
 
 **Options**:
-| Option | Default | Purpose |
-|--------|---------|---------|
-| `closable` | true | Can be closed |
-| `closeOnOverlay` | true | Close on backdrop click |
-| `closeOnEscape` | true | Close on Escape key |
-| `showClose` | true | Show X button |
+```
+┌────────────────┬─────────┬─────────────────────────┐
+│ Option         │ Default │ Purpose                 │
+├────────────────┼─────────┼─────────────────────────┤
+│ closable       │ true    │ Can be closed           │
+│ closeOnOverlay │ true    │ Close on backdrop click │
+│ closeOnEscape  │ true    │ Close on Escape key     │
+│ showClose      │ true    │ Show X button           │
+└────────────────┴─────────┴─────────────────────────┘
+```
 
 ---
 
@@ -568,13 +681,17 @@ const { isValid, data, errors } = Form.validate(formElement, rules);
 
 **Card Types**:
 
-| Method | Purpose |
-|--------|---------|
-| `Card.render(options)` | Basic card |
-| `Card.stat(options)` | Statistics card |
-| `Card.animal(animal)` | Animal card (grid view) |
-| `Card.user(user)` | User profile card |
-| `Card.activity(activity)` | Activity feed item |
+```
+┌─────────────────────────┬─────────────────────────┐
+│ Method                  │ Purpose                 │
+├─────────────────────────┼─────────────────────────┤
+│ Card.render(options)    │ Basic card              │
+│ Card.stat(options)      │ Statistics card         │
+│ Card.animal(animal)     │ Animal card (grid view) │
+│ Card.user(user)         │ User profile card       │
+│ Card.activity(activity) │ Activity feed item      │
+└─────────────────────────┴─────────────────────────┘
+```
 
 ---
 
@@ -704,12 +821,16 @@ PDFPreview.show(doc, filename);
 **Modes**: `login`, `register`
 
 **Methods**:
-| Method | Purpose |
-|--------|---------|
-| `render()` | Render login/register form |
-| `handleSubmit(e)` | Form submission |
-| `togglePassword()` | Show/hide password |
-| `afterMount()` | Setup form listeners |
+```
+┌──────────────────┬────────────────────────────┐
+│ Method           │ Purpose                    │
+├──────────────────┼────────────────────────────┤
+│ render()         │ Render login/register form │
+│ handleSubmit(e)  │ Form submission            │
+│ togglePassword() │ Show/hide password         │
+│ afterMount()     │ Setup form listeners       │
+└──────────────────┴────────────────────────────┘
+```
 
 ---
 
@@ -726,13 +847,17 @@ PDFPreview.show(doc, filename);
 - Quick actions
 
 **Methods**:
-| Method | Purpose |
-|--------|---------|
-| `render()` | Render dashboard |
-| `loadData()` | Fetch dashboard data |
-| `renderStats()` | Render stat cards |
-| `renderCharts()` | Initialize charts |
-| `refresh()` | Refresh all data |
+```
+┌────────────────┬──────────────────────┐
+│ Method         │ Purpose              │
+├────────────────┼──────────────────────┤
+│ render()       │ Render dashboard     │
+│ loadData()     │ Fetch dashboard data │
+│ renderStats()  │ Render stat cards    │
+│ renderCharts() │ Initialize charts    │
+│ refresh()      │ Refresh all data     │
+└────────────────┴──────────────────────┘
+```
 
 ---
 
@@ -944,12 +1069,16 @@ PDFPreview.show(doc, filename);
 **Purpose**: Media queries for responsive design
 
 **Breakpoints**:
-| Size | Width |
-|------|-------|
-| sm | 640px |
-| md | 768px |
-| lg | 1024px |
-| xl | 1280px |
+```
+┌──────┬────────┐
+│ Size │ Width  │
+├──────┼────────┤
+│ sm   │ 640px  │
+│ md   │ 768px  │
+│ lg   │ 1024px │
+│ xl   │ 1280px │
+└──────┴────────┘
+```
 
 ---
 

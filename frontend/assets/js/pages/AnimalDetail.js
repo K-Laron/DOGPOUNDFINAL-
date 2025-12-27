@@ -83,6 +83,7 @@ const AnimalDetailPage = {
 
         const animal = this.animal;
         const statusClass = Utils.getStatusBadgeClass(animal.Current_Status);
+        const placeholder = Utils.getAnimalPlaceholder(animal.Type);
 
         container.innerHTML = `
             <!-- Header -->
@@ -145,10 +146,10 @@ const AnimalDetailPage = {
                     <div class="card">
                         <div class="card-body p-0">
                             <img 
-                                src="${animal.Image_URL || 'assets/images/placeholder-animal.svg'}" 
+                                src="${animal.Image_URL || placeholder}" 
                                 alt="${animal.Name}"
                                 style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-xl);"
-                                onerror="this.src='assets/images/placeholder-animal.svg'"
+                                onerror="this.src='${placeholder}'"
                             >
                         </div>
                     </div>

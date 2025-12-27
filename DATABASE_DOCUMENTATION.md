@@ -59,12 +59,16 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Roles`
 **Purpose**: Define user roles for access control
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `RoleID` | INT PK | Auto-increment ID |
-| `Role_Name` | VARCHAR(50) | Unique role name |
-| `Created_At` | DATETIME | Creation timestamp |
-| `Updated_At` | DATETIME | Last update timestamp |
+```
+┌─────────────┬─────────────┬───────────────────────┐
+│ Column      │ Type        │ Description           │
+├─────────────┼─────────────┼───────────────────────┤
+│ RoleID      │ INT PK      │ Auto-increment ID     │
+│ Role_Name   │ VARCHAR(50) │ Unique role name      │
+│ Created_At  │ DATETIME    │ Creation timestamp    │
+│ Updated_At  │ DATETIME    │ Last update timestamp │
+└─────────────┴─────────────┴───────────────────────┘
+```
 
 **Default Roles**:
 - Admin
@@ -77,23 +81,27 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Users`
 **Purpose**: Store all system users
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `UserID` | INT PK | Auto-increment ID |
-| `RoleID` | INT FK | Reference to Roles |
-| `FirstName` | VARCHAR(50) | First name |
-| `LastName` | VARCHAR(50) | Last name |
-| `Username` | VARCHAR(50) | Unique username |
-| `Email` | VARCHAR(100) | Unique email |
-| `Contact_Number` | VARCHAR(20) | Phone number |
-| `Address` | TEXT | Full address |
-| `Avatar_Url` | VARCHAR(255) | Profile image URL |
-| `Password_Hash` | VARCHAR(255) | Bcrypt hashed password |
-| `Account_Status` | ENUM | 'Active', 'Inactive', 'Banned' |
-| `Preferences` | JSON | User settings (theme, notifications) |
-| `Is_Deleted` | BOOLEAN | Soft delete flag |
-| `Created_At` | DATETIME | Registration date |
-| `Updated_At` | DATETIME | Last update |
+```
+┌────────────────┬──────────────┬──────────────────────────────────────┐
+│ Column         │ Type         │ Description                          │
+├────────────────┼──────────────┼──────────────────────────────────────┤
+│ UserID         │ INT PK       │ Auto-increment ID                    │
+│ RoleID         │ INT FK       │ Reference to Roles                   │
+│ FirstName      │ VARCHAR(50)  │ First name                           │
+│ LastName       │ VARCHAR(50)  │ Last name                            │
+│ Username       │ VARCHAR(50)  │ Unique username                      │
+│ Email          │ VARCHAR(100) │ Unique email                         │
+│ Contact_Number │ VARCHAR(20)  │ Phone number                         │
+│ Address        │ TEXT         │ Full address                         │
+│ Avatar_Url     │ VARCHAR(255) │ Profile image URL                    │
+│ Password_Hash  │ VARCHAR(255) │ Bcrypt hashed password               │
+│ Account_Status │ ENUM         │ 'Active', 'Inactive', 'Banned'       │
+│ Preferences    │ JSON         │ User settings (theme, notifications) │
+│ Is_Deleted     │ BOOLEAN      │ Soft delete flag                     │
+│ Created_At     │ DATETIME     │ Registration date                    │
+│ Updated_At     │ DATETIME     │ Last update                          │
+└────────────────┴──────────────┴──────────────────────────────────────┘
+```
 
 **Indexes**:
 - `idx_users_email` on Email
@@ -105,15 +113,19 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Veterinarians`
 **Purpose**: Additional veterinarian details (extends Users)
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `VetID` | INT PK | Auto-increment ID |
-| `UserID` | INT FK | Reference to Users (unique) |
-| `License_Number` | VARCHAR(50) | Professional license |
-| `Specialization` | VARCHAR(100) | Area of expertise |
-| `Years_Experience` | INT | Years practicing |
-| `Clinic_Name` | VARCHAR(100) | Associated clinic |
-| `Bio` | TEXT | Professional biography |
+```
+┌──────────────────┬──────────────┬─────────────────────────────┐
+│ Column           │ Type         │ Description                 │
+├──────────────────┼──────────────┼─────────────────────────────┤
+│ VetID            │ INT PK       │ Auto-increment ID           │
+│ UserID           │ INT FK       │ Reference to Users (unique) │
+│ License_Number   │ VARCHAR(50)  │ Professional license        │
+│ Specialization   │ VARCHAR(100) │ Area of expertise           │
+│ Years_Experience │ INT          │ Years practicing            │
+│ Clinic_Name      │ VARCHAR(100) │ Associated clinic           │
+│ Bio              │ TEXT         │ Professional biography      │
+└──────────────────┴──────────────┴─────────────────────────────┘
+```
 
 ---
 
@@ -122,20 +134,24 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Animals`
 **Purpose**: Core animal records
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `AnimalID` | INT PK | Auto-increment ID |
-| `Name` | VARCHAR(50) | Animal name |
-| `Type` | ENUM | 'Dog', 'Cat', 'Other' |
-| `Breed` | VARCHAR(50) | Breed/species |
-| `Gender` | ENUM | 'Male', 'Female', 'Unknown' |
-| `Age_Group` | VARCHAR(20) | 'Puppy', 'Adult', 'Senior' |
-| `Weight` | DECIMAL(5,2) | Weight in kg |
-| `Intake_Date` | DATETIME | When animal arrived |
-| `Intake_Status` | ENUM | 'Stray', 'Surrendered', 'Confiscated' |
-| `Current_Status` | ENUM | Current status (see below) |
-| `Image_URL` | VARCHAR(255) | Photo URL |
-| `Is_Deleted` | BOOLEAN | Soft delete flag |
+```
+┌────────────────┬──────────────┬────────────────────────────────────────┐
+│ Column         │ Type         │ Description                            │
+├────────────────┼──────────────┼────────────────────────────────────────┤
+│ AnimalID       │ INT PK       │ Auto-increment ID                      │
+│ Name           │ VARCHAR(50)  │ Animal name                            │
+│ Type           │ ENUM         │ 'Dog', 'Cat', 'Other'                  │
+│ Breed          │ VARCHAR(50)  │ Breed/species                          │
+│ Gender         │ ENUM         │ 'Male', 'Female', 'Unknown'            │
+│ Age_Group      │ VARCHAR(20)  │ 'Puppy', 'Adult', 'Senior'             │
+│ Weight         │ DECIMAL(5,2) │ Weight in kg                           │
+│ Intake_Date    │ DATETIME     │ When animal arrived                    │
+│ Intake_Status  │ ENUM         │ 'Stray', 'Surrendered', 'Confiscated'  │
+│ Current_Status │ ENUM         │ Current status (see below)             │
+│ Image_URL      │ VARCHAR(255) │ Photo URL                              │
+│ Is_Deleted     │ BOOLEAN      │ Soft delete flag                       │
+└────────────────┴──────────────┴────────────────────────────────────────┘
+```
 
 **Current Status Values**:
 - `Available` - Ready for adoption
@@ -155,14 +171,18 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Impound_Records`
 **Purpose**: Details about how animal was received
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `ImpoundID` | INT PK | Auto-increment ID |
-| `AnimalID` | INT FK | Reference to Animals |
-| `Capture_Date` | DATETIME | When captured/received |
-| `Location_Found` | VARCHAR(255) | Where found |
-| `Impounding_Officer` | VARCHAR(100) | Officer who processed |
-| `Condition_On_Arrival` | TEXT | Health condition notes |
+```
+┌──────────────────────┬──────────────┬────────────────────────┐
+│ Column               │ Type         │ Description            │
+├──────────────────────┼──────────────┼────────────────────────┤
+│ ImpoundID            │ INT PK       │ Auto-increment ID      │
+│ AnimalID             │ INT FK       │ Reference to Animals   │
+│ Capture_Date         │ DATETIME     │ When captured/received │
+│ Location_Found       │ VARCHAR(255) │ Where found            │
+│ Impounding_Officer   │ VARCHAR(100) │ Officer who processed  │
+│ Condition_On_Arrival │ TEXT         │ Health condition notes │
+└──────────────────────┴──────────────┴────────────────────────┘
+```
 
 ---
 
@@ -171,16 +191,20 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Medical_Records`
 **Purpose**: Track all medical procedures and treatments
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `RecordID` | INT PK | Auto-increment ID |
-| `AnimalID` | INT FK | Reference to Animals |
-| `VetID` | INT FK | Reference to Veterinarians |
-| `Date_Performed` | DATETIME | When procedure done |
-| `Diagnosis_Type` | ENUM | Type of procedure |
-| `Vaccine_Name` | VARCHAR(100) | Vaccine if applicable |
-| `Treatment_Notes` | TEXT | Detailed notes |
-| `Next_Due_Date` | DATE | Follow-up date |
+```
+┌──────────────────┬──────────────┬─────────────────────────────┐
+│ Column           │ Type         │ Description                 │
+├──────────────────┼──────────────┼─────────────────────────────┤
+│ RecordID         │ INT PK       │ Auto-increment ID           │
+│ AnimalID         │ INT FK       │ Reference to Animals        │
+│ VetID            │ INT FK       │ Reference to Veterinarians  │
+│ Date_Performed   │ DATETIME     │ When procedure done         │
+│ Diagnosis_Type   │ ENUM         │ Type of procedure           │
+│ Vaccine_Name     │ VARCHAR(100) │ Vaccine if applicable       │
+│ Treatment_Notes  │ TEXT         │ Detailed notes              │
+│ Next_Due_Date    │ DATE         │ Follow-up date              │
+└──────────────────┴──────────────┴─────────────────────────────┘
+```
 
 **Diagnosis Types**:
 - Checkup
@@ -201,14 +225,18 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Feeding_Records`
 **Purpose**: Track animal feeding schedule
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `FeedingID` | INT PK | Auto-increment ID |
-| `AnimalID` | INT FK | Reference to Animals |
-| `Fed_By_UserID` | INT FK | Staff who fed |
-| `Feeding_Time` | DATETIME | When fed |
-| `Food_Type` | VARCHAR(50) | Type of food |
-| `Quantity_Used` | DECIMAL(5,2) | Amount in kg/units |
+```
+┌─────────────────┬──────────────┬───────────────────────────┐
+│ Column          │ Type         │ Description               │
+├─────────────────┼──────────────┼───────────────────────────┤
+│ FeedingID       │ INT PK       │ Auto-increment ID         │
+│ AnimalID        │ INT FK       │ Reference to Animals      │
+│ Fed_By_UserID   │ INT FK       │ Staff who fed             │
+│ Feeding_Time    │ DATETIME     │ When fed                  │
+│ Food_Type       │ VARCHAR(50)  │ Type of food              │
+│ Quantity_Used   │ DECIMAL(5,2) │ Amount in kg/units        │
+└─────────────────┴──────────────┴───────────────────────────┘
+```
 
 ---
 
@@ -217,15 +245,19 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Adoption_Requests`
 **Purpose**: Track adoption applications
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `RequestID` | INT PK | Auto-increment ID |
-| `AnimalID` | INT FK | Animal being adopted |
-| `Adopter_UserID` | INT FK | User requesting |
-| `Request_Date` | DATETIME | When submitted |
-| `Status` | ENUM | Current status |
-| `Staff_Comments` | TEXT | Internal notes |
-| `Processed_By_UserID` | INT FK | Staff who processed |
+```
+┌─────────────────────┬──────────┬───────────────────────┐
+│ Column              │ Type     │ Description           │
+├─────────────────────┼──────────┼───────────────────────┤
+│ RequestID           │ INT PK   │ Auto-increment ID     │
+│ AnimalID            │ INT FK   │ Animal being adopted  │
+│ Adopter_UserID      │ INT FK   │ User requesting       │
+│ Request_Date        │ DATETIME │ When submitted        │
+│ Status              │ ENUM     │ Current status        │
+│ Staff_Comments      │ TEXT     │ Internal notes        │
+│ Processed_By_UserID │ INT FK   │ Staff who processed   │
+└─────────────────────┴──────────┴───────────────────────┘
+```
 
 **Status Values**:
 - `Pending` - Awaiting review
@@ -247,16 +279,20 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Inventory`
 **Purpose**: Track supplies and materials
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `ItemID` | INT PK | Auto-increment ID |
-| `Item_Name` | VARCHAR(100) | Item name |
-| `Category` | ENUM | 'Medical', 'Food', 'Cleaning', 'Supplies' |
-| `Quantity_On_Hand` | INT | Current stock |
-| `Reorder_Level` | INT | Low stock threshold |
-| `Expiration_Date` | DATE | If perishable |
-| `Supplier_Name` | VARCHAR(100) | Supplier info |
-| `Last_Updated` | DATETIME | Last stock update |
+```
+┌──────────────────┬──────────────┬───────────────────────────────────────────┐
+│ Column           │ Type         │ Description                               │
+├──────────────────┼──────────────┼───────────────────────────────────────────┤
+│ ItemID           │ INT PK       │ Auto-increment ID                         │
+│ Item_Name        │ VARCHAR(100) │ Item name                                 │
+│ Category         │ ENUM         │ 'Medical', 'Food', 'Cleaning', 'Supplies' │
+│ Quantity_On_Hand │ INT          │ Current stock                             │
+│ Reorder_Level    │ INT          │ Low stock threshold                       │
+│ Expiration_Date  │ DATE         │ If perishable                             │
+│ Supplier_Name    │ VARCHAR(100) │ Supplier info                             │
+│ Last_Updated     │ DATETIME     │ Last stock update                         │
+└──────────────────┴──────────────┴───────────────────────────────────────────┘
+```
 
 **Indexes**:
 - `idx_inventory_category` on Category
@@ -270,17 +306,21 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Invoices`
 **Purpose**: Track all charges/fees
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `InvoiceID` | INT PK | Auto-increment ID |
-| `Payer_UserID` | INT FK | Customer being charged |
-| `Issued_By_UserID` | INT FK | Staff who issued |
-| `Transaction_Type` | ENUM | 'Adoption Fee', 'Reclaim Fee' |
-| `Total_Amount` | DECIMAL(10,2) | Invoice amount |
-| `Status` | ENUM | 'Unpaid', 'Paid', 'Cancelled' |
-| `Is_Deleted` | BOOLEAN | Soft delete flag |
-| `Related_AnimalID` | INT FK | Related animal |
-| `Related_RequestID` | INT FK | Related adoption request |
+```
+┌───────────────────┬───────────────┬───────────────────────────────┐
+│ Column            │ Type          │ Description                   │
+├───────────────────┼───────────────┼───────────────────────────────┤
+│ InvoiceID         │ INT PK        │ Auto-increment ID             │
+│ Payer_UserID      │ INT FK        │ Customer being charged        │
+│ Issued_By_UserID  │ INT FK        │ Staff who issued              │
+│ Transaction_Type  │ ENUM          │ 'Adoption Fee', 'Reclaim Fee' │
+│ Total_Amount      │ DECIMAL(10,2) │ Invoice amount                │
+│ Status            │ ENUM          │ 'Unpaid', 'Paid', 'Cancelled' │
+│ Is_Deleted        │ BOOLEAN       │ Soft delete flag              │
+│ Related_AnimalID  │ INT FK        │ Related animal                │
+│ Related_RequestID │ INT FK        │ Related adoption request      │
+└───────────────────┴───────────────┴───────────────────────────────┘
+```
 
 **Indexes**:
 - `idx_invoices_status` on (Status, Is_Deleted)
@@ -291,15 +331,19 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Payments`
 **Purpose**: Track payments against invoices
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `PaymentID` | INT PK | Auto-increment ID |
-| `InvoiceID` | INT FK | Invoice being paid |
-| `Received_By_UserID` | INT FK | Staff who received |
-| `Payment_Date` | DATETIME | When paid |
-| `Amount_Paid` | DECIMAL(10,2) | Amount received |
-| `Payment_Method` | ENUM | 'Cash', 'GCash', 'Bank Transfer' |
-| `Reference_Number` | VARCHAR(50) | Transaction reference |
+```
+┌────────────────────┬───────────────┬──────────────────────────────────┐
+│ Column             │ Type          │ Description                      │
+├────────────────────┼───────────────┼──────────────────────────────────┤
+│ PaymentID          │ INT PK        │ Auto-increment ID                │
+│ InvoiceID          │ INT FK        │ Invoice being paid               │
+│ Received_By_UserID │ INT FK        │ Staff who received               │
+│ Payment_Date       │ DATETIME      │ When paid                        │
+│ Amount_Paid        │ DECIMAL(10,2) │ Amount received                  │
+│ Payment_Method     │ ENUM          │ 'Cash', 'GCash', 'Bank Transfer' │
+│ Reference_Number   │ VARCHAR(50)   │ Transaction reference            │
+└────────────────────┴───────────────┴──────────────────────────────────┘
+```
 
 **Indexes**:
 - `idx_payments_invoice` on InvoiceID
@@ -312,14 +356,18 @@ This document provides a detailed explanation of the database schema, tables, re
 #### `Activity_Logs`
 **Purpose**: Audit trail of all user actions
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `LogID` | INT PK | Auto-increment ID |
-| `UserID` | INT FK | User who performed action |
-| `Action_Type` | VARCHAR(50) | Type of action |
-| `Description` | TEXT | Detailed description |
-| `IP_Address` | VARCHAR(45) | User's IP address |
-| `Log_Date` | DATETIME | When action occurred |
+```
+┌─────────────┬─────────────┬───────────────────────────┐
+│ Column      │ Type        │ Description               │
+├─────────────┼─────────────┼───────────────────────────┤
+│ LogID       │ INT PK      │ Auto-increment ID         │
+│ UserID      │ INT FK      │ User who performed action │
+│ Action_Type │ VARCHAR(50) │ Type of action            │
+│ Description │ TEXT        │ Detailed description      │
+│ IP_Address  │ VARCHAR(45) │ User's IP address         │
+│ Log_Date    │ DATETIME    │ When action occurred      │
+└─────────────┴─────────────┴───────────────────────────┘
+```
 
 **Common Action Types**:
 - LOGIN_SUCCESS

@@ -8,26 +8,34 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ## 📌 Project Overview
 
-| Property | Value |
-|----------|-------|
-| **Project Name** | Catarman Dog Pound Management System |
-| **Version** | 1.2.0 |
-| **Last Updated** | December 27, 2025 |
-| **Type** | Web Application (Single Page Application) |
-| **Purpose** | Streamline dog pound operations |
+```
+┌───────────────────┬─────────────────────────────────────────────┐
+│ Property          │ Value                                       │
+├───────────────────┼─────────────────────────────────────────────┤
+│ Project Name      │ Catarman Dog Pound Management System        │
+│ Version           │ 1.2.0                                       │
+│ Last Updated      │ December 27, 2025                           │
+│ Type              │ Web Application (Single Page Application)   │
+│ Purpose           │ Streamline dog pound operations             │
+└───────────────────┴─────────────────────────────────────────────┘
+```
 
 ---
 
 ## 🎯 Goals & Objectives
 
-| # | Goal | Description |
-|---|------|-------------|
-| 1 | **Digitize Operations** | Replace paper-based record-keeping with a digital system |
-| 2 | **Improve Efficiency** | Automate routine tasks and reduce manual data entry |
-| 3 | **Enhance Adoption** | Provide an online portal for potential adopters |
-| 4 | **Track Medical Records** | Maintain complete veterinary history for each animal |
-| 5 | **Manage Finances** | Track billing, invoices, and payments |
-| 6 | **Monitor Inventory** | Track supplies and receive low-stock alerts |
+```
+┌───┬───────────────────────┬────────────────────────────────────────────────────┐
+│ # │ Goal                  │ Description                                        │
+├───┼───────────────────────┼────────────────────────────────────────────────────┤
+│ 1 │ Digitize Operations   │ Replace paper-based record-keeping with digital    │
+│ 2 │ Improve Efficiency    │ Automate routine tasks and reduce manual data entry│
+│ 3 │ Enhance Adoption      │ Provide an online portal for potential adopters    │
+│ 4 │ Track Medical Records │ Maintain complete veterinary history per animal    │
+│ 5 │ Manage Finances       │ Track billing, invoices, and payments              │
+│ 6 │ Monitor Inventory     │ Track supplies and receive low-stock alerts        │
+└───┴───────────────────────┴────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -96,13 +104,17 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
                     ╚═══════════════════╝
 ```
 
-| Layer | Technology | Purpose |
-|:------|:-----------|:--------|
-| 🎨 **Frontend** | HTML5, CSS3, JS (ES6+) | Single Page Application UI |
-| ⚙️ **Backend** | PHP 8.x | RESTful API server |
-| 🗄️ **Database** | MySQL 5.7+ | Data persistence |
-| 🔑 **Auth** | JWT (JSON Web Tokens) | Secure user sessions |
-| 🖥️ **Environment** | XAMPP | Local development server |
+```
+┌───────────────┬────────────────────────┬────────────────────────────┐
+│ Layer         │ Technology             │ Purpose                    │
+├───────────────┼────────────────────────┼────────────────────────────┤
+│ Frontend      │ HTML5, CSS3, JS (ES6+) │ Single Page Application UI │
+│ Backend       │ PHP 8.x                │ RESTful API server         │
+│ Database      │ MySQL 5.7+             │ Data persistence           │
+│ Auth          │ JWT (JSON Web Tokens)  │ Secure user sessions       │
+│ Environment   │ XAMPP                  │ Local development server   │
+└───────────────┴────────────────────────┴────────────────────────────┘
+```
 
 ---
 
@@ -136,12 +148,16 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
              └─────────────┘
 ```
 
-| Role | Dashboard | Users | Animals | Adoptions | Medical | Billing | Inventory |
-|:-----|:---------:|:-----:|:-------:|:---------:|:-------:|:-------:|:---------:|
-| **Admin** | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Staff** | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Veterinarian** | ✅ | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ |
-| **Adopter** | ❌ | ❌ | 👁️ | ✅ Own | ❌ | ❌ | ❌ |
+```
+┌──────────────┬───────────┬───────┬─────────┬───────────┬─────────┬─────────┬───────────┐
+│ Role         │ Dashboard │ Users │ Animals │ Adoptions │ Medical │ Billing │ Inventory │
+├──────────────┼───────────┼───────┼─────────┼───────────┼─────────┼─────────┼───────────┤
+│ Admin        │ ✅        │ ✅    │ ✅      │ ✅        │ ✅      │ ✅      │ ✅        │
+│ Staff        │ ✅        │ ❌    │ ✅      │ ✅        │ ✅      │ ✅      │ ✅        │
+│ Veterinarian │ ✅        │ ❌    │ ✅      │ ❌        │ ✅      │ ❌      │ ❌        │
+│ Adopter      │ ❌        │ ❌    │ 👁️      │ ✅ Own    │ ❌      │ ❌      │ ❌        │
+└──────────────┴───────────┴───────┴─────────┴───────────┴─────────┴─────────┴───────────┘
+```
 
 ---
 
@@ -149,18 +165,22 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ### Core Modules
 
-| Module | Status | Features |
-|:-------|:------:|:---------|
-| 🔐 **Authentication** | ✅ Complete | Login, Register, JWT, Password Hashing, Rate Limiting |
-| 👤 **User Management** | ✅ Complete | CRUD, Roles, Avatars, Profile Management |
-| 🐕 **Animal Management** | ✅ Complete | Registry, Images, Status, Impound, Feeding |
-| 🏠 **Adoption** | ✅ Complete | All users can adopt, Requests, Workflow, Interview, History |
-| 🩺 **Medical Records** | ✅ Complete | Treatments, Diagnoses, Due Dates, Vet Assignment, PDF Export |
-| 💰 **Billing** | ✅ Complete | Invoices, Payments, PDF Preview, Individual Invoice Print |
-| 📦 **Inventory** | ✅ Complete | Stock, Categories, Alerts, Expiration, PDF Export |
-| 📊 **Dashboard** | ✅ Complete | Stats, Charts, Activity Feed, Quick Actions |
-| 🔔 **Notifications** | ✅ Complete | User Alerts, Unread Count, History |
-| 🛡️ **Security** | ✅ Complete | Rate Limiting, Sanitization, XSS Prevention |
+```
+┌────────────────────┬──────────────┬────────────────────────────────────────────────────────┐
+│ Module             │ Status       │ Features                                               │
+├────────────────────┼──────────────┼────────────────────────────────────────────────────────┤
+│ Authentication     │ ✅ Complete  │ Login, Register, JWT, Password Hashing, Rate Limiting  │
+│ User Management    │ ✅ Complete  │ CRUD, Roles, Avatars, Profile Management               │
+│ Animal Management  │ ✅ Complete  │ Registry, Images, Status, Impound, Feeding             │
+│ Adoption           │ ✅ Complete  │ All users adopt, Requests, Workflow, History           │
+│ Medical Records    │ ✅ Complete  │ Treatments, Diagnoses, Due Dates, Vet Assign, Export   │
+│ Billing            │ ✅ Complete  │ Invoices, Payments, PDF Preview, Print                 │
+│ Inventory          │ ✅ Complete  │ Stock, Categories, Alerts, Expiration, PDF Export      │
+│ Dashboard          │ ✅ Complete  │ Stats, Charts, Activity Feed, Quick Actions            │
+│ Notifications      │ ✅ Complete  │ User Alerts, Unread Count, History                     │
+│ Security           │ ✅ Complete  │ Rate Limiting, Sanitization, XSS Prevention            │
+└────────────────────┴──────────────┴────────────────────────────────────────────────────────┘
+```
 
 ### Detailed Checklist
 
@@ -196,6 +216,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Impound record management
 - [x] Feeding record tracking
 - [x] Animal search and filtering
+- [x] Type-specific placeholder images (Dog, Cat, Other)
 - [x] Public "Available for Adoption" listing
 </details>
 
@@ -312,17 +333,21 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ### Security Features
 
-| Feature | Status | Implementation | File |
-|:--------|:------:|:---------------|:-----|
-| 🔑 JWT Authentication | ✅ | HS256 signature, 24h expiry | `JWT.php` |
-| 🔒 Password Hashing | ✅ | bcrypt with auto-salt | Built-in PHP |
-| 🛡️ SQL Injection Prevention | ✅ | PDO prepared statements | All Models |
-| 🧹 XSS Prevention | ✅ | Auto-sanitize all input | `Sanitizer.php` |
-| 🌐 CORS Protection | ✅ | Whitelist origins | `bootstrap.php` |
-| 🚦 Rate Limiting | ✅ | 10 login/min, 100 API/min | `RateLimiter.php` |
-| ✅ Input Validation | ✅ | Comprehensive rules | `Validator.php` |
-| 👤 Role-Based Access | ✅ | Middleware checks | `AuthMiddleware.php` |
-| 📝 Audit Trail | ✅ | All actions logged | `Activity_Logs` |
+```
+┌─────────────────────────┬────────┬─────────────────────────────┬────────────────────┐
+│ Feature                 │ Status │ Implementation              │ File               │
+├─────────────────────────┼────────┼─────────────────────────────┼────────────────────┤
+│ JWT Authentication      │ ✅     │ HS256 signature, 24h expiry │ JWT.php            │
+│ Password Hashing        │ ✅     │ bcrypt with auto-salt       │ Built-in PHP       │
+│ SQL Injection Prevention│ ✅     │ PDO prepared statements     │ All Models         │
+│ XSS Prevention          │ ✅     │ Auto-sanitize all input     │ Sanitizer.php      │
+│ CORS Protection         │ ✅     │ Whitelist origins           │ bootstrap.php      │
+│ Rate Limiting           │ ✅     │ 10 login/min, 100 API/min   │ RateLimiter.php    │
+│ Input Validation        │ ✅     │ Comprehensive rules         │ Validator.php      │
+│ Role-Based Access       │ ✅     │ Middleware checks           │ AuthMiddleware.php │
+│ Audit Trail             │ ✅     │ All actions logged          │ Activity_Logs      │
+└─────────────────────────┴────────┴─────────────────────────────┴────────────────────┘
+```
 
 ### Rate Limiting Configuration
 
@@ -431,34 +456,42 @@ dogpound/
 
 ### Relationships
 
-| Parent Table | Child Table | Relationship | Description |
-|:-------------|:------------|:-------------|:------------|
-| `Roles` | `Users` | One-to-Many | Each role has many users |
-| `Users` | `Animals` | One-to-Many | Users manage multiple animals |
-| `Users` | `Adoption_Requests` | One-to-Many | Users submit multiple requests |
-| `Users` | `Activity_Logs` | One-to-Many | Users generate many logs |
-| `Animals` | `Medical_Records` | One-to-Many | Animals have many medical records |
-| `Animals` | `Impound_Records` | One-to-Many | Animals have impound history |
-| `Animals` | `Feeding_Records` | One-to-Many | Animals have feeding logs |
-| `Animals` | `Adoption_Requests` | One-to-Many | Animals receive adoption requests |
-| `Invoices` | `Payments` | One-to-Many | Invoices receive multiple payments |
+```
+┌───────────────────┬───────────────────┬──────────────┬───────────────────────────────────┐
+│ Parent Table      │ Child Table       │ Relationship │ Description                       │
+├───────────────────┼───────────────────┼──────────────┼───────────────────────────────────┤
+│ Roles             │ Users             │ One-to-Many  │ Each role has many users          │
+│ Users             │ Animals           │ One-to-Many  │ Users manage multiple animals     │
+│ Users             │ Adoption_Requests │ One-to-Many  │ Users submit multiple requests    │
+│ Users             │ Activity_Logs     │ One-to-Many  │ Users generate many logs          │
+│ Animals           │ Medical_Records   │ One-to-Many  │ Animals have many medical records │
+│ Animals           │ Impound_Records   │ One-to-Many  │ Animals have impound history      │
+│ Animals           │ Feeding_Records   │ One-to-Many  │ Animals have feeding logs         │
+│ Animals           │ Adoption_Requests │ One-to-Many  │ Animals receive adoption requests │
+│ Invoices          │ Payments          │ One-to-Many  │ Invoices receive multiple payments│
+└───────────────────┴───────────────────┴──────────────┴───────────────────────────────────┘
+```
 
 ### Core Tables (12)
 
-| Table | Records | Purpose |
-|:------|:-------:|:--------|
-| `Roles` | 4 | User role definitions |
-| `Users` | Dynamic | All system users |
-| `Veterinarians` | Dynamic | Extended vet information |
-| `Animals` | Dynamic | Animal records |
-| `Impound_Records` | Dynamic | Animal intake details |
-| `Medical_Records` | Dynamic | Veterinary treatments |
-| `Feeding_Records` | Dynamic | Animal feeding logs |
-| `Adoption_Requests` | Dynamic | Adoption applications |
-| `Invoices` | Dynamic | Billing records |
-| `Payments` | Dynamic | Payment transactions |
-| `Inventory` | Dynamic | Supplies tracking |
-| `Activity_Logs` | Dynamic | Audit trail |
+```
+┌───────────────────┬─────────┬──────────────────────────┐
+│ Table             │ Records │ Purpose                  │
+├───────────────────┼─────────┼──────────────────────────┤
+│ Roles             │ 4       │ User role definitions    │
+│ Users             │ Dynamic │ All system users         │
+│ Veterinarians     │ Dynamic │ Extended vet information │
+│ Animals           │ Dynamic │ Animal records           │
+│ Impound_Records   │ Dynamic │ Animal intake details    │
+│ Medical_Records   │ Dynamic │ Veterinary treatments    │
+│ Feeding_Records   │ Dynamic │ Animal feeding logs      │
+│ Adoption_Requests │ Dynamic │ Adoption applications    │
+│ Invoices          │ Dynamic │ Billing records          │
+│ Payments          │ Dynamic │ Payment transactions     │
+│ Inventory         │ Dynamic │ Supplies tracking        │
+│ Activity_Logs     │ Dynamic │ Audit trail              │
+└───────────────────┴─────────┴──────────────────────────┘
+```
 
 ---
 
@@ -466,28 +499,36 @@ dogpound/
 
 ### Authentication
 
-| Method | Endpoint | Auth | Description |
-|:------:|:---------|:----:|:------------|
-| POST | `/auth/login` | ❌ | User login |
-| POST | `/auth/register` | ❌ | User registration |
-| POST | `/auth/refresh` | ✅ | Refresh token |
-| POST | `/auth/logout` | ✅ | Logout |
+```
+┌────────┬──────────────────┬──────┬───────────────────┐
+│ Method │ Endpoint         │ Auth │ Description       │
+├────────┼──────────────────┼──────┼───────────────────┤
+│ POST   │ /auth/login      │ ❌   │ User login        │
+│ POST   │ /auth/register   │ ❌   │ User registration │
+│ POST   │ /auth/refresh    │ ✅   │ Refresh token     │
+│ POST   │ /auth/logout     │ ✅   │ Logout            │
+└────────┴──────────────────┴──────┴───────────────────┘
+```
 
 ### Resources
 
-| Method | Endpoint | Auth | Description |
-|:------:|:---------|:----:|:------------|
-| GET/POST | `/users` | Admin | User management |
-| GET/PUT/DELETE | `/users/{id}` | Admin | User details |
-| GET/POST | `/animals` | Staff+ | Animal management |
-| GET | `/animals/available` | Public | Available for adoption |
-| GET/POST | `/adoptions` | Auth | Adoption requests |
-| GET/POST | `/medical` | Staff+ | Medical records |
-| GET/POST | `/inventory` | Staff+ | Inventory items |
-| GET/POST | `/billing/invoices` | Staff+ | Invoice management |
-| GET/POST | `/billing/payments` | Staff+ | Payment recording |
-| GET | `/dashboard/stats` | Staff+ | Dashboard statistics |
-| GET | `/notifications` | Auth | User notifications |
+```
+┌────────────────┬──────────────────────┬────────┬────────────────────────┐
+│ Method         │ Endpoint             │ Auth   │ Description            │
+├────────────────┼──────────────────────┼────────┼────────────────────────┤
+│ GET/POST       │ /users               │ Admin  │ User management        │
+│ GET/PUT/DELETE │ /users/{id}          │ Admin  │ User details           │
+│ GET/POST       │ /animals             │ Staff+ │ Animal management      │
+│ GET            │ /animals/available   │ Public │ Available for adoption │
+│ GET/POST       │ /adoptions           │ Auth   │ Adoption requests      │
+│ GET/POST       │ /medical             │ Staff+ │ Medical records        │
+│ GET/POST       │ /inventory           │ Staff+ │ Inventory items        │
+│ GET/POST       │ /billing/invoices    │ Staff+ │ Invoice management     │
+│ GET/POST       │ /billing/payments    │ Staff+ │ Payment recording      │
+│ GET            │ /dashboard/stats     │ Staff+ │ Dashboard statistics   │
+│ GET            │ /notifications       │ Auth   │ User notifications     │
+└────────────────┴──────────────────────┴────────┴────────────────────────┘
+```
 
 ---
 
@@ -495,88 +536,116 @@ dogpound/
 
 ### Development Setup ✅
 
-| Step | Status | Command/Action |
-|:-----|:------:|:---------------|
-| Install XAMPP | ✅ | PHP 8.0+, MySQL 5.7+ |
-| Create Database | ✅ | `catarman_dog_pound_db` |
-| Import Schema | ✅ | `database/schema.sql` |
-| Import Seeders | ✅ | `database/seeders.sql` |
-| Configure DB | ✅ | `backend/app/config/database.php` |
-| Start Servers | ✅ | Run `start.bat` |
+```
+┌─────────────────┬────────┬──────────────────────────────────┐
+│ Step            │ Status │ Command/Action                   │
+├─────────────────┼────────┼──────────────────────────────────┤
+│ Install XAMPP   │ ✅     │ PHP 8.0+, MySQL 5.7+             │
+│ Create Database │ ✅     │ catarman_dog_pound_db            │
+│ Import Schema   │ ✅     │ database/schema.sql              │
+│ Import Seeders  │ ✅     │ database/seeders.sql             │
+│ Configure DB    │ ✅     │ backend/app/config/database.php  │
+│ Start Servers   │ ✅     │ Run start.bat                    │
+└─────────────────┴────────┴──────────────────────────────────┘
+```
 
 ### Production Checklist ⏳
 
-| Task | Status | Priority |
-|:-----|:------:|:--------:|
-| Change `JWT_SECRET` | ⏳ | 🔴 High |
-| Set `APP_ENV` to production | ⏳ | 🔴 High |
-| Configure CORS origins | ⏳ | 🔴 High |
-| Setup HTTPS/SSL | ⏳ | 🔴 High |
-| Production DB credentials | ⏳ | 🔴 High |
-| Automated backups | ⏳ | 🟡 Medium |
-| Error logging | ⏳ | 🟡 Medium |
-| Review rate limits | ⏳ | 🟢 Low |
+```
+┌───────────────────────────┬────────┬──────────┐
+│ Task                      │ Status │ Priority │
+├───────────────────────────┼────────┼──────────┤
+│ Change JWT_SECRET         │ ⏳     │ 🔴 High  │
+│ Set APP_ENV to production │ ⏳     │ 🔴 High  │
+│ Configure CORS origins    │ ⏳     │ 🔴 High  │
+│ Setup HTTPS/SSL           │ ⏳     │ 🔴 High  │
+│ Production DB credentials │ ⏳     │ 🔴 High  │
+│ Automated backups         │ ⏳     │ 🟡 Medium│
+│ Error logging             │ ⏳     │ 🟡 Medium│
+│ Review rate limits        │ ⏳     │ 🟢 Low   │
+└───────────────────────────┴────────┴──────────┘
+```
 
 ---
 
 ## 📊 Testing
 
-| Category | Tests | Status |
-|:---------|:------|:------:|
-| **CRUD Operations** | All modules | ✅ |
-| **Role-Based Access** | Permission checks | ✅ |
-| **Form Validation** | All forms | ✅ |
-| **Error Handling** | Edge cases | ✅ |
-| **Responsive Design** | Mobile/Desktop | ✅ |
-| **SQL Injection** | Attack attempts | ✅ |
-| **XSS Prevention** | Payload testing | ✅ |
-| **Auth Bypass** | Security testing | ✅ |
-| **Rate Limiting** | Threshold testing | ✅ |
-| **Role Escalation** | Privilege testing | ✅ |
+```
+┌───────────────────┬───────────────────┬────────┐
+│ Category          │ Tests             │ Status │
+├───────────────────┼───────────────────┼────────┤
+│ CRUD Operations   │ All modules       │ ✅     │
+│ Role-Based Access │ Permission checks │ ✅     │
+│ Form Validation   │ All forms         │ ✅     │
+│ Error Handling    │ Edge cases        │ ✅     │
+│ Responsive Design │ Mobile/Desktop    │ ✅     │
+│ SQL Injection     │ Attack attempts   │ ✅     │
+│ XSS Prevention    │ Payload testing   │ ✅     │
+│ Auth Bypass       │ Security testing  │ ✅     │
+│ Rate Limiting     │ Threshold testing │ ✅     │
+│ Role Escalation   │ Privilege testing │ ✅     │
+└───────────────────┴───────────────────┴────────┘
+```
 
 ---
 
 ## 📈 Future Roadmap
 
-| Feature | Priority | Status | Target |
-|:--------|:--------:|:------:|:-------|
-| 📧 Email Notifications | 🔴 High | ⏳ | Q1 2026 |
-| 📱 SMS Alerts | 🟡 Medium | ⏳ | Q2 2026 |
-| 📲 Mobile App | 🟡 Medium | ⏳ | Q3 2026 |
-| 📊 Excel/CSV Export | 🟢 Low | ⏳ | TBD |
-| 🌍 Multi-language | 🟢 Low | ⏳ | TBD |
-| 🌙 Dark Mode | ✅ Done | ✅ | Completed |
-| 📴 PWA Support | 🟢 Low | ⏳ | TBD |
+```
+┌────────────────────────┬──────────┬────────┬───────────┐
+│ Feature                │ Priority │ Status │ Target    │
+├────────────────────────┼──────────┼────────┼───────────┤
+│ 📧 Email Notifications │ 🔴 High  │ ⏳     │ Q1 2026   │
+│ 📱 SMS Alerts          │ 🟡 Medium│ ⏳     │ Q2 2026   │
+│ 📲 Mobile App          │ 🟡 Medium│ ⏳     │ Q3 2026   │
+│ 📊 Excel/CSV Export    │ 🟢 Low   │ ⏳     │ TBD       │
+│ 🌍 Multi-language      │ 🟢 Low   │ ⏳     │ TBD       │
+│ 🌙 Dark Mode           │ ✅ Done  │ ✅     │ Completed │
+│ 📴 PWA Support         │ 🟢 Low   │ ⏳     │ TBD       │
+└────────────────────────┴──────────┴────────┴───────────┘
+```
 
 ---
 
 ## 📝 Version History
 
-| Version | Date | Changes |
-|:--------|:-----|:--------|
-| **1.0.0** | Dec 2025 | Initial release with all core modules |
-| **1.0.1** | Dec 2025 | Added rate limiting and input sanitization |
-| **1.1.0** | Dec 26, 2025 | Enhanced security module, updated documentation |
-| **1.2.0** | Dec 27, 2025 | PDF preview feature, individual invoice printing, adoption for all users |
+```
+┌─────────┬──────────────┬────────────────────────────────────────────────────────┐
+│ Version │ Date         │ Changes                                                │
+├─────────┼──────────────┼────────────────────────────────────────────────────────┤
+│ 1.0.0   │ Dec 2025     │ Initial release with all core modules                  │
+│ 1.0.1   │ Dec 2025     │ Added rate limiting and input sanitization             │
+│ 1.1.0   │ Dec 26, 2025 │ Enhanced security module, updated documentation        │
+│ 1.2.0   │ Dec 27, 2025 │ PDF preview, invoices, adoption for all users          │
+└─────────┴──────────────┴────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## 👨‍💻 Project Info
 
-| Property | Value |
-|:---------|:------|
-| **Project Owner** | Catarman Dog Pound |
-| **Purpose** | Educational / Capstone Project |
-| **License** | Educational Use Only |
+```
+┌───────────────┬────────────────────────────────┐
+│ Property      │ Value                          │
+├───────────────┼────────────────────────────────┤
+│ Project Owner │ Catarman Dog Pound             │
+│ Purpose       │ Educational / Capstone Project │
+│ License       │ Educational Use Only           │
+└───────────────┴────────────────────────────────┘
+```
 
 ---
 
 ## 📚 Related Documentation
 
-| Document | Description |
-|:---------|:------------|
-| [README.md](README.md) | Project overview and quick start |
-| [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | Detailed directory structure |
-| [BACKEND_DOCUMENTATION.md](BACKEND_DOCUMENTATION.md) | Backend code documentation |
-| [FRONTEND_DOCUMENTATION.md](FRONTEND_DOCUMENTATION.md) | Frontend code documentation |
-| [DATABASE_DOCUMENTATION.md](DATABASE_DOCUMENTATION.md) | Database schema reference |
+```
+┌───────────────────────────┬─────────────────────────────────┐
+│ Document                  │ Description                     │
+├───────────────────────────┼─────────────────────────────────┤
+│ README.md                 │ Project overview and quick start│
+│ PROJECT_STRUCTURE.md      │ Detailed directory structure    │
+│ BACKEND_DOCUMENTATION.md  │ Backend code documentation      │
+│ FRONTEND_DOCUMENTATION.md │ Frontend code documentation     │
+│ DATABASE_DOCUMENTATION.md │ Database schema reference       │
+└───────────────────────────┴─────────────────────────────────┘
+```

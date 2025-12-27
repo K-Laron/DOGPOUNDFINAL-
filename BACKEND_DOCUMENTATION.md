@@ -45,7 +45,34 @@ backend/
 
 **Flow**:
 ```
-HTTP Request → index.php → bootstrap.php → App class → Router → Controller → Response
+HTTP Request
+      │
+      ▼
+┌─────────────┐
+│  index.php  │ 1. Entry Point
+└──────┬──────┘
+      │
+      ▼
+┌──────────────┐
+│ bootstrap.php│ 2. Init & Config
+└──────┬───────┘
+      │
+      ▼
+┌──────────────┐
+│  App Class   │ 3. Core Logic
+└──────┬───────┘
+      │
+      ▼
+┌──────────────┐      ┌────────────┐
+│   Router     │─────►│ Controller │ 4. Process
+└──────────────┘      └─────┬──────┘
+                            │
+      ┌─────────────────────┘
+      │
+      ▼
+┌──────────────┐
+│  Response    │ 5. JSON Output
+└──────────────┘
 ```
 
 ---
@@ -92,32 +119,36 @@ HTTP Request → index.php → bootstrap.php → App class → Router → Contro
 
 **Sections**:
 
-| Constant | Purpose | Default Value |
-|----------|---------|---------------|
-| `APP_ENV` | Environment mode | `'development'` |
-| `APP_NAME` | Application name | `'Catarman Dog Pound Management System'` |
-| `APP_VERSION` | Version number | `'1.0.0'` |
-| `BASE_URL` | API base URL | `'http://localhost:8000'` |
-| `FRONTEND_URL` | Frontend URL for CORS | `'http://localhost:3000'` |
-| `JWT_SECRET` | Token signing key | Should be changed in production! |
-| `JWT_EXPIRY` | Access token life | `86400` (24 hours) |
-| `JWT_REFRESH_EXPIRY` | Refresh token life | `604800` (7 days) |
-| `ALLOWED_ORIGINS` | CORS whitelist | Array of allowed URLs |
-| `UPLOAD_PATH` | File upload directory | `/uploads/` |
-| `MAX_FILE_SIZE` | Max upload size | `5MB` |
-| `ALLOWED_EXTENSIONS` | Permitted file types | `['jpg', 'jpeg', 'png', 'gif', 'webp']` |
-| `DEFAULT_PAGE_SIZE` | Pagination default | `20` |
-| `MAX_PAGE_SIZE` | Pagination maximum | `100` |
-| `PASSWORD_MIN_LENGTH` | Minimum password | `8` |
-| `MAX_LOGIN_ATTEMPTS` | Before lockout | `5` |
-| `LOCKOUT_TIME` | Lockout duration | `900` (15 minutes) |
-| `RATE_LIMIT_ENABLED` | Enable/disable rate limiting | `true` |
-| `RATE_LIMIT_LOGIN_MAX` | Max login attempts per window | `10` |
-| `RATE_LIMIT_LOGIN_WINDOW` | Login rate limit window | `60` (1 minute) |
-| `RATE_LIMIT_API_MAX` | Max API requests per window | `100` |
-| `RATE_LIMIT_API_WINDOW` | API rate limit window | `60` (1 minute) |
-| `ADOPTION_FEE_DOG` | Dog adoption fee | `500.00` |
-| `ADOPTION_FEE_CAT` | Cat adoption fee | `300.00` |
+```
+┌─────────────────────────┬──────────────────────────────┬──────────────────────────────────────────┐
+│ Constant                │ Purpose                      │ Default Value                            │
+├─────────────────────────┼──────────────────────────────┼──────────────────────────────────────────┤
+│ APP_ENV                 │ Environment mode             │ 'development'                            │
+│ APP_NAME                │ Application name             │ 'Catarman Dog Pound Management System'   │
+│ APP_VERSION             │ Version number               │ '1.0.0'                                  │
+│ BASE_URL                │ API base URL                 │ 'http://localhost:8000'                  │
+│ FRONTEND_URL            │ Frontend URL for CORS        │ 'http://localhost:3000'                  │
+│ JWT_SECRET              │ Token signing key            │ Should be changed in production!         │
+│ JWT_EXPIRY              │ Access token life            │ 86400 (24 hours)                         │
+│ JWT_REFRESH_EXPIRY      │ Refresh token life           │ 604800 (7 days)                          │
+│ ALLOWED_ORIGINS         │ CORS whitelist               │ Array of allowed URLs                    │
+│ UPLOAD_PATH             │ File upload directory        │ /uploads/                        │
+│ MAX_FILE_SIZE           │ Max upload size              │ 5MB                                      │
+│ ALLOWED_EXTENSIONS      │ Permitted file types         │ ['jpg', 'jpeg', 'png', 'gif', 'webp']    │
+│ DEFAULT_PAGE_SIZE       │ Pagination default           │ 20                                       │
+│ MAX_PAGE_SIZE           │ Pagination maximum           │ 100                                      │
+│ PASSWORD_MIN_LENGTH     │ Minimum password             │ 8                                        │
+│ MAX_LOGIN_ATTEMPTS      │ Before lockout               │ 5                                        │
+│ LOCKOUT_TIME            │ Lockout duration             │ 900 (15 minutes)                         │
+│ RATE_LIMIT_ENABLED      │ Enable/disable rate limiting │ true                                     │
+│ RATE_LIMIT_LOGIN_MAX    │ Max login attempts per window│ 10                                       │
+│ RATE_LIMIT_LOGIN_WINDOW │ Login rate limit window      │ 60 (1 minute)                            │
+│ RATE_LIMIT_API_MAX      │ Max API requests per window  │ 100                                      │
+│ RATE_LIMIT_API_WINDOW   │ API rate limit window        │ 60 (1 minute)                            │
+│ ADOPTION_FEE_DOG        │ Dog adoption fee             │ 500.00                                   │
+│ ADOPTION_FEE_CAT        │ Cat adoption fee             │ 300.00                                   │
+└─────────────────────────┴──────────────────────────────┴──────────────────────────────────────────┘
+```
 
 ---
 
@@ -138,13 +169,17 @@ private $charset = "utf8mb4";
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `getConnection()` | Returns PDO instance (lazy loading) |
-| `getInstance()` | Singleton pattern - returns single Database instance |
-| `beginTransaction()` | Starts database transaction |
-| `commit()` | Commits current transaction |
-| `rollback()` | Rolls back current transaction |
+```
+┌────────────────────┬────────────────────────────────────────────────────────┐
+│ Method             │ Purpose                                                │
+├────────────────────┼────────────────────────────────────────────────────────┤
+│ getConnection()    │ Returns PDO instance (lazy loading)                    │
+│ getInstance()      │ Singleton pattern - returns single Database instance     │
+│ beginTransaction() │ Starts database transaction                            │
+│ commit()           │ Commits current transaction                            │
+│ rollback()         │ Rolls back current transaction                         │
+└────────────────────┴────────────────────────────────────────────────────────┘
+```
 
 **PDO Options Set**:
 - `ERRMODE_EXCEPTION`: Throws exceptions on errors
@@ -182,16 +217,20 @@ private $charset = "utf8mb4";
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `get($path, $handler, $roles)` | Register GET route |
-| `post($path, $handler, $roles)` | Register POST route |
-| `put($path, $handler, $roles)` | Register PUT route |
-| `delete($path, $handler, $roles)` | Register DELETE route |
-| `patch($path, $handler, $roles)` | Register PATCH route |
-| `dispatch()` | Process incoming request |
-| `authenticate()` | Verify JWT token |
-| `authorize($roles)` | Check user has required role |
+```
+┌─────────────────────────────────┬──────────────────────────────────────────┐
+│ Method                          │ Purpose                                  │
+├─────────────────────────────────┼──────────────────────────────────────────┤
+│ get($path, $handler, $roles)    │ Register GET route                       │
+│ post($path, $handler, $roles)   │ Register POST route                      │
+│ put($path, $handler, $roles)    │ Register PUT route                       │
+│ delete($path, $handler, $roles) │ Register DELETE route                    │
+│ patch($path, $handler, $roles)  │ Register PATCH route                     │
+│ dispatch()                      │ Process incoming request                 │
+│ authenticate()                  │ Verify JWT token                         │
+│ authorize($roles)               │ Check user has required role             │
+└─────────────────────────────────┴──────────────────────────────────────────┘
+```
 
 **Role Authorization**:
 - `null`: No authentication required (public route)
@@ -206,17 +245,21 @@ private $charset = "utf8mb4";
 
 **Methods**:
 
-| Method | HTTP Code | Purpose |
-|--------|-----------|---------|
-| `success($data, $message, $code)` | 200 | Successful operation |
-| `created($data, $message)` | 201 | Resource created |
-| `error($message, $code, $errors)` | 4xx | Client error |
-| `validationError($errors)` | 422 | Validation failed |
-| `unauthorized($message)` | 401 | Authentication required |
-| `forbidden($message)` | 403 | Access denied |
-| `notFound($message)` | 404 | Resource not found |
-| `serverError($message)` | 500 | Server error |
-| `paginated($data, $page, $perPage, $total)` | 200 | Paginated list |
+```
+┌──────────────────────────────────────────────┬───────────┬─────────────────────────┐
+│ Method                                       │ HTTP Code │ Purpose                 │
+├──────────────────────────────────────────────┼───────────┼─────────────────────────┤
+│ success($data, $message, $code)              │ 200       │ Successful operation    │
+│ created($data, $message)                     │ 201       │ Resource created        │
+│ error($message, $code, $errors)              │ 4xx       │ Client error            │
+│ validationError($errors)                     │ 422       │ Validation failed       │
+│ unauthorized($message)                       │ 401       │ Authentication required │
+│ forbidden($message)                          │ 403       │ Access denied           │
+│ notFound($message)                           │ 404       │ Resource not found      │
+│ serverError($message)                        │ 500       │ Server error            │
+│ paginated($data, $page, $perPage, $total)    │ 200       │ Paginated list          │
+└──────────────────────────────────────────────┴───────────┴─────────────────────────┘
+```
 
 **Response Format**:
 ```json
@@ -268,14 +311,18 @@ private $charset = "utf8mb4";
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `generate($payload, $expiry)` | Create access token |
-| `verify($token)` | Verify and decode token |
-| `decode($token)` | Decode without verification (debug only) |
-| `generateRefreshToken($userId)` | Create refresh token (7 day expiry) |
-| `isExpired($token)` | Check if token expired |
-| `getExpiresIn($token)` | Seconds until expiration |
+```
+┌─────────────────────────────────┬──────────────────────────────────────────┐
+│ Method                          │ Purpose                                  │
+├─────────────────────────────────┼──────────────────────────────────────────┤
+│ generate($payload, $expiry)     │ Create access token                      │
+│ verify($token)                  │ Verify and decode token                  │
+│ decode($token)                  │ Decode without verification (debug only) │
+│ generateRefreshToken($userId)   │ Create refresh token (7 day expiry)      │
+│ isExpired($token)               │ Check if token expired                   │
+│ getExpiresIn($token)            │ Seconds until expiration                 │
+└─────────────────────────────────┴──────────────────────────────────────────┘
+```
 
 **Security Features**:
 - Uses `hash_equals()` for timing-safe signature comparison
@@ -302,22 +349,26 @@ if ($validator->fails()) {
 
 **Available Rules**:
 
-| Rule | Purpose | Example |
-|------|---------|---------|
-| `required` | Field must exist and not empty | `'name' => 'required'` |
-| `email` | Valid email format | `'email' => 'email'` |
-| `min:n` | Minimum length/value | `'password' => 'min:8'` |
-| `max:n` | Maximum length/value | `'name' => 'max:50'` |
-| `numeric` | Must be numeric | `'price' => 'numeric'` |
-| `integer` | Must be integer | `'age' => 'integer'` |
-| `positive` | Must be > 0 | `'quantity' => 'positive'` |
-| `in:a,b,c` | Must be in list | `'status' => 'in:active,inactive'` |
-| `date` | Valid date format | `'birth_date' => 'date'` |
-| `phone` | Valid phone format | `'contact' => 'phone'` |
-| `url` | Valid URL format | `'website' => 'url'` |
-| `alpha` | Letters only | `'name' => 'alpha'` |
-| `alphanumeric` | Letters and numbers | `'username' => 'alphanumeric'` |
-| `unique:table,column` | Unique in database | `'email' => 'unique:Users,Email'` |
+```
+┌───────────────────────┬────────────────────────────────┬────────────────────────────────────┐
+│ Rule                  │ Purpose                        │ Example                            │
+├───────────────────────┼────────────────────────────────┼────────────────────────────────────┤
+│ required              │ Field must exist and not empty │ 'name' => 'required'               │
+│ email                 │ Valid email format             │ 'email' => 'email'                 │
+│ min:n                 │ Minimum length/value           │ 'password' => 'min:8'              │
+│ max:n                 │ Maximum length/value           │ 'name' => 'max:50'                 │
+│ numeric               │ Must be numeric                │ 'price' => 'numeric'               │
+│ integer               │ Must be integer                │ 'age' => 'integer'                 │
+│ positive              │ Must be > 0                    │ 'quantity' => 'positive'           │
+│ in:a,b,c              │ Must be in list                │ 'status' => 'in:active,inactive'   │
+│ date                  │ Valid date format              │ 'birth_date' => 'date'             │
+│ phone                 │ Valid phone format             │ 'contact' => 'phone'               │
+│ url                   │ Valid URL format               │ 'website' => 'url'                 │
+│ alpha                 │ Letters only                   │ 'name' => 'alpha'                  │
+│ alphanumeric          │ Letters and numbers            │ 'username' => 'alphanumeric'       │
+│ unique:table,column   │ Unique in database             │ 'email' => 'unique:Users,Email'    │
+└───────────────────────┴────────────────────────────────┴────────────────────────────────────┘
+```
 
 ---
 
@@ -332,14 +383,18 @@ if ($validator->fails()) {
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `check($type, $id, $max, $window)` | Check and enforce rate limit |
-| `checkGlobal()` | Apply global API rate limiting |
-| `checkLogin($identifier)` | Apply stricter login rate limiting |
-| `getRemaining($type, $id, $max, $window)` | Get remaining attempts |
-| `reset($type, $identifier)` | Reset rate limit for identifier |
-| `cleanup($maxAge)` | Clear expired rate limit data |
+```
+┌───────────────────────────────────────────┬────────────────────────────────────┐
+│ Method                                    │ Purpose                            │
+├───────────────────────────────────────────┼────────────────────────────────────┤
+│ check($type, $id, $max, $window)          │ Check and enforce rate limit       │
+│ checkGlobal()                             │ Apply global API rate limiting     │
+│ checkLogin($identifier)                   │ Apply stricter login rate limiting │
+│ getRemaining($type, $id, $max, $window)  │ Get remaining attempts             │
+│ reset($type, $identifier)                 │ Reset rate limit for identifier    │
+│ cleanup($maxAge)                          │ Clear expired rate limit data      │
+└───────────────────────────────────────────┴────────────────────────────────────┘
+```
 
 **Usage**:
 ```php
@@ -373,19 +428,23 @@ RateLimiter::check('api', $userId, 100, 60);
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `string($value, $allowHtml)` | Sanitize string, escape HTML |
-| `email($value)` | Validate and normalize email |
-| `integer($value, $default)` | Extract integer value |
-| `float($value, $default)` | Extract decimal value |
-| `boolean($value, $default)` | Parse boolean value |
-| `url($value)` | Validate and sanitize URL |
-| `stripTags($value, $allowed)` | Remove HTML tags |
-| `stripDangerousTags($value)` | Remove only dangerous HTML |
-| `filename($value)` | Sanitize filename (prevent traversal) |
-| `array($data, $options)` | Recursively sanitize array |
-| `request($data)` | Sanitize entire request data |
+```
+┌───────────────────────────────┬───────────────────────────────────────────┐
+│ Method                        │ Purpose                                   │
+├───────────────────────────────┼───────────────────────────────────────────┤
+│ string($value, $allowHtml)    │ Sanitize string, escape HTML              │
+│ email($value)                 │ Validate and normalize email              │
+│ integer($value, $default)     │ Extract integer value                     │
+│ float($value, $default)       │ Extract decimal value                     │
+│ boolean($value, $default)     │ Parse boolean value                       │
+│ url($value)                   │ Validate and sanitize URL                 │
+│ stripTags($value, $allowed)   │ Remove HTML tags                          │
+│ stripDangerousTags($value)    │ Remove only dangerous HTML                │
+│ filename($value)              │ Sanitize filename (prevent traversal)     │
+│ array($data, $options)        │ Recursively sanitize array                │
+│ request($data)                │ Sanitize entire request data              │
+└───────────────────────────────┴───────────────────────────────────────────┘
+```
 
 **Usage**:
 ```php
@@ -409,17 +468,21 @@ $id = Sanitizer::integer($input['id']);
 
 **Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `authenticate()` | Verify token, load user from database |
-| `requireRole($roles)` | Ensure user has required role |
-| `hasRole($roles)` | Check role without error |
-| `isAdmin()` | Check if user is Admin |
-| `isStaff()` | Check if user is Staff |
-| `isVeterinarian()` | Check if user is Veterinarian |
-| `isAdopter()` | Check if user is Adopter |
-| `getCurrentUser()` | Get authenticated user data |
-| `getUserId()` | Get current user's ID |
+```
+┌───────────────────────┬──────────────────────────────────────┐
+│ Method                │ Purpose                              │
+├───────────────────────┼──────────────────────────────────────┤
+│ authenticate()        │ Verify token, load user from database│
+│ requireRole($roles)   │ Ensure user has required role        │
+│ hasRole($roles)       │ Check role without error             │
+│ isAdmin()             │ Check if user is Admin               │
+│ isStaff()             │ Check if user is Staff               │
+│ isVeterinarian()      │ Check if user is Veterinarian        │
+│ isAdopter()           │ Check if user is Adopter             │
+│ getCurrentUser()      │ Get authenticated user data          │
+│ getUserId()           │ Get current user's ID                │
+└───────────────────────┴──────────────────────────────────────┘
+```
 
 **Authentication Flow**:
 1. Extract Bearer token from `Authorization` header
@@ -442,20 +505,24 @@ $id = Sanitizer::integer($input['id']);
 
 **Helper Methods**:
 
-| Method | Purpose |
-|--------|---------|
-| `query($key, $default)` | Get URL query parameter |
-| `input($key, $default)` | Get request body field |
-| `all()` | Get all request data |
-| `only(['field1', 'field2'])` | Get specific fields only |
-| `except(['password'])` | Get all except specified fields |
-| `has($key)` | Check if field exists |
-| `getPagination()` | Extract page/per_page params |
-| `validate($rules)` | Validate input data |
-| `logActivity($type, $desc)` | Log to Activity_Logs table |
-| `isOwner($userId)` | Check if user owns resource |
-| `hasRole($roles)` | Check user role |
-| `handleFileUpload($field, $folder)` | Process uploaded file |
+```
+┌─────────────────────────────────┬─────────────────────────────────┐
+│ Method                          │ Purpose                         │
+├─────────────────────────────────┼─────────────────────────────────┤
+│ query($key, $default)           │ Get URL query parameter         │
+│ input($key, $default)           │ Get request body field          │
+│ all()                           │ Get all request data            │
+│ only(['field1', 'field2'])      │ Get specific fields only        │
+│ except(['password'])            │ Get all except specified fields │
+│ has($key)                       │ Check if field exists           │
+│ getPagination()                 │ Extract page/per_page params    │
+│ validate($rules)                │ Validate input data             │
+│ logActivity($type, $desc)       │ Log to Activity_Logs table      │
+│ isOwner($userId)                │ Check if user owns resource     │
+│ hasRole($roles)                 │ Check user role                 │
+│ handleFileUpload($field, $folder)│ Process uploaded file          │
+└─────────────────────────────────┴─────────────────────────────────┘
+```
 
 ---
 
@@ -464,15 +531,19 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| POST | `/auth/login` | User login |
-| POST | `/auth/register` | Public registration (creates Adopter) |
-| POST | `/auth/refresh` | Refresh access token |
-| POST | `/auth/logout` | Logout (for logging) |
-| POST | `/auth/logout-all` | Invalidate all sessions |
-| POST | `/auth/forgot-password` | Request password reset |
-| POST | `/auth/reset-password` | Reset with token |
+```
+┌────────┬─────────────────────────┬───────────────────────────────────────┐
+│ Method │ Endpoint                │ Purpose                               │
+├────────┼─────────────────────────┼───────────────────────────────────────┤
+│ POST   │ /auth/login             │ User login                            │
+│ POST   │ /auth/register          │ Public registration (creates Adopter) │
+│ POST   │ /auth/refresh           │ Refresh access token                  │
+│ POST   │ /auth/logout            │ Logout (for logging)                  │
+│ POST   │ /auth/logout-all        │ Invalidate all sessions               │
+│ POST   │ /auth/forgot-password   │ Request password reset                │
+│ POST   │ /auth/reset-password    │ Reset with token                      │
+└────────┴─────────────────────────┴───────────────────────────────────────┘
+```
 
 **Login Flow**:
 1. Validate input (email/username + password)
@@ -490,18 +561,22 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/users` | Admin | List all users |
-| GET | `/users/{id}` | Admin/Owner | Get user details |
-| POST | `/users` | Admin | Create new user |
-| PUT | `/users/{id}` | Admin/Owner | Update user |
-| DELETE | `/users/{id}` | Admin | Soft delete user |
-| GET | `/users/profile/me` | Any | Get own profile |
-| PUT | `/users/profile/me` | Any | Update own profile |
-| POST | `/users/profile/avatar` | Any | Upload avatar |
-| PUT | `/users/{id}/status` | Admin | Change account status |
-| PUT | `/users/{id}/role` | Admin | Change user role |
+```
+┌────────┬─────────────────────────┬──────────────┬───────────────────────┐
+│ Method │ Endpoint                │ Auth         │ Purpose               │
+├────────┼─────────────────────────┼──────────────┼───────────────────────┤
+│ GET    │ /users                  │ Admin        │ List all users        │
+│ GET    │ /users/{id}             │ Admin/Owner  │ Get user details      │
+│ POST   │ /users                  │ Admin        │ Create new user       │
+│ PUT    │ /users/{id}             │ Admin/Owner  │ Update user           │
+│ DELETE │ /users/{id}             │ Admin        │ Soft delete user      │
+│ GET    │ /users/profile/me       │ Any          │ Get own profile       │
+│ PUT    │ /users/profile/me       │ Any          │ Update own profile    │
+│ POST   │ /users/profile/avatar   │ Any          │ Upload avatar         │
+│ PUT    │ /users/{id}/status      │ Admin        │ Change account status │
+│ PUT    │ /users/{id}/role        │ Admin        │ Change user role      │
+└────────┴─────────────────────────┴──────────────┴───────────────────────┘
+```
 
 ---
 
@@ -510,18 +585,22 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/animals/available` | Public | Available for adoption |
-| GET | `/animals/{id}` | Public | Single animal details |
-| GET | `/animals` | Staff+ | List all animals |
-| GET | `/animals/stats/summary` | Staff+ | Statistics |
-| POST | `/animals` | Staff+ | Create animal |
-| PUT | `/animals/{id}` | Staff+ | Update animal |
-| DELETE | `/animals/{id}` | Admin | Soft delete |
-| PATCH | `/animals/{id}/status` | Staff+ | Update status only |
-| POST | `/animals/{id}/image` | Staff+ | Upload image |
-| POST | `/animals/{id}/impound` | Staff+ | Add impound record |
+```
+┌────────┬─────────────────────────┬──────────────┬────────────────────────┐
+│ Method │ Endpoint                │ Auth         │ Purpose                │
+├────────┼─────────────────────────┼──────────────┼────────────────────────┤
+│ GET    │ /animals/available      │ Public       │ Available for adoption │
+│ GET    │ /animals/{id}           │ Public       │ Single animal details  │
+│ GET    │ /animals                │ Staff+       │ List all animals       │
+│ GET    │ /animals/stats/summary  │ Staff+       │ Statistics             │
+│ POST   │ /animals                │ Staff+       │ Create animal          │
+│ PUT    │ /animals/{id}           │ Staff+       │ Update animal          │
+│ DELETE │ /animals/{id}             │ Admin        │ Soft delete            │
+│ PATCH  │ /animals/{id}/status    │ Staff+       │ Update status only     │
+│ POST   │ /animals/{id}/image     │ Staff+       │ Upload image           │
+│ POST   │ /animals/{id}/impound   │ Staff+       │ Add impound record     │
+└────────┴─────────────────────────┴──────────────┴────────────────────────┘
+```
 
 ---
 
@@ -530,15 +609,19 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/adoptions` | Staff+ | List all requests |
-| GET | `/adoptions/{id}` | Any | Get request details |
-| POST | `/adoptions` | Any | Submit adoption request |
-| PUT | `/adoptions/{id}` | Staff+ | Update request |
-| DELETE | `/adoptions/{id}` | Admin | Delete request |
-| PATCH | `/adoptions/{id}/status` | Staff+ | Approve/reject |
-| GET | `/adoptions/my/requests` | Adopter | Own requests |
+```
+┌────────┬─────────────────────────┬──────────────┬─────────────────────────┐
+│ Method │ Endpoint                │ Auth         │ Purpose                 │
+├────────┼─────────────────────────┼──────────────┼─────────────────────────┤
+│ GET    │ /adoptions              │ Staff+       │ List all requests       │
+│ GET    │ /adoptions/{id}         │ Any          │ Get request details     │
+│ POST   │ /adoptions              │ Any          │ Submit adoption request │
+│ PUT    │ /adoptions/{id}         │ Staff+       │ Update request          │
+│ DELETE │ /adoptions/{id}         │ Admin        │ Delete request          │
+│ PATCH  │ /adoptions/{id}/status  │ Staff+       │ Approve/reject          │
+│ GET    │ /adoptions/my/requests  │ Adopter      │ Own requests            │
+└────────┴─────────────────────────┴──────────────┴─────────────────────────┘
+```
 
 ---
 
@@ -547,15 +630,19 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/medical` | Staff+ | List all records |
-| GET | `/medical/{id}` | Staff+ | Get record details |
-| POST | `/medical` | Vet | Create record |
-| PUT | `/medical/{id}` | Vet | Update record |
-| DELETE | `/medical/{id}` | Admin | Delete record |
-| GET | `/medical/animal/{id}` | Staff+ | Records for animal |
-| GET | `/medical/veterinarians` | Staff+ | List veterinarians |
+```
+┌────────┬─────────────────────────┬──────────────┬────────────────────┐
+│ Method │ Endpoint                │ Auth         │ Purpose            │
+├────────┼─────────────────────────┼──────────────┼────────────────────┤
+│ GET    │ /medical                │ Staff+       │ List all records   │
+│ GET    │ /medical/{id}           │ Staff+       │ Get record details │
+│ POST   │ /medical                │ Vet          │ Create record      │
+│ PUT    │ /medical/{id}           │ Vet          │ Update record      │
+│ DELETE │ /medical/{id}             │ Admin        │ Delete record      │
+│ GET    │ /medical/animal/{id}    │ Staff+       │ Records for animal │
+│ GET    │ /medical/veterinarians  │ Staff+       │ List veterinarians │
+└────────┴─────────────────────────┴──────────────┴────────────────────┘
+```
 
 ---
 
@@ -564,15 +651,19 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/inventory` | Staff+ | List all items |
-| GET | `/inventory/{id}` | Staff+ | Get item details |
-| POST | `/inventory` | Staff+ | Add item |
-| PUT | `/inventory/{id}` | Staff+ | Update item |
-| DELETE | `/inventory/{id}` | Admin | Delete item |
-| POST | `/inventory/{id}/adjust` | Staff+ | Adjust quantity |
-| GET | `/inventory/low-stock` | Staff+ | Low stock alerts |
+```
+┌────────┬─────────────────────────┬──────────────┬────────────────────┐
+│ Method │ Endpoint                │ Auth         │ Purpose            │
+├────────┼─────────────────────────┼──────────────┼────────────────────┤
+│ GET    │ /inventory              │ Staff+       │ List all items     │
+│ GET    │ /inventory/{id}         │ Staff+       │ Get item details   │
+│ POST   │ /inventory              │ Staff+       │ Add item           │
+│ PUT    │ /inventory/{id}         │ Staff+       │ Update item        │
+│ DELETE │ /inventory/{id}         │ Admin        │ Delete item        │
+│ POST   │ /inventory/{id}/adjust  │ Staff+       │ Adjust quantity    │
+│ GET    │ /inventory/low-stock    │ Staff+       │ Low stock alerts   │
+└────────┴─────────────────────────┴──────────────┴────────────────────┘
+```
 
 ---
 
@@ -581,16 +672,20 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/billing/invoices` | Staff+ | List invoices |
-| GET | `/billing/invoices/{id}` | Staff+ | Invoice details |
-| POST | `/billing/invoices` | Staff+ | Create invoice |
-| PUT | `/billing/invoices/{id}` | Staff+ | Update invoice |
-| DELETE | `/billing/invoices/{id}` | Admin | Delete invoice |
-| GET | `/billing/payments` | Staff+ | List payments |
-| POST | `/billing/payments` | Staff+ | Record payment |
-| GET | `/billing/reports` | Admin | Financial reports |
+```
+┌────────┬─────────────────────────┬──────────────┬────────────────────┐
+│ Method │ Endpoint                │ Auth         │ Purpose            │
+├────────┼─────────────────────────┼──────────────┼────────────────────┤
+│ GET    │ /billing/invoices       │ Staff+       │ List invoices      │
+│ GET    │ /billing/invoices/{id}  │ Staff+       │ Invoice details    │
+│ POST   │ /billing/invoices       │ Staff+       │ Create invoice     │
+│ PUT    │ /billing/invoices/{id}  │ Staff+       │ Update invoice     │
+│ DELETE │ /billing/invoices/{id}  │ Admin        │ Delete invoice     │
+│ GET    │ /billing/payments       │ Staff+       │ List payments      │
+│ POST   │ /billing/payments       │ Staff+       │ Record payment     │
+│ GET    │ /billing/reports        │ Admin        │ Financial reports  │
+└────────┴─────────────────────────┴──────────────┴────────────────────┘
+```
 
 ---
 
@@ -599,12 +694,16 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/dashboard/stats` | Staff+ | Statistics summary |
-| GET | `/dashboard/activities` | Staff+ | Recent activities |
-| GET | `/dashboard/charts` | Staff+ | Chart data |
-| GET | `/dashboard/overdue` | Staff+ | Overdue tasks |
+```
+┌────────┬─────────────────────────┬──────────────┬────────────────────┐
+│ Method │ Endpoint                │ Auth         │ Purpose            │
+├────────┼─────────────────────────┼──────────────┼────────────────────┤
+│ GET    │ /dashboard/stats        │ Staff+       │ Statistics summary │
+│ GET    │ /dashboard/activities   │ Staff+       │ Recent activities  │
+│ GET    │ /dashboard/charts       │ Staff+       │ Chart data         │
+│ GET    │ /dashboard/overdue      │ Staff+       │ Overdue tasks      │
+└────────┴─────────────────────────┴──────────────┴────────────────────┘
+```
 
 ---
 
@@ -613,13 +712,17 @@ $id = Sanitizer::integer($input['id']);
 
 **Endpoints**:
 
-| Method | Endpoint | Auth | Purpose |
-|--------|----------|------|---------|
-| GET | `/notifications` | Any | User's notifications |
-| GET | `/notifications/unread-count` | Any | Unread count |
-| PUT | `/notifications/{id}/read` | Any | Mark as read |
-| PUT | `/notifications/read-all` | Any | Mark all read |
-| DELETE | `/notifications/{id}` | Any | Delete notification |
+```
+┌────────┬────────────────────────────┬──────────┬─────────────────────┐
+│ Method │ Endpoint                   │ Auth     │ Purpose             │
+├────────┼────────────────────────────┼──────────┼─────────────────────┤
+│ GET    │ /notifications             │ Any      │ User's notifications│
+│ GET    │ /notifications/unread-count│ Any      │ Unread count        │
+│ PUT    │ /notifications/{id}/read   │ Any      │ Mark as read        │
+│ PUT    │ /notifications/read-all    │ Any      │ Mark all read       │
+│ DELETE │ /notifications/{id}        │ Any      │ Delete notification │
+└────────┴────────────────────────────┴──────────┴─────────────────────┘
+```
 
 ---
 
@@ -659,18 +762,22 @@ $id = Sanitizer::integer($input['id']);
 
 ### Other Models
 
-| Model | Table | Purpose |
-|-------|-------|---------|
-| `AdoptionRequest.php` | `Adoption_Requests` | Adoption applications |
-| `MedicalRecord.php` | `Medical_Records` | Veterinary records |
-| `Inventory.php` | `Inventory` | Supplies tracking |
-| `Invoice.php` | `Invoices` | Billing invoices |
-| `Payment.php` | `Payments` | Payment records |
-| `ActivityLog.php` | `Activity_Logs` | User activity tracking |
-| `ImpoundRecord.php` | `Impound_Records` | Animal intake records |
-| `FeedingRecord.php` | `Feeding_Records` | Feeding logs |
-| `Veterinarian.php` | `Veterinarians` | Vet information |
-| `Role.php` | `Roles` | User roles |
+```
+┌─────────────────────┬───────────────────┬───────────────────────┐
+│ Model               │ Table             │ Purpose               │
+├─────────────────────┼───────────────────┼───────────────────────┤
+│ AdoptionRequest.php │ Adoption_Requests │ Adoption applications │
+│ MedicalRecord.php   │ Medical_Records   │ Veterinary records    │
+│ Inventory.php       │ Inventory         │ Supplies tracking     │
+│ Invoice.php         │ Invoices          │ Billing invoices      │
+│ Payment.php         │ Payments          │ Payment records       │
+│ ActivityLog.php     │ Activity_Logs     │ User activity tracking│
+│ ImpoundRecord.php   │ Impound_Records   │ Animal intake records │
+│ FeedingRecord.php   │ Feeding_Records   │ Feeding logs          │
+│ Veterinarian.php    │ Veterinarians     │ Vet information       │
+│ Role.php            │ Roles             │ User roles            │
+└─────────────────────┴───────────────────┴───────────────────────┘
+```
 
 ---
 
@@ -707,17 +814,21 @@ Defines notification routes
 
 ## 🔒 Security Summary
 
-| Feature | Implementation |
-|---------|----------------|
-| Password Storage | `password_hash()` with bcrypt |
-| Authentication | JWT tokens (HS256) |
-| SQL Injection | PDO prepared statements |
-| XSS Prevention | `Sanitizer` class auto-sanitizes all input |
-| CORS | Whitelist of allowed origins |
-| Rate Limiting | `RateLimiter` class (10 login/min, 100 API/min) |
-| Session Security | Stateless (JWT-based) |
-| Input Validation | `Validator` class with comprehensive rules |
-| Input Sanitization | `Sanitizer` class (HTML escaping, control char removal) |
+```
+┌────────────────────┬─────────────────────────────────────────────────────────┐
+│ Feature            │ Implementation                                          │
+├────────────────────┼─────────────────────────────────────────────────────────┤
+│ Password Storage   │ password_hash() with bcrypt                             │
+│ Authentication     │ JWT tokens (HS256)                                      │
+│ SQL Injection      │ PDO prepared statements                                 │
+│ XSS Prevention     │ Sanitizer class auto-sanitizes all input                │
+│ CORS               │ Whitelist of allowed origins                            │
+│ Rate Limiting      │ RateLimiter class (10 login/min, 100 API/min)           │
+│ Session Security   │ Stateless (JWT-based)                                   │
+│ Input Validation   │ Validator class with comprehensive rules                │
+│ Input Sanitization │ Sanitizer class (HTML escaping, control char removal)   │
+└────────────────────┴─────────────────────────────────────────────────────────┘
+```
 
 ---
 

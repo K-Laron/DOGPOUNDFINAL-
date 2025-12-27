@@ -94,12 +94,13 @@ const Card = {
     animal(animal, options = {}) {
         const { square = false } = options;
         const statusClass = Utils.getStatusBadgeClass(animal.Current_Status);
-        const imageUrl = animal.Image_URL || 'assets/images/placeholder-animal.svg';
+        const placeholder = Utils.getAnimalPlaceholder(animal.Type);
+        const imageUrl = animal.Image_URL || placeholder;
 
         return `
             <div class="card card-hover animal-card ${square ? 'square' : ''}" onclick="Router.navigate('/animals/${animal.AnimalID}')">
                 <div class="animal-card-image">
-                    <img src="${imageUrl}" alt="${animal.Name}" onerror="this.src='assets/images/placeholder-animal.svg'">
+                    <img src="${imageUrl}" alt="${animal.Name}" onerror="this.src='${placeholder}'">
                     <span class="badge ${statusClass}" style="position: absolute; top: 12px; right: 12px;">
                         ${animal.Current_Status}
                     </span>

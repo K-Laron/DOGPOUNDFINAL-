@@ -91,12 +91,16 @@ dogpound/
         │   ├── components.css# UI components
         │   ├── layouts.css   # Page layouts
         │   ├── animations.css# Transitions & effects
-        │   └── responsive.css# Media queries
+        │   ├── responsive.css# Media queries
+        │   └── enhancements.css # Enhanced UI features
         │
         ├── images/           # Static images
         │   ├── favicon.png
         │   ├── favicon.svg
-        │   └── placeholder-animal.svg
+        │   ├── placeholder-animal.svg # Generic animal placeholder
+        │   ├── placeholder-dog.svg    # Dog-specific placeholder
+        │   ├── placeholder-cat.svg    # Cat-specific placeholder
+        │   └── placeholder-other.svg  # Other animals placeholder
         │
         ├── js/               # JavaScript
         │   ├── app.js        # Main application
@@ -141,14 +145,18 @@ dogpound/
 
 ## 🔑 Key Files
 
-| File | Purpose |
-|------|---------|
-| `start.bat` | Starts PHP & frontend servers |
-| `stop.bat` | Stops all background servers |
-| `backend/app/config/config.php` | JWT secret, CORS, rate limits, app settings |
-| `backend/app/config/database.php` | MySQL connection settings |
-| `backend/app/utils/RateLimiter.php` | Rate limiting for API & login protection |
-| `backend/app/utils/Sanitizer.php` | Input sanitization for XSS prevention |
-| `database/schema.sql` | Full database schema |
-| `frontend/index.html` | SPA entry point |
-| `frontend/assets/js/app.js` | Main application bootstrap |
+```
+┌─────────────────────────────────────┬──────────────────────────────────────────┐
+│ File                                │ Purpose                                  │
+├─────────────────────────────────────┼──────────────────────────────────────────┤
+│ start.bat                           │ Starts PHP & frontend servers            │
+│ stop.bat                            │ Stops all background servers             │
+│ backend/app/config/config.php       │ JWT secret, CORS, rate limits, settings  │
+│ backend/app/config/database.php     │ MySQL connection settings                │
+│ backend/app/utils/RateLimiter.php   │ Rate limiting for API & login protection │
+│ backend/app/utils/Sanitizer.php     │ Input sanitization for XSS prevention    │
+│ database/schema.sql                 │ Full database schema                     │
+│ frontend/index.html                 │ SPA entry point                          │
+│ frontend/assets/js/app.js           │ Main application bootstrap               │
+└─────────────────────────────────────┴──────────────────────────────────────────┘
+```

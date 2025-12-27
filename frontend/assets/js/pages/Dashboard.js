@@ -464,10 +464,12 @@ const DashboardPage = {
             return;
         }
 
-        container.innerHTML = this.data.recentAnimals.map(animal => `
+        container.innerHTML = this.data.recentAnimals.map(animal => {
+            const placeholder = Utils.getAnimalPlaceholder(animal.Type);
+            return `
             <div class="flex items-center gap-4 p-4 hover:bg-hover cursor-pointer border-b border-color" onclick="Router.navigate('/animals/${animal.AnimalID}')">
                 <div class="avatar avatar-lg" style="border-radius: var(--radius-lg); overflow: hidden;">
-                    <img src="${animal.Image_URL || 'assets/images/placeholder-animal.svg'}" alt="${animal.Name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='assets/images/placeholder-animal.svg'">
+                    <img src="${animal.Image_URL || placeholder}" alt="${animal.Name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${placeholder}'">
                 </div>
                 <div class="flex-1 min-w-0">
                     <h4 class="font-semibold truncate">${animal.Name}</h4>
@@ -475,7 +477,7 @@ const DashboardPage = {
                 </div>
                 <span class="badge ${Utils.getStatusBadgeClass(animal.Current_Status)}">${animal.Current_Status}</span>
             </div>
-        `).join('');
+        `}).join('');
     },
 
     /**

@@ -69501,3 +69501,22 @@ Stack trace:
 (
 )
 
+[27-Dec-2025 08:52:33 Asia/Manila] PHP Warning:  Uncaught PDOException: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\AuthController.php:302
+Stack trace:
+#0 C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\AuthController.php(302): PDOStatement->execute(Array)
+#1 C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\AuthController.php(53): AuthController->logFailedLogin('admin@example.c...')
+#2 C:\Users\TESS LARON\Desktop\dogpound\backend\app\utils\Router.php(338): AuthController->login()
+#3 C:\Users\TESS LARON\Desktop\dogpound\backend\app\utils\Router.php(142): Router->callHandler('AuthController@...', Array)
+#4 C:\Users\TESS LARON\Desktop\dogpound\backend\app\bootstrap.php(172): Router->dispatch()
+#5 C:\Users\TESS LARON\Desktop\dogpound\backend\public\index.php(34): App->run()
+#6 {main}
+  thrown in C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\AuthController.php on line 302
+[27-Dec-2025 08:52:33 Asia/Manila] PHP Fatal error:  Maximum execution time of 60 seconds exceeded in C:\Users\TESS LARON\Desktop\dogpound\backend\app\controllers\AuthController.php on line 306
+[27-Dec-2025 08:52:36 Asia/Manila] Database Connection Error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[27-Dec-2025 08:52:36 Asia/Manila] Database initialization failed: Database connection failed. Please check configuration.
+[27-Dec-2025 08:53:27 Asia/Manila] Database Connection Error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[27-Dec-2025 08:53:27 Asia/Manila] Database initialization failed: Database connection failed. Please check configuration.
+[27-Dec-2025 08:59:42 Asia/Manila] Database Connection Error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[27-Dec-2025 08:59:42 Asia/Manila] Database initialization failed: Database connection failed. Please check configuration.
+[27-Dec-2025 08:59:50 Asia/Manila] Database Connection Error: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+[27-Dec-2025 08:59:50 Asia/Manila] Database initialization failed: Database connection failed. Please check configuration.
