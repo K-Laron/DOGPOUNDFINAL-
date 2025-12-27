@@ -254,6 +254,7 @@ This document provides a detailed explanation of the database schema, tables, re
 │ Adopter_UserID      │ INT FK   │ User requesting       │
 │ Request_Date        │ DATETIME │ When submitted        │
 │ Status              │ ENUM     │ Current status        │
+│ Interview_Date      │ DATETIME │ Scheduled interview   │
 │ Staff_Comments      │ TEXT     │ Internal notes        │
 │ Processed_By_UserID │ INT FK   │ Staff who processed   │
 └─────────────────────┴──────────┴───────────────────────┘

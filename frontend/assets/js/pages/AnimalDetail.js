@@ -99,6 +99,11 @@ const AnimalDetailPage = {
                 </div>
                 <div class="flex items-center gap-3">
                     <span class="badge ${statusClass}" style="font-size: var(--text-sm); padding: 8px 16px;">${animal.Current_Status}</span>
+                    ${animal.Current_Status === 'Available' ? `
+                        <button class="btn btn-primary" onclick="AnimalDetailPage.requestAdoption()">
+                            Request Adoption
+                        </button>
+                    ` : ''}
                     ${Auth.isStaff() ? `
                         <div class="dropdown" id="animal-actions-dropdown">
                             <button class="btn btn-secondary">
@@ -130,10 +135,6 @@ const AnimalDetailPage = {
                                 ` : ''}
                             </div>
                         </div>
-                    ` : animal.Current_Status === 'Available' ? `
-                        <button class="btn btn-primary" onclick="AnimalDetailPage.requestAdoption()">
-                            Request Adoption
-                        </button>
                     ` : ''}
                 </div>
             </div>
@@ -146,7 +147,7 @@ const AnimalDetailPage = {
                     <div class="card">
                         <div class="card-body p-0">
                             <img 
-                                src="${animal.Image_URL || placeholder}" 
+                                src="${animal.Image_URL && animal.Image_URL.trim() ? animal.Image_URL : placeholder}" 
                                 alt="${animal.Name}"
                                 style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-xl);"
                                 onerror="this.src='${placeholder}'"
@@ -288,11 +289,15 @@ const AnimalDetailPage = {
 
             if (response.success) {
                 this.medicalRecords = response.data.data || response.data;
-                this.renderMedicalRecords();
+            } else {
+                this.medicalRecords = [];
             }
         } catch (error) {
             console.error('Failed to load medical records:', error);
+            this.medicalRecords = [];
         }
+
+        this.renderMedicalRecords();
     },
 
     /**
@@ -350,11 +355,15 @@ const AnimalDetailPage = {
 
             if (response.success) {
                 this.feedingRecords = response.data.data || response.data;
-                this.renderFeedingRecords();
+            } else {
+                this.feedingRecords = [];
             }
         } catch (error) {
             console.error('Failed to load feeding records:', error);
+            this.feedingRecords = [];
         }
+
+        this.renderFeedingRecords();
     },
 
     /**
@@ -404,11 +413,15 @@ const AnimalDetailPage = {
 
             if (response.success) {
                 this.adoptionHistory = response.data || [];
-                this.renderAdoptionHistory();
+            } else {
+                this.adoptionHistory = [];
             }
         } catch (error) {
             console.error('Failed to load adoption history:', error);
+            this.adoptionHistory = [];
         }
+
+        this.renderAdoptionHistory();
     },
 
     /**

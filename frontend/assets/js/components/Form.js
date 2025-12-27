@@ -184,7 +184,7 @@ const Form = {
                 break;
 
             case 'hidden':
-                return `<input type="hidden" id="${name}" name="${name}" value="${value || ''}">`;
+                return `<input type="hidden" id="${name}" name="${name}" value="${value || field.value || ''}">`;
 
             case 'divider':
                 return `<hr style="margin: var(--space-6) 0; border: none; border-top: 1px solid var(--border-color);">`;
@@ -425,11 +425,11 @@ const Form = {
         if (formGroup) {
             formGroup.classList.add('has-error');
             formGroup.classList.remove('has-success');
-            
+
             // Remove existing error
             formGroup.querySelector('.form-error')?.remove();
             formGroup.querySelector('.validation-icon')?.remove();
-            
+
             const errorEl = document.createElement('p');
             errorEl.className = 'form-error';
             errorEl.innerHTML = `
@@ -455,7 +455,7 @@ const Form = {
         if (formGroup) {
             formGroup.classList.add('has-success');
             formGroup.classList.remove('has-error');
-            
+
             // Remove existing error
             formGroup.querySelector('.form-error')?.remove();
 
@@ -478,7 +478,7 @@ const Form = {
 
         const icon = document.createElement('span');
         icon.className = `validation-icon validation-${type}`;
-        
+
         if (type === 'success') {
             icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         } else {
@@ -522,7 +522,7 @@ const Form = {
 
         const counter = document.createElement('span');
         counter.className = 'char-counter';
-        
+
         const updateCounter = () => {
             const currentLength = field.value.length;
             counter.textContent = `${currentLength}/${maxLength}`;

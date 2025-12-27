@@ -45,7 +45,7 @@ const Sidebar = {
                     label: 'Adoptions',
                     icon: 'file-text',
                     path: '/adoptions',
-                    roles: ['Admin', 'Staff', 'Adopter'],
+                    roles: ['Admin', 'Staff', 'Veterinarian', 'Adopter'],
                     badge: () => Store.get('pendingAdoptions') || 0
                 },
                 {

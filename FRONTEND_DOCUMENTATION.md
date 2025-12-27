@@ -747,7 +747,7 @@ Charts.area(canvasId, { labels, datasets })
     },
     {
         section: 'Management',
-        roles: ['Admin', 'Staff'],
+        roles: ['Admin', 'Staff', 'Veterinarian'],
         items: [
             { id: 'adoptions', label: 'Adoptions', path: '/adoptions', badge: () => pendingCount },
             { id: 'medical', label: 'Medical Records', path: '/medical' },
@@ -1194,3 +1194,56 @@ afterMount() {
     });
 }
 ```
+
+---
+
+## 📱 Mobile Responsive Design
+
+### Overview
+The application is fully responsive with special attention to data tables on mobile devices.
+
+### Responsive CSS (`responsive.css`)
+
+**Breakpoints**:
+```
+┌──────────────┬─────────────────────────────────────────────┐
+│ Breakpoint   │ Target                                      │
+├──────────────┼─────────────────────────────────────────────┤
+│ ≤1024px      │ Tablets - Sidebar becomes drawer            │
+│ ≤768px       │ Mobile - Tables convert to card layouts     │
+│ ≤480px       │ Small mobile - Compact spacing              │
+│ ≤360px       │ Extra small - Hide non-essential elements   │
+└──────────────┴─────────────────────────────────────────────┘
+```
+
+### Mobile Table Card Layout
+On screens ≤768px, data tables transform into stacked card layouts:
+
+**Affected Pages**:
+- Adoptions (`#adoptions-container`)
+- Medical Records (`#records-container`)
+- Billing (`#billing-content`)
+- Inventory (`#inventory-container`)
+- Users (`#users-container`)
+
+**CSS Transformation**:
+```css
+/* Tables become vertical cards */
+table tbody { display: flex; flex-direction: column; }
+table tr { display: flex; flex-direction: column; padding: 16px; }
+table td { display: flex; justify-content: space-between; }
+table td::before { content: attr(data-label); } /* Column labels */
+```
+
+### Animal Cards (Mobile)
+On mobile, animal cards display with:
+- Full-width images (200px height)
+- Vertical stacking (image on top, info below)
+- Proper border radius on top corners only
+
+### Touch Enhancements (`main.css`)
+- `-webkit-overflow-scrolling: touch` for momentum scrolling
+- Minimum 44px touch targets on interactive elements
+- Safe area insets for notched devices
+- Disabled hover effects on touch devices
+

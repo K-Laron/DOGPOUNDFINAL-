@@ -225,28 +225,53 @@ class AdoptionController extends BaseController {
         }
         
         $this->validate([
-            'status' => 'required|in:Interview Scheduled,Approved,Rejected,Completed'
+            'status' => 'required|in:Interview Scheduled,Approved,Rejected,Completed',
+            'interview_date' => 'nullable|datetime'
         ]);
         
         $newStatus = $this->input('status');
         $comments = $this->input('comments');
+        $interviewDate = $this->input('interview_date');
         
         $this->db->beginTransaction();
         
         try {
-            // Update request
-            $stmt = $this->db->prepare("
-                UPDATE Adoption_Requests 
-                SET Status = :status, Staff_Comments = :comments, Processed_By_UserID = :staff_id
-                WHERE RequestID = :id
-            ");
-            
-            $stmt->execute([
-                'status' => $newStatus,
-                'comments' => $comments,
-                'staff_id' => $this->user['UserID'],
-                'id' => $id
-            ]);
+            // Update request with interview date if status is Interview Scheduled
+            if ($newStatus === 'Interview Scheduled' && $interviewDate) {
+                $stmt = $this->db->prepare("
+                    UPDATE Adoption_Requests 
+                    SET Status = :status, 
+                        Staff_Comments = :comments, 
+                        Processed_By_UserID = :staff_id,
+                        Interview_Date = :interview_date
+                    WHERE RequestID = :id
+                ");
+                
+                $stmt->execute([
+                    'status' => $newStatus,
+                    'comments' => $comments,
+                    'staff_id' => $this->user['UserID'],
+                    'interview_date' => $interviewDate,
+                    'id' => $id
+                ]);
+            } else {
+                // Clear interview date for other statuses
+                $stmt = $this->db->prepare("
+                    UPDATE Adoption_Requests 
+                    SET Status = :status, 
+                        Staff_Comments = :comments, 
+                        Processed_By_UserID = :staff_id,
+                        Interview_Date = NULL
+                    WHERE RequestID = :id
+                ");
+                
+                $stmt->execute([
+                    'status' => $newStatus,
+                    'comments' => $comments,
+                    'staff_id' => $this->user['UserID'],
+                    'id' => $id
+                ]);
+            }
             
             // If completed, update animal status and reject other pending requests
             if ($newStatus === 'Completed') {

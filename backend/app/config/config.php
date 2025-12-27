@@ -30,8 +30,8 @@ define('FRONTEND_URL', 'http://localhost:3000');
 // JWT CONFIGURATION
 // ============================================
 
-// Secret key for JWT signing (CHANGE THIS IN PRODUCTION!)
-define('JWT_SECRET', 'your-super-secret-key-change-this-in-production-minimum-32-characters');
+// Secret key for JWT signing (64-character secure key)
+define('JWT_SECRET', 'CdP@2025$Mgmt!Sys#Jwt&SecretKey^X9kL2mN4pQ6rS8tU0vW1xY3zA5bC7dE9f');
 
 // Token expiry times (in seconds)
 define('JWT_EXPIRY', 86400);           // 24 hours

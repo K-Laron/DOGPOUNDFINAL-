@@ -36,15 +36,15 @@ dogpound/
 │   │   │
 │   │   ├── controllers/      # Business Logic
 │   │   │   ├── BaseController.php
-│   │   │   ├── AdoptionController.php
+│   │   │   ├── AdoptionController.php # Adoptions (Admin, Staff, Vet access)
 │   │   │   ├── AnimalController.php
 │   │   │   ├── AuthController.php
 │   │   │   ├── BillingController.php
 │   │   │   ├── DashboardController.php
 │   │   │   ├── InventoryController.php
-│   │   │   ├── MedicalController.php
+│   │   │   ├── MedicalController.php  # Medical records & overdue tracking
 │   │   │   ├── NotificationController.php
-│   │   │   └── UserController.php
+│   │   │   └── UserController.php    # User management & profile stats logic
 │   │   │
 │   │   ├── middleware/       # Request Middleware
 │   │   │   └── AuthMiddleware.php
@@ -91,16 +91,15 @@ dogpound/
         │   ├── components.css# UI components
         │   ├── layouts.css   # Page layouts
         │   ├── animations.css# Transitions & effects
-        │   ├── responsive.css# Media queries
+        │   ├── responsive.css# Media queries & mobile card layouts
         │   └── enhancements.css # Enhanced UI features
         │
         ├── images/           # Static images
         │   ├── favicon.png
         │   ├── favicon.svg
-        │   ├── placeholder-animal.svg # Generic animal placeholder
-        │   ├── placeholder-dog.svg    # Dog-specific placeholder
-        │   ├── placeholder-cat.svg    # Cat-specific placeholder
-        │   └── placeholder-other.svg  # Other animals placeholder
+        │   ├── placeholder-cat.png    # Cat-specific placeholder
+        │   ├── placeholder-dog.png    # Dog-specific placeholder
+        │   └── placeholder-other.png  # Other animals placeholder
         │
         ├── js/               # JavaScript
         │   ├── app.js        # Main application

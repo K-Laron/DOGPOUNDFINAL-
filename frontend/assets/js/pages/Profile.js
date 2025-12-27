@@ -60,10 +60,10 @@ const ProfilePage = {
                         <div class="card-body" id="tab-content">
                             ${Loading.skeleton('text', { lines: 5 })}
                         </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
     },
 
     /**

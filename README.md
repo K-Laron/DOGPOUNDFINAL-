@@ -14,6 +14,16 @@ A comprehensive web-based application designed to streamline the operations of t
 *   **PDF Preview**: Preview all PDF exports before printing or downloading (Medical, Inventory, Billing).
 *   **Modern Interface**: Clean, responsive design with dark/light mode support and smooth animations.
 
+## 🔄 Recent Updates (December 27, 2025)
+
+*   **Mobile Responsive Tables**: Adoptions, Medical Records, Billing, Inventory, and Users tables now display as stacked cards on mobile devices - no horizontal scrolling.
+*   **Full-Width Animal Images**: Animal cards on mobile now show full-width images at the top for better visual impact.
+*   **Role-Based Access**: Expanded Veterinarian access to Adoption requests and histories (read-only).
+*   **Enhanced Stats**: Accurate, role-specific dashboard statistics for Vets, Staff, and Admins.
+*   **Medical Records**: Improved "Overdue" tracking logic to catch all missed treatments.
+*   **Data Integrity**: Fixed data loading issues for deceased animals and adoption histories.
+*   **Performance**: Optimized user statistics queries to use direct database counts.
+
 ## 🛠️ Tech Stack
 
 *   **Frontend**: HTML5, CSS3 (Custom Design System), Vanilla JavaScript (ES6+, SPA Architecture)

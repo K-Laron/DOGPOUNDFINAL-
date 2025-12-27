@@ -398,6 +398,7 @@
    TABLET AND BELOW (max-width: 1024px)
    ========================================== */
 @media (max-width: 1024px) {
+
     /* Sidebar - slide-in drawer on tablet/mobile */
     .sidebar {
         position: fixed;
@@ -537,6 +538,7 @@
    MOBILE (max-width: 768px)
    ========================================== */
 @media (max-width: 768px) {
+
     /* Root variable overrides */
     :root {
         --header-height: 56px;
@@ -816,7 +818,8 @@
     .form-select,
     .form-textarea {
         padding: var(--space-3) var(--space-4);
-        font-size: 16px; /* Prevent zoom on iOS */
+        font-size: 16px;
+        /* Prevent zoom on iOS */
     }
 
     .form-group {
@@ -887,7 +890,8 @@
     .form-select,
     .form-textarea {
         padding: var(--space-3);
-        font-size: 16px; /* Prevent zoom on iOS */
+        font-size: 16px;
+        /* Prevent zoom on iOS */
     }
 
     .form-label {
@@ -1154,6 +1158,7 @@
    MOBILE DATA TABLE CARD VIEW
    ========================================== */
 @media (max-width: 768px) {
+
     /* DataTable mobile enhancements */
     .data-table-wrapper .table-container {
         border: none;
@@ -1209,27 +1214,34 @@
    ========================================== */
 @media (max-width: 768px) {
     .animal-card {
-        flex-direction: row;
-        gap: var(--space-3);
+        flex-direction: column;
+        gap: 0;
     }
 
     .animal-card-image {
-        width: 100px;
-        height: 100px;
+        width: 100%;
+        height: 200px;
         flex-shrink: 0;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .animal-card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
     .animal-card-body {
-        padding: var(--space-3);
+        padding: var(--space-4);
         flex: 1;
     }
 
     .animal-card-name {
-        font-size: var(--text-base);
+        font-size: var(--text-lg);
     }
 
     .animal-card-info {
-        font-size: var(--text-xs);
+        font-size: var(--text-sm);
     }
 }
 
@@ -1426,6 +1438,276 @@
 
     .confirm-title {
         font-size: var(--text-base);
+    }
+}
+
+/* ==========================================
+   RESPONSIVE ADOPTIONS TABLE - CARD LAYOUT
+   ========================================== */
+@media (max-width: 768px) {
+
+    /* Remove table wrapper scroll */
+    #adoptions-container .table-wrapper,
+    #adoptions-container .table-container {
+        overflow-x: visible !important;
+        overflow: visible !important;
+    }
+
+    #adoptions-container .table {
+        min-width: unset !important;
+        width: 100% !important;
+    }
+
+    /* Hide table headers on mobile */
+    #adoptions-table thead,
+    #adoptions-container table thead {
+        display: none;
+    }
+
+    #adoptions-table tbody,
+    #adoptions-container table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    #adoptions-table tr,
+    #adoptions-container table tr {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        gap: var(--space-3);
+        border: 1px solid var(--border-primary);
+    }
+
+    #adoptions-table td,
+    #adoptions-container table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 !important;
+        border: none !important;
+        gap: var(--space-2);
+    }
+
+    /* Add labels before each cell */
+    #adoptions-table td::before,
+    #adoptions-container table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    /* Animal column - full width on top */
+    #adoptions-table td:first-child,
+    #adoptions-container table td:first-child {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: var(--space-3) !important;
+        border-bottom: 1px solid var(--border-primary) !important;
+        margin-bottom: var(--space-2);
+    }
+
+    #adoptions-table td:first-child::before,
+    #adoptions-container table td:first-child::before {
+        display: none;
+    }
+
+    #adoptions-table td:first-child .flex,
+    #adoptions-container table td:first-child .flex {
+        width: 100%;
+    }
+
+    #adoptions-table td:first-child img,
+    #adoptions-container table td:first-child img {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    /* Actions column - full width at bottom */
+    #adoptions-table td:last-child,
+    #adoptions-container table td:last-child {
+        justify-content: flex-end;
+        padding-top: var(--space-3) !important;
+        border-top: 1px solid var(--border-primary) !important;
+        margin-top: var(--space-2);
+    }
+
+    #adoptions-table td:last-child::before,
+    #adoptions-container table td:last-child::before {
+        display: none;
+    }
+
+    /* Status badge styling */
+    #adoptions-table td .badge,
+    #adoptions-container table td .badge {
+        font-size: var(--text-sm);
+        padding: var(--space-1) var(--space-3);
+    }
+}
+
+/* ==========================================
+   RESPONSIVE ALL DATA TABLES - CARD LAYOUT
+   Medical, Inventory, Billing, Users
+   ========================================== */
+@media (max-width: 768px) {
+
+    /* Target all main table containers */
+    #records-container .table-wrapper,
+    #records-container .table-container,
+    #inventory-container .table-wrapper,
+    #inventory-container .table-container,
+    #billing-content .table-wrapper,
+    #billing-content .table-container,
+    #users-container .table-wrapper,
+    #users-container .table-container {
+        overflow-x: visible !important;
+        overflow: visible !important;
+    }
+
+    #records-container .table,
+    #inventory-container .table,
+    #billing-content .table,
+    #users-container .table {
+        min-width: unset !important;
+        width: 100% !important;
+    }
+
+    /* Hide table headers */
+    #records-container table thead,
+    #inventory-container table thead,
+    #billing-content table thead,
+    #users-container table thead {
+        display: none;
+    }
+
+    /* Convert tbody to flex column */
+    #records-container table tbody,
+    #inventory-container table tbody,
+    #billing-content table tbody,
+    #users-container table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+    }
+
+    /* Each row becomes a card */
+    #records-container table tr,
+    #inventory-container table tr,
+    #billing-content table tr,
+    #users-container table tr {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4);
+        gap: var(--space-3);
+        border: 1px solid var(--border-primary);
+    }
+
+    /* Each cell becomes a flex row with label */
+    #records-container table td,
+    #inventory-container table td,
+    #billing-content table td,
+    #users-container table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 !important;
+        border: none !important;
+        gap: var(--space-2);
+    }
+
+    /* Add labels from data-label attribute */
+    #records-container table td::before,
+    #inventory-container table td::before,
+    #billing-content table td::before,
+    #users-container table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        flex-shrink: 0;
+    }
+
+    /* First cell (usually name/animal) - special styling */
+    #records-container table td:first-child,
+    #inventory-container table td:first-child,
+    #billing-content table td:first-child,
+    #users-container table td:first-child {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: var(--space-3) !important;
+        border-bottom: 1px solid var(--border-primary) !important;
+        margin-bottom: var(--space-2);
+    }
+
+    #records-container table td:first-child::before,
+    #inventory-container table td:first-child::before,
+    #billing-content table td:first-child::before,
+    #users-container table td:first-child::before {
+        display: none;
+    }
+
+    #records-container table td:first-child .flex,
+    #inventory-container table td:first-child .flex,
+    #billing-content table td:first-child .flex,
+    #users-container table td:first-child .flex {
+        width: 100%;
+    }
+
+    /* Avatar/image sizes in first cell */
+    #records-container table td:first-child img,
+    #inventory-container table td:first-child img,
+    #billing-content table td:first-child img,
+    #users-container table td:first-child img,
+    #records-container table td:first-child .avatar,
+    #inventory-container table td:first-child .avatar,
+    #billing-content table td:first-child .avatar,
+    #users-container table td:first-child .avatar {
+        width: 48px !important;
+        height: 48px !important;
+    }
+
+    /* Last cell (actions) - special styling */
+    #records-container table td:last-child,
+    #inventory-container table td:last-child,
+    #billing-content table td:last-child,
+    #users-container table td:last-child {
+        justify-content: flex-end;
+        padding-top: var(--space-3) !important;
+        border-top: 1px solid var(--border-primary) !important;
+        margin-top: var(--space-2);
+    }
+
+    #records-container table td:last-child::before,
+    #inventory-container table td:last-child::before,
+    #billing-content table td:last-child::before,
+    #users-container table td:last-child::before {
+        display: none;
+    }
+
+    /* Badge styling */
+    #records-container table td .badge,
+    #inventory-container table td .badge,
+    #billing-content table td .badge,
+    #users-container table td .badge {
+        font-size: var(--text-sm);
+        padding: var(--space-1) var(--space-3);
+    }
+
+    /* Ensure action buttons don't wrap weird */
+    #records-container table td:last-child .flex,
+    #inventory-container table td:last-child .flex,
+    #billing-content table td:last-child .flex,
+    #users-container table td:last-child .flex {
+        gap: var(--space-2);
     }
 }
 

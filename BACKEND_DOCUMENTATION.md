@@ -576,6 +576,14 @@ $id = Sanitizer::integer($input['id']);
 │ PUT    │ /users/{id}/status      │ Admin        │ Change account status │
 │ PUT    │ /users/{id}/role        │ Admin        │ Change user role      │
 └────────┴─────────────────────────┴──────────────┴───────────────────────┘
+
+**Key Features**:
+- **Profile Stats**: 
+  - Adopters: Adoption requests, completed adoptions, pending requests
+  - Veterinarians: Medical records, animals treated, records this month
+  - Staff/Admin: Verified counts from Activity Logs and database tables
+- **Avatar Management**: Upload, delete, and validation
+- **Role Management**: Admin can assign/revoke roles
 ```
 
 ---
@@ -613,7 +621,7 @@ $id = Sanitizer::integer($input['id']);
 ┌────────┬─────────────────────────┬──────────────┬─────────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose                 │
 ├────────┼─────────────────────────┼──────────────┼─────────────────────────┤
-│ GET    │ /adoptions              │ Staff+       │ List all requests       │
+│ GET    │ /adoptions              │ Staff/Vet+   │ List all requests       │
 │ GET    │ /adoptions/{id}         │ Any          │ Get request details     │
 │ POST   │ /adoptions              │ Any          │ Submit adoption request │
 │ PUT    │ /adoptions/{id}         │ Staff+       │ Update request          │
@@ -642,6 +650,11 @@ $id = Sanitizer::integer($input['id']);
 │ GET    │ /medical/animal/{id}    │ Staff+       │ Records for animal │
 │ GET    │ /medical/veterinarians  │ Staff+       │ List veterinarians │
 └────────┴─────────────────────────┴──────────────┴────────────────────┘
+
+**Key Features**:
+- **Overdue Tracking**: Intelligently identifies all animals with past-due treatments, regardless of their latest record status.
+- **Veterinarian Integration**: Links medical records to veterinarian profiles.
+
 ```
 
 ---
@@ -792,8 +805,10 @@ Defines user management routes
 ### `app/api/animals.php`
 Defines animal CRUD routes
 
-### `app/api/adoptions.php`
-Defines adoption request routes
+**Adoption Menu Access**:
+- Admin, Staff: Full access to all requests
+- Veterinarian: View access to requests and histories
+- Adopter: Access to their own requests only
 
 ### `app/api/medical.php`
 Defines medical record routes

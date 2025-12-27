@@ -432,7 +432,20 @@ const AdoptionsPage = {
                     label: 'New Status',
                     required: true,
                     options: availableStatuses.map(s => ({ value: s, label: s }))
-                },
+                }
+            ])}
+                    
+                    <div id="interview-date-container" class="form-group" style="display: none;">
+                        <label class="form-label" for="interview_date">Interview Date & Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" 
+                               id="interview_date" 
+                               name="interview_date" 
+                               class="form-input"
+                               min="${new Date().toISOString().slice(0, 16)}">
+                        <span class="form-hint">Select when the interview will be held</span>
+                    </div>
+                    
+                    ${Form.generate([
                 {
                     type: 'textarea',
                     name: 'comments',
@@ -446,15 +459,32 @@ const AdoptionsPage = {
             confirmText: 'Update Status',
             onConfirm: async () => {
                 const form = document.getElementById('process-form');
+                const statusSelect = form.querySelector('[name="status"]');
+                const interviewDateInput = form.querySelector('[name="interview_date"]');
+
+                // Validate interview date if Interview Scheduled is selected
+                if (statusSelect.value === 'Interview Scheduled' && !interviewDateInput.value) {
+                    Toast.error('Please select an interview date and time');
+                    interviewDateInput.focus();
+                    return false;
+                }
+
                 if (!Form.validate(form)) return false;
 
                 const data = Form.getData(form);
 
                 try {
-                    const response = await API.adoptions.process(adoption.RequestID || adoption.id, {
+                    const requestData = {
                         status: data.status,
                         comments: data.comments
-                    });
+                    };
+
+                    // Include interview date if applicable
+                    if (data.status === 'Interview Scheduled' && data.interview_date) {
+                        requestData.interview_date = data.interview_date;
+                    }
+
+                    const response = await API.adoptions.process(adoption.RequestID || adoption.id, requestData);
 
                     if (response.success) {
                         Toast.success('Adoption request updated successfully');
@@ -468,6 +498,28 @@ const AdoptionsPage = {
                 }
             }
         });
+
+        // Setup dynamic show/hide for interview date field
+        setTimeout(() => {
+            const statusSelect = document.querySelector('#process-form [name="status"]');
+            const interviewContainer = document.getElementById('interview-date-container');
+
+            if (statusSelect && interviewContainer) {
+                // Check initial value
+                if (statusSelect.value === 'Interview Scheduled') {
+                    interviewContainer.style.display = 'block';
+                }
+
+                // Listen for changes
+                statusSelect.addEventListener('change', (e) => {
+                    if (e.target.value === 'Interview Scheduled') {
+                        interviewContainer.style.display = 'block';
+                    } else {
+                        interviewContainer.style.display = 'none';
+                    }
+                });
+            }
+        }, 100);
     },
 
     /**

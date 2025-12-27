@@ -145,16 +145,35 @@ const LoginPage = {
         const submitBtn = form.querySelector('button[type="submit"]');
         const formData = Form.getData(form);
 
-        // Validate
-        if (this.mode === 'register') {
-            if (formData.password !== formData.password_confirmation) {
-                Toast.error('Passwords do not match');
+        // Clear previous errors
+        Utils.clearFormErrors();
+
+        // Validate based on mode
+        if (this.mode === 'login') {
+            // Login validation
+            const validation = Utils.validateForm(formData, {
+                username: ['required', { type: 'min', value: 3 }],
+                password: ['required', { type: 'min', value: 6 }]
+            });
+
+            if (!validation.isValid) {
+                Utils.showFormErrors(validation.errors);
                 return;
             }
+        } else {
+            // Registration validation
+            const validation = Utils.validateForm(formData, {
+                username: ['required', 'username'],
+                first_name: ['required', { type: 'name' }],
+                last_name: ['required', { type: 'name' }],
+                email: ['required', 'email'],
+                contact_number: ['phone'],
+                password: ['required', { type: 'password' }],
+                password_confirmation: ['required', { type: 'match', field: 'password', message: 'Passwords do not match' }]
+            });
 
-            const passwordValidation = Utils.validatePassword(formData.password);
-            if (!passwordValidation.isValid) {
-                Toast.error(passwordValidation.message);
+            if (!validation.isValid) {
+                Utils.showFormErrors(validation.errors);
                 return;
             }
         }

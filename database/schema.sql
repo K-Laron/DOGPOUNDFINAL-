@@ -134,6 +134,7 @@ CREATE TABLE IF NOT EXISTS Adoption_Requests (
     Adopter_UserID INT NOT NULL,
     Request_Date DATETIME DEFAULT CURRENT_TIMESTAMP,
     Status ENUM('Pending', 'Interview Scheduled', 'Approved', 'Rejected', 'Completed', 'Cancelled') DEFAULT 'Pending',
+    Interview_Date DATETIME DEFAULT NULL,
     Staff_Comments TEXT,
     Processed_By_UserID INT,
     Created_At DATETIME DEFAULT CURRENT_TIMESTAMP,

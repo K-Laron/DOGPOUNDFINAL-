@@ -173,19 +173,13 @@ class MedicalController extends BaseController {
                    u.FirstName as Vet_FirstName, u.LastName as Vet_LastName,
                    DATEDIFF(CURDATE(), mr.Next_Due_Date) as Days_Overdue
             FROM Medical_Records mr
-            INNER JOIN (
-                SELECT MAX(RecordID) as MaxID
-                FROM Medical_Records
-                GROUP BY AnimalID, Diagnosis_Type, COALESCE(Vaccine_Name, '')
-            ) latest ON mr.RecordID = latest.MaxID
             JOIN Animals a ON mr.AnimalID = a.AnimalID
-            JOIN Veterinarians v ON mr.VetID = v.VetID
-            JOIN Users u ON v.UserID = u.UserID
+            LEFT JOIN Veterinarians v ON mr.VetID = v.VetID
+            LEFT JOIN Users u ON v.UserID = u.UserID
             WHERE mr.Next_Due_Date IS NOT NULL 
             AND mr.Next_Due_Date != '0000-00-00'
             AND mr.Next_Due_Date < CURDATE()
             AND a.Is_Deleted = FALSE 
-            AND a.Current_Status NOT IN ('Adopted', 'Deceased', 'Reclaimed')
             ORDER BY mr.Next_Due_Date ASC
         ");
         

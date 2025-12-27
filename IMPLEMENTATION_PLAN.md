@@ -13,8 +13,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 │ Property          │ Value                                       │
 ├───────────────────┼─────────────────────────────────────────────┤
 │ Project Name      │ Catarman Dog Pound Management System        │
-│ Version           │ 1.2.0                                       │
-│ Last Updated      │ December 27, 2025                           │
+│ Version           │ 1.4.0                                       │
+│ Last Updated      │ December 27, 2025 (Night)                   │
 │ Type              │ Web Application (Single Page Application)   │
 │ Purpose           │ Streamline dog pound operations             │
 └───────────────────┴─────────────────────────────────────────────┘
@@ -154,7 +154,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 ├──────────────┼───────────┼───────┼─────────┼───────────┼─────────┼─────────┼───────────┤
 │ Admin        │ ✅        │ ✅    │ ✅      │ ✅        │ ✅      │ ✅      │ ✅        │
 │ Staff        │ ✅        │ ❌    │ ✅      │ ✅        │ ✅      │ ✅      │ ✅        │
-│ Veterinarian │ ✅        │ ❌    │ ✅      │ ❌        │ ✅      │ ❌      │ ❌        │
+│ Veterinarian │ ✅        │ ❌    │ ✅      │ 👁️ View   │ ✅      │ ❌      │ ❌        │
 │ Adopter      │ ❌        │ ❌    │ 👁️      │ ✅ Own    │ ❌      │ ❌      │ ❌        │
 └──────────────┴───────────┴───────┴─────────┴───────────┴─────────┴─────────┴───────────┘
 ```
@@ -295,6 +295,26 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Control character removal
 - [x] File-based rate limit storage
 - [x] HTTP 429 responses with Retry-After headers
+</details>
+
+<details open>
+<summary><b>11. End-Game Refinements (Dec 27 Updates)</b></summary>
+
+- [x] **Vet Role Expansion**: Grant Vets view access to adoption requests and history
+- [x] **Accurate Stats**: Fix User Profile stats to use `Activity_Logs` and specific DB columns
+- [x] **Medical Overdue**: Improve logic to catch ALL overdue records, not just latest
+- [x] **Data Fixes**: Ensure deceased animals and adoption history load correctly
+- [x] **Image Placeholders**: Fix correct fallback mapping for "Other" animal types
+</details>
+
+<details open>
+<summary><b>12. Mobile Responsive UI (Dec 27 Updates)</b></summary>
+
+- [x] **Card Layout Tables**: Convert all data tables to stacked cards on mobile (≤768px)
+- [x] **Full-Width Animal Images**: Animal cards show edge-to-edge images on mobile
+- [x] **Touch Optimizations**: 44px minimum touch targets, momentum scrolling
+- [x] **No Horizontal Scroll**: All pages fit within viewport on mobile
+- [x] **Responsive Containers**: Adoptions, Medical, Billing, Inventory, Users
 </details>
 
 ---
@@ -617,6 +637,8 @@ dogpound/
 │ 1.0.1   │ Dec 2025     │ Added rate limiting and input sanitization             │
 │ 1.1.0   │ Dec 26, 2025 │ Enhanced security module, updated documentation        │
 │ 1.2.0   │ Dec 27, 2025 │ PDF preview, invoices, adoption for all users          │
+│ 1.3.0   │ Dec 27, 2025 │ Role expansion (Vet), accurate stats, overdue logic fix  │
+│ 1.4.0   │ Dec 27, 2025 │ Mobile responsive tables, full-width images, touch UI    │
 └─────────┴──────────────┴────────────────────────────────────────────────────────┘
 ```
 

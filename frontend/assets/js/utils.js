@@ -589,6 +589,7 @@ const Utils = {
      * @returns {boolean}
      */
     isValidPhone(phone) {
+        if (!phone || phone.trim() === '') return true; // Optional field
         const regex = /^(09|\+639)\d{9}$/;
         return regex.test(phone.replace(/[\s-]/g, ''));
     },
@@ -628,6 +629,242 @@ const Utils = {
         result.message = strengthLabels[result.strength - 1] || 'Very Weak';
 
         return result;
+    },
+
+    /**
+     * Validate username
+     * @param {string} username
+     * @returns {Object} { isValid, message }
+     */
+    validateUsername(username) {
+        if (!username || username.trim() === '') {
+            return { isValid: false, message: 'Username is required' };
+        }
+        if (username.length < 3) {
+            return { isValid: false, message: 'Username must be at least 3 characters' };
+        }
+        if (username.length > 50) {
+            return { isValid: false, message: 'Username must not exceed 50 characters' };
+        }
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+            return { isValid: false, message: 'Username can only contain letters, numbers, and underscores' };
+        }
+        return { isValid: true, message: '' };
+    },
+
+    /**
+     * Validate name (first name, last name)
+     * @param {string} name
+     * @param {string} fieldName
+     * @returns {Object} { isValid, message }
+     */
+    validateName(name, fieldName = 'Name') {
+        if (!name || name.trim() === '') {
+            return { isValid: false, message: `${fieldName} is required` };
+        }
+        if (name.length < 2) {
+            return { isValid: false, message: `${fieldName} must be at least 2 characters` };
+        }
+        if (name.length > 50) {
+            return { isValid: false, message: `${fieldName} must not exceed 50 characters` };
+        }
+        if (!/^[a-zA-Z\s\-']+$/.test(name)) {
+            return { isValid: false, message: `${fieldName} can only contain letters, spaces, hyphens, and apostrophes` };
+        }
+        return { isValid: true, message: '' };
+    },
+
+    /**
+     * Validate email with detailed message
+     * @param {string} email
+     * @returns {Object} { isValid, message }
+     */
+    validateEmail(email) {
+        if (!email || email.trim() === '') {
+            return { isValid: false, message: 'Email is required' };
+        }
+        if (!this.isValidEmail(email)) {
+            return { isValid: false, message: 'Please enter a valid email address' };
+        }
+        if (email.length > 100) {
+            return { isValid: false, message: 'Email must not exceed 100 characters' };
+        }
+        return { isValid: true, message: '' };
+    },
+
+    /**
+     * Validate contact number with detailed message
+     * @param {string} phone
+     * @returns {Object} { isValid, message }
+     */
+    validatePhone(phone) {
+        if (!phone || phone.trim() === '') {
+            return { isValid: true, message: '' }; // Optional field
+        }
+        if (!this.isValidPhone(phone)) {
+            return { isValid: false, message: 'Please enter a valid Philippine phone number (e.g., 09171234567)' };
+        }
+        return { isValid: true, message: '' };
+    },
+
+    /**
+     * Validate required field
+     * @param {string} value
+     * @param {string} fieldName
+     * @returns {Object} { isValid, message }
+     */
+    validateRequired(value, fieldName = 'This field') {
+        if (value === null || value === undefined || (typeof value === 'string' && value.trim() === '')) {
+            return { isValid: false, message: `${fieldName} is required` };
+        }
+        return { isValid: true, message: '' };
+    },
+
+    /**
+     * Validate number range
+     * @param {number} value
+     * @param {Object} options - { min, max, fieldName }
+     * @returns {Object} { isValid, message }
+     */
+    validateNumber(value, options = {}) {
+        const { min = null, max = null, fieldName = 'Value' } = options;
+
+        if (value === null || value === undefined || value === '') {
+            return { isValid: true, message: '' }; // Let required validation handle empty
+        }
+
+        const num = parseFloat(value);
+        if (isNaN(num)) {
+            return { isValid: false, message: `${fieldName} must be a valid number` };
+        }
+        if (min !== null && num < min) {
+            return { isValid: false, message: `${fieldName} must be at least ${min}` };
+        }
+        if (max !== null && num > max) {
+            return { isValid: false, message: `${fieldName} must not exceed ${max}` };
+        }
+        return { isValid: true, message: '' };
+    },
+
+    /**
+     * Validate form data with rules
+     * @param {Object} data - Form data object
+     * @param {Object} rules - Validation rules { fieldName: [rules] }
+     * @returns {Object} { isValid, errors }
+     */
+    validateForm(data, rules) {
+        const errors = {};
+        let isValid = true;
+
+        for (const [field, fieldRules] of Object.entries(rules)) {
+            const value = data[field];
+
+            for (const rule of fieldRules) {
+                let result = { isValid: true, message: '' };
+
+                if (typeof rule === 'string') {
+                    // Built-in rules
+                    switch (rule) {
+                        case 'required':
+                            result = this.validateRequired(value, this.formatFieldLabel(field));
+                            break;
+                        case 'email':
+                            result = this.validateEmail(value);
+                            break;
+                        case 'phone':
+                            result = this.validatePhone(value);
+                            break;
+                        case 'username':
+                            result = this.validateUsername(value);
+                            break;
+                    }
+                } else if (typeof rule === 'object') {
+                    // Custom rules with options
+                    if (rule.type === 'min' && value) {
+                        if (value.length < rule.value) {
+                            result = { isValid: false, message: `${this.formatFieldLabel(field)} must be at least ${rule.value} characters` };
+                        }
+                    } else if (rule.type === 'max' && value) {
+                        if (value.length > rule.value) {
+                            result = { isValid: false, message: `${this.formatFieldLabel(field)} must not exceed ${rule.value} characters` };
+                        }
+                    } else if (rule.type === 'number') {
+                        result = this.validateNumber(value, { ...rule, fieldName: this.formatFieldLabel(field) });
+                    } else if (rule.type === 'match') {
+                        if (value !== data[rule.field]) {
+                            result = { isValid: false, message: rule.message || 'Values do not match' };
+                        }
+                    } else if (rule.type === 'password') {
+                        result = this.validatePassword(value);
+                    } else if (rule.type === 'name') {
+                        result = this.validateName(value, this.formatFieldLabel(field));
+                    }
+                }
+
+                if (!result.isValid) {
+                    errors[field] = result.message;
+                    isValid = false;
+                    break; // Stop at first error for this field
+                }
+            }
+        }
+
+        return { isValid, errors };
+    },
+
+    /**
+     * Format field name to label
+     * @param {string} field
+     * @returns {string}
+     */
+    formatFieldLabel(field) {
+        return field
+            .replace(/_/g, ' ')
+            .replace(/([A-Z])/g, ' $1')
+            .trim()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    },
+
+    /**
+     * Show form validation errors
+     * @param {Object} errors - { fieldName: errorMessage }
+     */
+    showFormErrors(errors) {
+        // Clear previous errors
+        document.querySelectorAll('.form-error').forEach(el => el.remove());
+        document.querySelectorAll('.form-input.error, .form-select.error, .form-textarea.error').forEach(el => {
+            el.classList.remove('error');
+        });
+
+        // Show new errors
+        for (const [field, message] of Object.entries(errors)) {
+            const input = document.querySelector(`[name="${field}"]`);
+            if (input) {
+                input.classList.add('error');
+                const errorEl = document.createElement('span');
+                errorEl.className = 'form-error';
+                errorEl.textContent = message;
+                input.parentNode.appendChild(errorEl);
+            }
+        }
+
+        // Show first error as toast
+        const firstError = Object.values(errors)[0];
+        if (firstError) {
+            Toast.error(firstError);
+        }
+    },
+
+    /**
+     * Clear form validation errors
+     */
+    clearFormErrors() {
+        document.querySelectorAll('.form-error').forEach(el => el.remove());
+        document.querySelectorAll('.form-input.error, .form-select.error, .form-textarea.error').forEach(el => {
+            el.classList.remove('error');
+        });
     },
 
     /**
@@ -1115,11 +1352,11 @@ const Utils = {
      */
     getAnimalPlaceholder(type) {
         const typeMap = {
-            'Dog': 'assets/images/placeholder-dog.svg',
-            'Cat': 'assets/images/placeholder-cat.svg',
-            'Other': 'assets/images/placeholder-other.svg'
+            'Dog': '/assets/images/placeholder-dog.png',
+            'Cat': '/assets/images/placeholder-cat.png',
+            'Other': '/assets/images/placeholder-other.png'
         };
-        return typeMap[type] || 'assets/images/placeholder-other.svg';
+        return typeMap[type] || '/assets/images/placeholder-other.png';
     }
 };
 

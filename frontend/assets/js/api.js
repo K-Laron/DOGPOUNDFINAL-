@@ -618,7 +618,7 @@ const API = {
      * Notification endpoints
      */
     notifications: {
-        list: () => API.request('/notifications')
+        list: () => API.get('/notifications')
     },
 
     /**

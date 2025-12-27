@@ -609,6 +609,8 @@ class UserController extends BaseController {
         // Add stats based on role
         if ($user['Role_Name'] === 'Adopter') {
             $response['stats'] = $this->getAdopterStats($user['UserID']);
+        } else if ($user['Role_Name'] === 'Veterinarian') {
+            $response['stats'] = $this->getVetStats($user['UserID']);
         } else {
             $response['stats'] = $this->getUserStats($user['UserID']);
         }
@@ -1076,14 +1078,14 @@ class UserController extends BaseController {
     private function getVeterinarianDetails($userId) {
         $stmt = $this->db->prepare("
             SELECT 
-                VetID,
-                License_Number,
-                Specialization,
-                Years_Experience,
-                Clinic_Name,
-                Bio,
-                Created_At,
-                Updated_At
+                VetID as vet_id,
+                License_Number as license_number,
+                Specialization as specialization,
+                Years_Experience as years_experience,
+                Clinic_Name as clinic_name,
+                Bio as bio,
+                Created_At as created_at,
+                Updated_At as updated_at
             FROM Veterinarians 
             WHERE UserID = :user_id
         ");
@@ -1234,13 +1236,13 @@ class UserController extends BaseController {
     }
 
     /**
-     * Get user statistics from activity logs
+     * Get user statistics
      * 
      * @param int $userId User ID
      * @return array User statistics
      */
     private function getUserStats($userId) {
-        // Animals registered (CREATE_ANIMAL)
+        // Animals registered by this user (from Activity_Logs since Animals table doesn't track creator)
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as count 
             FROM Activity_Logs 
@@ -1249,20 +1251,20 @@ class UserController extends BaseController {
         $stmt->execute(['user_id' => $userId]);
         $animalsRegistered = (int)$stmt->fetch()['count'];
         
-        // Adoptions processed (PROCESS_ADOPTION)
+        // Adoptions processed by this user
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as count 
-            FROM Activity_Logs 
-            WHERE UserID = :user_id AND Action_Type = 'PROCESS_ADOPTION'
+            FROM Adoption_Requests 
+            WHERE Processed_By_UserID = :user_id
         ");
         $stmt->execute(['user_id' => $userId]);
         $adoptionsProcessed = (int)$stmt->fetch()['count'];
         
-        // Invoices created (CREATE_INVOICE)
+        // Invoices created by this user
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as count 
-            FROM Activity_Logs 
-            WHERE UserID = :user_id AND Action_Type = 'CREATE_INVOICE'
+            FROM Invoices 
+            WHERE Issued_By_UserID = :user_id AND Is_Deleted = FALSE
         ");
         $stmt->execute(['user_id' => $userId]);
         $invoicesCreated = (int)$stmt->fetch()['count'];
@@ -1271,6 +1273,64 @@ class UserController extends BaseController {
             'animals_registered' => $animalsRegistered,
             'adoptions_processed' => $adoptionsProcessed,
             'invoices_created' => $invoicesCreated
+        ];
+    }
+    
+    /**
+     * Get veterinarian statistics
+     * 
+     * @param int $userId User ID
+     * @return array Veterinarian statistics
+     */
+    private function getVetStats($userId) {
+        // Get VetID for this user
+        $stmt = $this->db->prepare("SELECT VetID FROM Veterinarians WHERE UserID = :user_id");
+        $stmt->execute(['user_id' => $userId]);
+        $vet = $stmt->fetch();
+        
+        if (!$vet) {
+            return [
+                'medical_records' => 0,
+                'animals_treated' => 0,
+                'records_this_month' => 0
+            ];
+        }
+        
+        $vetId = $vet['VetID'];
+        
+        // Total medical records by this vet
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) as count 
+            FROM Medical_Records 
+            WHERE VetID = :vet_id
+        ");
+        $stmt->execute(['vet_id' => $vetId]);
+        $medicalRecords = (int)$stmt->fetch()['count'];
+        
+        // Unique animals treated
+        $stmt = $this->db->prepare("
+            SELECT COUNT(DISTINCT AnimalID) as count 
+            FROM Medical_Records 
+            WHERE VetID = :vet_id
+        ");
+        $stmt->execute(['vet_id' => $vetId]);
+        $animalsTreated = (int)$stmt->fetch()['count'];
+        
+        // Records this month
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) as count 
+            FROM Medical_Records 
+            WHERE VetID = :vet_id
+            AND MONTH(Created_At) = MONTH(CURRENT_DATE)
+            AND YEAR(Created_At) = YEAR(CURRENT_DATE)
+        ");
+        $stmt->execute(['vet_id' => $vetId]);
+        $recordsThisMonth = (int)$stmt->fetch()['count'];
+        
+        return [
+            'medical_records' => $medicalRecords,
+            'animals_treated' => $animalsTreated,
+            'records_this_month' => $recordsThisMonth
         ];
     }
     
