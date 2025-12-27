@@ -4,8 +4,9 @@
 
 ```
 dogpound/
-├── 📄 README.md              # Project documentation
-├── 📄 PROJECT_STRUCTURE.md   # This file
+├── 📄 README.md                 # Project documentation
+├── 📄 SYSTEM_DESIGN_DOCUMENT.md # Detailed system architecture & flows
+├── 📄 PROJECT_STRUCTURE.md      # This file
 ├── 🚀 start.bat              # Start development servers
 ├── 🛑 stop.bat               # Stop development servers
 │

@@ -114,15 +114,14 @@ A comprehensive web-based application designed to streamline the operations of t
 ## 📚 Documentation
 
 ```
-┌───────────────────────────┬──────────────────────────────────────┐
-│ Document                  │ Description                          │
-├───────────────────────────┼──────────────────────────────────────┤
-│ IMPLEMENTATION_PLAN.md    │ Complete project implementation plan │
-│ PROJECT_STRUCTURE.md      │ Detailed directory structure         │
-│ BACKEND_DOCUMENTATION.md  │ Backend code documentation           │
-│ FRONTEND_DOCUMENTATION.md │ Frontend code documentation          │
-│ DATABASE_DOCUMENTATION.md │ Database schema & queries            │
-└───────────────────────────┴──────────────────────────────────────┘
+| Document                  | Description                          |
+| ------------------------- | ------------------------------------ |
+| IMPLEMENTATION_PLAN.md    | Complete project implementation plan |
+| PROJECT_STRUCTURE.md      | Detailed directory structure         |
+| BACKEND_DOCUMENTATION.md  | Backend code documentation           |
+| FRONTEND_DOCUMENTATION.md | Frontend code documentation          |
+| DATABASE_DOCUMENTATION.md | Database schema & queries            |
+| SYSTEM_DESIGN_DOCUMENT.md | System architecture and flowcharts   |
 ```
 
 ## 📄 License
