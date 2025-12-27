@@ -114,7 +114,6 @@ A comprehensive web-based application designed to streamline the operations of t
 | [BACKEND_DOCUMENTATION.md](BACKEND_DOCUMENTATION.md) | Backend code documentation |
 | [FRONTEND_DOCUMENTATION.md](FRONTEND_DOCUMENTATION.md) | Frontend code documentation |
 | [DATABASE_DOCUMENTATION.md](DATABASE_DOCUMENTATION.md) | Database schema & queries |
-| [DEFENSE_GUIDE.md](DEFENSE_GUIDE.md) | Project defense preparation guide |
 
 ## 📄 License
 

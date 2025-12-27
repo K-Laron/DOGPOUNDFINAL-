@@ -580,4 +580,3 @@ dogpound/
 | [BACKEND_DOCUMENTATION.md](BACKEND_DOCUMENTATION.md) | Backend code documentation |
 | [FRONTEND_DOCUMENTATION.md](FRONTEND_DOCUMENTATION.md) | Frontend code documentation |
 | [DATABASE_DOCUMENTATION.md](DATABASE_DOCUMENTATION.md) | Database schema reference |
-| [DEFENSE_GUIDE.md](DEFENSE_GUIDE.md) | Project defense preparation |
