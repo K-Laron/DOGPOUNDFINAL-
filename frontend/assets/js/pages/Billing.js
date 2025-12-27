@@ -640,12 +640,24 @@ const BillingPage = {
                         </div>
                     `,
                     footer: `
-                        <button class="btn btn-secondary" data-action="cancel">Close</button>
-                        ${invoice.Status === 'Unpaid' ? `
-                            <button class="btn btn-primary" onclick="Modal.closeAll(); BillingPage.showRecordPaymentModal(${JSON.stringify(invoice).replace(/"/g, '&quot;')})">
-                                Record Payment
-                            </button>
-                        ` : ''}
+                        <div class="flex items-center justify-between w-full">
+                            <button class="btn btn-secondary" data-action="cancel">Close</button>
+                            <div class="flex gap-3">
+                                <button class="btn btn-ghost" onclick="BillingPage.generateInvoicePDF(${JSON.stringify(invoice).replace(/"/g, '&quot;')})">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                                        <rect x="6" y="14" width="12" height="8"></rect>
+                                    </svg>
+                                    Print Invoice
+                                </button>
+                                ${invoice.Status === 'Unpaid' ? `
+                                    <button class="btn btn-primary" onclick="Modal.closeAll(); BillingPage.showRecordPaymentModal(${JSON.stringify(invoice).replace(/"/g, '&quot;')})">
+                                        Record Payment
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
                     `
                 });
             }
@@ -909,7 +921,7 @@ const BillingPage = {
 
                 try {
                     const response = await API.billing.report(data);
-                    
+
                     if (response.success && response.data) {
                         // Download or display report
                         Toast.success('Report generated successfully');
@@ -964,7 +976,7 @@ const BillingPage = {
 
             doc.setFontSize(14);
             doc.setTextColor(127, 140, 141); // Gray
-            
+
             // Different title based on report type
             if (report_type === 'unpaid') {
                 doc.text('Unpaid Invoices Report', 14, 32);
@@ -1120,7 +1132,7 @@ const BillingPage = {
                 // For detailed report, add invoice list
                 if (report_type === 'detailed' && invoice_list && invoice_list.length > 0) {
                     yPos = doc.lastAutoTable.finalY + 15;
-                    
+
                     // Check if we need a new page
                     if (yPos > 250) {
                         doc.addPage();
@@ -1164,15 +1176,254 @@ const BillingPage = {
                 doc.text(`Page ${i} of ${pageCount}`, 196, 285, { align: 'right' });
             }
 
-            // Save
-            const filename = `financial-report-${date_range.from}-to-${date_range.to}.pdf`;
-            doc.save(filename);
+            // Show preview instead of direct download
+            // Filename: ReportType_FirstName_LastName_Date.pdf
+            const reportUser = Auth.currentUser();
+            const firstName = (reportUser?.first_name || 'User').replace(/\s+/g, '');
+            const lastName = (reportUser?.last_name || '').replace(/\s+/g, '');
+            const currentDate = new Date().toISOString().split('T')[0];
+            const reportTypeName = report_type === 'unpaid' ? 'UnpaidInvoices' :
+                report_type === 'detailed' ? 'DetailedFinancial' : 'FinancialSummary';
+            const filename = `${reportTypeName}_${firstName}_${lastName}_${currentDate}.pdf`;
+            PDFPreview.show(doc, filename);
 
-            Toast.success('Report downloaded');
+            Toast.success('Report ready for preview');
         } catch (error) {
             console.error('PDF generation failed:', error);
             console.error('Data received:', data);
             Toast.error('Failed to generate PDF: ' + (error.message || 'Unknown error'));
+        }
+    },
+
+    /**
+     * Generate individual invoice PDF
+     * @param {Object} invoice - Invoice data
+     */
+    generateInvoicePDF(invoice) {
+        if (!window.jspdf) {
+            Toast.error('PDF library not loaded');
+            return;
+        }
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const invoiceNumber = String(invoice.InvoiceID).padStart(5, '0');
+            const balance = invoice.Total_Amount - (invoice.Amount_Paid || 0);
+            const currentDate = new Date().toISOString().split('T')[0];
+
+            // ===== HEADER SECTION =====
+            // Company Logo/Name
+            doc.setFontSize(22);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont(undefined, 'bold');
+            doc.text('Catarman Dog Pound', 14, 20);
+            doc.setFont(undefined, 'normal');
+
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Animal Shelter Management System', 14, 27);
+            doc.text('Catarman, Northern Samar, Philippines', 14, 33);
+
+            // Invoice Title & Number (right side)
+            doc.setFontSize(28);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont(undefined, 'bold');
+            doc.text('INVOICE', 196, 20, { align: 'right' });
+            doc.setFont(undefined, 'normal');
+
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`#${invoiceNumber}`, 196, 28, { align: 'right' });
+
+            // Status Badge
+            let statusColor, statusTextColor;
+            switch (invoice.Status) {
+                case 'Paid':
+                    statusColor = [212, 237, 218];
+                    statusTextColor = [21, 87, 36];
+                    break;
+                case 'Partial':
+                    statusColor = [255, 243, 205];
+                    statusTextColor = [133, 100, 4];
+                    break;
+                default:
+                    statusColor = [248, 215, 218];
+                    statusTextColor = [114, 28, 36];
+            }
+
+            doc.setFillColor(...statusColor);
+            doc.roundedRect(155, 32, 41, 10, 2, 2, 'F');
+            doc.setFontSize(9);
+            doc.setTextColor(...statusTextColor);
+            doc.setFont(undefined, 'bold');
+            doc.text(invoice.Status.toUpperCase(), 175.5, 39, { align: 'center' });
+            doc.setFont(undefined, 'normal');
+
+            // Horizontal divider
+            doc.setDrawColor(220, 220, 220);
+            doc.line(14, 45, 196, 45);
+
+            // ===== BILLING INFO SECTION =====
+            let yPos = 55;
+
+            // Bill To (left)
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text('BILL TO', 14, yPos);
+
+            doc.setFontSize(12);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont(undefined, 'bold');
+            doc.text(`${invoice.Payer_FirstName} ${invoice.Payer_LastName}`, 14, yPos + 8);
+            doc.setFont(undefined, 'normal');
+
+            doc.setFontSize(10);
+            doc.setTextColor(80, 80, 80);
+            if (invoice.Payer_Email) doc.text(invoice.Payer_Email, 14, yPos + 15);
+            if (invoice.Payer_Contact) doc.text(invoice.Payer_Contact, 14, yPos + 21);
+
+            // Invoice Details (right)
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text('INVOICE DATE', 130, yPos);
+            doc.text('TRANSACTION TYPE', 130, yPos + 14);
+
+            doc.setFontSize(10);
+            doc.setTextColor(44, 62, 80);
+            doc.text(Utils.formatDate(invoice.Created_At), 130, yPos + 7);
+            doc.text(invoice.Transaction_Type || 'General', 130, yPos + 21);
+
+            // ===== ITEMS TABLE =====
+            yPos = 95;
+
+            const tableData = [];
+
+            // Add animal info if available
+            if (invoice.Animal_Name) {
+                tableData.push({
+                    description: `Service for: ${invoice.Animal_Name} (${invoice.Animal_Type})`,
+                    amount: ''
+                });
+            }
+
+            tableData.push({
+                description: invoice.Transaction_Type || 'Service Fee',
+                amount: Utils.formatCurrency(invoice.Total_Amount)
+            });
+
+            doc.autoTable({
+                startY: yPos,
+                head: [['Description', 'Amount']],
+                body: tableData.map(row => [row.description, row.amount]),
+                theme: 'striped',
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 8
+                },
+                headStyles: {
+                    fillColor: [52, 73, 94],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                columnStyles: {
+                    0: { cellWidth: 145 },
+                    1: { cellWidth: 37, halign: 'right', fontStyle: 'bold' }
+                },
+                alternateRowStyles: { fillColor: [249, 250, 251] }
+            });
+
+            // ===== SUMMARY BOX =====
+            const tableEndY = doc.lastAutoTable.finalY + 10;
+
+            // Summary container
+            doc.setFillColor(249, 250, 251);
+            doc.roundedRect(120, tableEndY, 76, 55, 3, 3, 'F');
+            doc.setDrawColor(220, 220, 220);
+            doc.roundedRect(120, tableEndY, 76, 55, 3, 3, 'S');
+
+            // Subtotal
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Subtotal:', 125, tableEndY + 12);
+            doc.setTextColor(44, 62, 80);
+            doc.text(Utils.formatCurrency(invoice.Total_Amount), 191, tableEndY + 12, { align: 'right' });
+
+            // Amount Paid
+            doc.setTextColor(100, 100, 100);
+            doc.text('Amount Paid:', 125, tableEndY + 24);
+            doc.setTextColor(40, 167, 69);
+            doc.text(Utils.formatCurrency(invoice.Amount_Paid || 0), 191, tableEndY + 24, { align: 'right' });
+
+            // Divider
+            doc.setDrawColor(200, 200, 200);
+            doc.line(125, tableEndY + 32, 191, tableEndY + 32);
+
+            // Balance Due
+            doc.setFontSize(11);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont(undefined, 'bold');
+            doc.text('Balance Due:', 125, tableEndY + 45);
+
+            if (balance > 0) {
+                doc.setTextColor(220, 53, 69);
+            } else {
+                doc.setTextColor(40, 167, 69);
+            }
+            doc.text(Utils.formatCurrency(balance), 191, tableEndY + 45, { align: 'right' });
+            doc.setFont(undefined, 'normal');
+
+            // ===== PAYMENT HISTORY =====
+            if (invoice.payments && invoice.payments.length > 0) {
+                const paymentY = tableEndY + 70;
+
+                doc.setFontSize(11);
+                doc.setTextColor(44, 62, 80);
+                doc.setFont(undefined, 'bold');
+                doc.text('Payment History', 14, paymentY);
+                doc.setFont(undefined, 'normal');
+
+                const paymentRows = invoice.payments.map(p => [
+                    Utils.formatDate(p.Payment_Date),
+                    p.Payment_Method,
+                    p.Reference_Number || '-',
+                    Utils.formatCurrency(p.Amount_Paid)
+                ]);
+
+                doc.autoTable({
+                    head: [['Date', 'Method', 'Reference', 'Amount']],
+                    body: paymentRows,
+                    startY: paymentY + 5,
+                    theme: 'grid',
+                    styles: { fontSize: 9, cellPadding: 5 },
+                    headStyles: { fillColor: [108, 117, 125], textColor: 255 },
+                    alternateRowStyles: { fillColor: [250, 250, 250] }
+                });
+            }
+
+            // ===== FOOTER =====
+            doc.setDrawColor(220, 220, 220);
+            doc.line(14, 265, 196, 265);
+
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Thank you for your business!', 105, 273, { align: 'center' });
+
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text(`Generated on ${Utils.formatDateTime(new Date())} | Catarman Dog Pound`, 105, 280, { align: 'center' });
+
+            // Generate filename: Invoice_FirstName_LastName_Date.pdf
+            const firstName = (invoice.Payer_FirstName || 'Unknown').replace(/\s+/g, '');
+            const lastName = (invoice.Payer_LastName || '').replace(/\s+/g, '');
+            const filename = `Invoice_${firstName}_${lastName}_${currentDate}.pdf`;
+
+            PDFPreview.show(doc, filename);
+            Toast.success('Invoice ready for preview');
+
+        } catch (error) {
+            console.error('Invoice PDF generation failed:', error);
+            Toast.error('Failed to generate invoice PDF');
         }
     }
 };

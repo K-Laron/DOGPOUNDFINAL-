@@ -94,6 +94,9 @@ dogpound/
         │   └── responsive.css# Media queries
         │
         ├── images/           # Static images
+        │   ├── favicon.png
+        │   ├── favicon.svg
+        │   └── placeholder-animal.svg
         │
         ├── js/               # JavaScript
         │   ├── app.js        # Main application
@@ -109,8 +112,10 @@ dogpound/
         │   │   ├── DataTable.js
         │   │   ├── Form.js
         │   │   ├── Header.js
+        │   │   ├── HoverPreview.js
         │   │   ├── Loading.js
         │   │   ├── Modal.js
+        │   │   ├── PDFPreview.js  # PDF preview with print/download
         │   │   ├── Sidebar.js
         │   │   └── Toast.js
         │   │

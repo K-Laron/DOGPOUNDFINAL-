@@ -11,8 +11,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 | Property | Value |
 |----------|-------|
 | **Project Name** | Catarman Dog Pound Management System |
-| **Version** | 1.1.0 |
-| **Last Updated** | December 26, 2025 |
+| **Version** | 1.2.0 |
+| **Last Updated** | December 27, 2025 |
 | **Type** | Web Application (Single Page Application) |
 | **Purpose** | Streamline dog pound operations |
 
@@ -154,10 +154,10 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 | 🔐 **Authentication** | ✅ Complete | Login, Register, JWT, Password Hashing, Rate Limiting |
 | 👤 **User Management** | ✅ Complete | CRUD, Roles, Avatars, Profile Management |
 | 🐕 **Animal Management** | ✅ Complete | Registry, Images, Status, Impound, Feeding |
-| 🏠 **Adoption** | ✅ Complete | Requests, Workflow, Interview, History |
-| 🩺 **Medical Records** | ✅ Complete | Treatments, Diagnoses, Due Dates, Vet Assignment |
-| 💰 **Billing** | ✅ Complete | Invoices, Payments, PDF Reports |
-| 📦 **Inventory** | ✅ Complete | Stock, Categories, Alerts, Expiration |
+| 🏠 **Adoption** | ✅ Complete | All users can adopt, Requests, Workflow, Interview, History |
+| 🩺 **Medical Records** | ✅ Complete | Treatments, Diagnoses, Due Dates, Vet Assignment, PDF Export |
+| 💰 **Billing** | ✅ Complete | Invoices, Payments, PDF Preview, Individual Invoice Print |
+| 📦 **Inventory** | ✅ Complete | Stock, Categories, Alerts, Expiration, PDF Export |
 | 📊 **Dashboard** | ✅ Complete | Stats, Charts, Activity Feed, Quick Actions |
 | 🔔 **Notifications** | ✅ Complete | User Alerts, Unread Count, History |
 | 🛡️ **Security** | ✅ Complete | Rate Limiting, Sanitization, XSS Prevention |
@@ -227,7 +227,9 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Invoice generation
 - [x] Payment recording
 - [x] Invoice status tracking (Unpaid, Paid, Cancelled)
-- [x] PDF report generation (Summary, Detailed, Unpaid)
+- [x] PDF report generation with preview (Summary, Detailed, Unpaid)
+- [x] Individual invoice PDF print/download
+- [x] PDF filename format: ReportType_FirstName_LastName_Date.pdf
 - [x] Payment methods (Cash, GCash, Bank Transfer)
 - [x] Adoption fee calculation
 </details>
@@ -555,6 +557,7 @@ dogpound/
 | **1.0.0** | Dec 2025 | Initial release with all core modules |
 | **1.0.1** | Dec 2025 | Added rate limiting and input sanitization |
 | **1.1.0** | Dec 26, 2025 | Enhanced security module, updated documentation |
+| **1.2.0** | Dec 27, 2025 | PDF preview feature, individual invoice printing, adoption for all users |
 
 ---
 

@@ -56,14 +56,28 @@ const Header = {
                                 <button class="dropdown-item" onclick="Header.quickAction('medical')">
                                     Medical Record
                                 </button>
-                                ${!Auth.isVeterinarian() ? `
+                                ${(Auth.isAdmin() || Auth.hasRole('Staff')) ? `
                                 <button class="dropdown-item" onclick="Header.quickAction('inventory')">
                                     Inventory Item
+                                </button>
+                                <button class="dropdown-item" onclick="Header.quickAction('adoption')">
+                                    Adoption Request
+                                </button>
+                                <button class="dropdown-item" onclick="Header.quickAction('invoice')">
+                                    New Invoice
+                                </button>
+                                ` : ''}
+                                ${Auth.isAdmin() ? `
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" onclick="Header.quickAction('user')">
+                                    New User
                                 </button>
                                 ` : ''}
                             </div>
                         </div>
                     ` : ''}
+
+
                     
                     <button class="btn-icon btn-ghost" onclick="Header.toggleTheme()" title="${theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}">
                         ${theme === 'dark' ? this.icons.sun : this.icons.moon}
@@ -164,8 +178,33 @@ const Header = {
                     }
                 }, 300);
                 break;
+            case 'adoption':
+                Router.navigate('/adoptions');
+                setTimeout(() => {
+                    if (typeof AdoptionsPage !== 'undefined' && AdoptionsPage.showAddModal) {
+                        AdoptionsPage.showAddModal();
+                    }
+                }, 300);
+                break;
+            case 'invoice':
+                Router.navigate('/billing');
+                setTimeout(() => {
+                    if (typeof BillingPage !== 'undefined' && BillingPage.showAddModal) {
+                        BillingPage.showAddModal();
+                    }
+                }, 300);
+                break;
+            case 'user':
+                Router.navigate('/users');
+                setTimeout(() => {
+                    if (typeof UsersPage !== 'undefined' && UsersPage.showAddModal) {
+                        UsersPage.showAddModal();
+                    }
+                }, 300);
+                break;
         }
     },
+
 
     /**
      * Update page title

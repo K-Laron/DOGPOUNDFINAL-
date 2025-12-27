@@ -926,11 +926,15 @@ const InventoryPage = {
                 doc.text(`Page ${i} of ${pageCount}`, 196, 285, { align: 'right' });
             }
 
-            // Save
-            const filename = `inventory-report-${new Date().toISOString().split('T')[0]}.pdf`;
-            doc.save(filename);
+            // Show preview instead of direct download
+            // Filename: ReportType_FirstName_LastName_Date.pdf
+            const firstName = (user?.first_name || 'User').replace(/\s+/g, '');
+            const lastName = (user?.last_name || '').replace(/\s+/g, '');
+            const currentDate = new Date().toISOString().split('T')[0];
+            const filename = `InventoryReport_${firstName}_${lastName}_${currentDate}.pdf`;
+            PDFPreview.show(doc, filename);
 
-            Toast.success('Export downloaded');
+            Toast.success('PDF ready for preview');
         } catch (error) {
             console.error('Export failed:', error);
             Toast.error('Failed to generate PDF');

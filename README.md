@@ -6,11 +6,12 @@ A comprehensive web-based application designed to streamline the operations of t
 
 *   **User Management**: Role-based access control (Admin, Staff, Veterinarian, Adopter) with secure JWT authentication and profile management.
 *   **Animal Management**: Complete lifecycle tracking from intake to adoption, including image uploads and status updates.
-*   **Adoption Portal**: Dedicated interface for adopters to browse animals, submit requests, and track adoption status.
-*   **Medical Records**: Detailed veterinary logs for each animal, accessible by veterinarians and staff.
-*   **Billing System**: Invoice generation, payment tracking, and PDF report generation (summary, detailed, unpaid).
-*   **Inventory System**: Track supplies, monitor stock levels, and receive low-stock alerts.
+*   **Adoption Portal**: All authenticated users can browse and adopt animals, with staff/admin approval workflow.
+*   **Medical Records**: Detailed veterinary logs for each animal, with PDF export and preview.
+*   **Billing System**: Invoice generation, payment tracking, individual invoice printing, and PDF reports with preview before download.
+*   **Inventory System**: Track supplies, monitor stock levels, and receive low-stock alerts with PDF export.
 *   **Dashboard**: Real-time statistics, activity logs, and overdue task notifications.
+*   **PDF Preview**: Preview all PDF exports before printing or downloading (Medical, Inventory, Billing).
 *   **Modern Interface**: Clean, responsive design with dark/light mode support and smooth animations.
 
 ## 🛠️ Tech Stack

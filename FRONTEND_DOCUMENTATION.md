@@ -36,8 +36,10 @@ frontend/
         │   ├── DataTable.js
         │   ├── Form.js
         │   ├── Header.js
+        │   ├── HoverPreview.js
         │   ├── Loading.js
         │   ├── Modal.js
+        │   ├── PDFPreview.js
         │   ├── Sidebar.js
         │   └── Toast.js
         │
@@ -664,6 +666,36 @@ Loading.skeleton('stats', { count: 4 })
 
 ---
 
+### `components/PDFPreview.js`
+**Purpose**: PDF preview modal with Print and Download options
+
+**Methods**:
+```javascript
+PDFPreview.show(doc, filename)   // Show PDF preview modal
+PDFPreview.print()                // Print current PDF
+PDFPreview.download()             // Download current PDF
+```
+
+**Usage**:
+```javascript
+// Generate PDF with jsPDF
+const doc = new jsPDF();
+doc.text('Hello World', 10, 10);
+
+// Show preview instead of direct download
+const filename = 'Invoice_John_Doe_2025-12-27.pdf';
+PDFPreview.show(doc, filename);
+```
+
+**Features**:
+- Embedded PDF viewer in modal
+- Print button opens print dialog
+- Download button saves PDF with custom filename
+- Close button dismisses modal
+- Blob URL automatically cleaned up on close
+
+---
+
 ## 📄 Pages
 
 ### `pages/Login.js`
@@ -784,8 +816,10 @@ Loading.skeleton('stats', { count: 4 })
 **Features**:
 - Invoice creation
 - Payment recording
-- PDF report generation (summary, detailed, unpaid)
+- PDF report generation with preview (summary, detailed, unpaid)
+- Individual invoice PDF print/download
 - Filter by status/type/date
+- Filename format: `ReportType_FirstName_LastName_Date.pdf`
 
 ---
 
