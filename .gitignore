@@ -2,6 +2,7 @@
 # Logs
 # =============
 backend/logs/*.log
+backend/logs/rate_limits/
 *.log
 
 # =============
@@ -36,7 +37,7 @@ gemini.md
 # =============
 # Personal / Defense
 # =============
-DEFENSE_GUIDE.md
+# DEFENSE_GUIDE.md
 
 # =============
 # Environment / Secrets
