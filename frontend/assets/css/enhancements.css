@@ -143,7 +143,7 @@ html.theme-transitioning *::after {
         width: 100%;
         table-layout: auto;
     }
-    
+
     .table-container .table th,
     .table-container .table td {
         white-space: normal;
@@ -1285,6 +1285,37 @@ a:focus-visible {
 
 /* Note: Native browser tooltips are disabled via immediate CSS tooltip display */
 
+/* Header buttons - tooltip should appear BELOW (not above) */
+.header-actions .btn-icon[title]::after,
+.header-actions .btn[title]::after,
+.header .btn-icon[title]::after,
+.header .btn[title]::after {
+    bottom: auto;
+    top: calc(100% + 8px);
+    transform: translateX(-50%) translateY(-4px);
+}
+
+.header-actions .btn-icon[title]::before,
+.header-actions .btn[title]::before,
+.header .btn-icon[title]::before,
+.header .btn[title]::before {
+    bottom: auto;
+    top: calc(100% + 2px);
+    border-top-color: transparent;
+    border-bottom-color: var(--border-color);
+}
+
+.header-actions .btn-icon[title]:hover::after,
+.header-actions .btn-icon[title]:focus-visible::after,
+.header-actions .btn[title]:hover::after,
+.header-actions .btn[title]:focus-visible::after,
+.header .btn-icon[title]:hover::after,
+.header .btn-icon[title]:focus-visible::after,
+.header .btn[title]:hover::after,
+.header .btn[title]:focus-visible::after {
+    transform: translateX(-50%) translateY(0);
+}
+
 /* ==========================================
    ENHANCED BUTTON FOCUS STATES
    ========================================== */
@@ -1623,4 +1654,201 @@ a:focus-visible {
 .btn-icon.text-danger:hover {
     background-color: var(--color-danger-bg);
     color: var(--color-danger);
+}
+
+/* ==========================================
+   SCROLL-TO-TOP BUTTON (ENHANCED)
+   ========================================== */
+
+.scroll-to-top-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(var(--color-primary-rgb), 0.4),
+        0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: var(--z-fixed);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.scroll-to-top-btn.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.scroll-to-top-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 30px rgba(var(--color-primary-rgb), 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-to-top-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.scroll-to-top-btn svg {
+    transition: transform 0.2s ease;
+}
+
+.scroll-to-top-btn:hover svg {
+    transform: translateY(-2px);
+}
+
+/* Ripple effect on click */
+.scroll-to-top-btn::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+}
+
+.scroll-to-top-btn:active::after {
+    transform: scale(1.5);
+    opacity: 0;
+    transition: 0s;
+}
+
+/* Mobile positioning */
+@media (max-width: 768px) {
+    .scroll-to-top-btn {
+        bottom: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* Dark mode enhancements */
+[data-theme="dark"] .scroll-to-top-btn {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #5856D6 100%);
+    box-shadow: 0 4px 20px rgba(10, 132, 255, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .scroll-to-top-btn:hover {
+    box-shadow: 0 8px 30px rgba(10, 132, 255, 0.5),
+        0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* ==========================================
+   ENHANCED TABLE ROW HOVER
+   ========================================== */
+
+/* Safe row hover without breaking table layout */
+.table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(var(--color-primary-rgb), 0.06);
+}
+
+/* Active/Selected row state */
+.table tbody tr:active {
+    background-color: rgba(var(--color-primary-rgb), 0.08);
+}
+
+.table tbody tr.selected {
+    background-color: rgba(var(--color-primary-rgb), 0.1) !important;
+}
+
+/* Cell hover highlight for clickable cells */
+.table tbody td.clickable {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.table tbody td.clickable:hover {
+    color: var(--color-primary);
+}
+
+/* Action buttons fade in on row hover */
+.table tbody tr .action-buttons,
+.table tbody tr .table-actions,
+.table tbody tr td .flex.items-center.gap-1 {
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.table tbody tr:hover .action-buttons,
+.table tbody tr:hover .table-actions,
+.table tbody tr:hover td .flex.items-center.gap-1 {
+    opacity: 1;
+}
+
+/* Individual action button enhancements */
+.table tbody tr .btn-icon {
+    transition: all 0.15s ease;
+}
+
+.table tbody tr .btn-icon:hover {
+    transform: scale(1.1);
+    background-color: var(--bg-hover);
+}
+
+.table tbody tr .btn-icon:active {
+    transform: scale(0.95);
+}
+
+/* Specific action button colors on hover */
+.table tbody tr .btn-icon.edit-btn:hover,
+.table tbody tr .btn-icon[title*="Edit"]:hover,
+.table tbody tr .btn-icon[title*="edit"]:hover {
+    color: var(--color-primary);
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+}
+
+.table tbody tr .btn-icon.view-btn:hover,
+.table tbody tr .btn-icon[title*="View"]:hover,
+.table tbody tr .btn-icon[title*="view"]:hover {
+    color: var(--color-info);
+    background-color: var(--color-info-bg);
+}
+
+.table tbody tr .btn-icon.delete-btn:hover,
+.table tbody tr .btn-icon[title*="Delete"]:hover,
+.table tbody tr .btn-icon[title*="delete"]:hover {
+    color: var(--color-danger);
+    background-color: var(--color-danger-bg);
+}
+
+/* Row alternating subtle background */
+.table tbody tr:nth-child(even) {
+    background-color: rgba(0, 0, 0, 0.015);
+}
+
+[data-theme="dark"] .table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.015);
+}
+
+/* Enhanced dark mode table hover */
+[data-theme="dark"] .table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Badge hover effects in tables */
+.table tbody tr .badge {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover .badge {
+    transform: scale(1.02);
 }

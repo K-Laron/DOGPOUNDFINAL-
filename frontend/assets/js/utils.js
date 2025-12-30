@@ -1357,6 +1357,20 @@ const Utils = {
             'Other': '/assets/images/placeholder-other.png'
         };
         return typeMap[type] || '/assets/images/placeholder-other.png';
+    },
+
+    /**
+     * Get badge class for animal type
+     * @param {string} type - Animal type (Dog, Cat, Other)
+     * @returns {string} - Badge class
+     */
+    getAnimalTypeBadgeClass(type) {
+        const typeMap = {
+            'Dog': 'badge-primary',
+            'Cat': 'badge-success',
+            'Other': 'badge-warning'
+        };
+        return typeMap[type] || 'badge-gray';
     }
 };
 

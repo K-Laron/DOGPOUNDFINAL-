@@ -139,6 +139,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.4] - 2025-12-31
+
+### Added
+
+#### UI Enhancements
+- Smooth scroll-to-top button with gradient background, bounce animation, and ripple effect
+- Enhanced table row hover effects with subtle highlighting and action button fade-in
+- Color-coded action button hover states (blue for edit, cyan for view, red for delete)
+- Alternating row backgrounds for improved table readability
+- Color-coded animal type badges on cards (Dog=blue, Cat=green, Other=orange)
+- Consistent pagination across all pages (numbered buttons with first/last navigation)
+
+#### Dashboard Improvements
+- Real-time trend percentage calculations for "Total Animals" (compares current vs last month intakes)
+- Real-time trend percentage calculations for "Revenue This Month" (compares current vs last month collections)
+- Added "Others" animal type to Intake Overview chart (now shows Dogs, Cats, and Others)
+
+### Fixed
+- Header tooltips (theme switcher, etc.) now appear below buttons instead of above to prevent cutoff
+
+### Changed
+- Table row hover now uses primary color accent instead of generic gray
+- Scroll-to-top button uses premium gradient styling with shadow effects
+
+---
+
 ## [Unreleased]
 
 ### Planned

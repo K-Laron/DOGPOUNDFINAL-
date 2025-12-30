@@ -617,6 +617,11 @@ const DashboardPage = {
                     label: 'Cats',
                     data: data.map(d => d.cats || 0),
                     color: Charts.colors.success
+                },
+                {
+                    label: 'Others',
+                    data: data.map(d => d.others || 0),
+                    color: Charts.colors.warning
                 }
             ],
             showLegend: true,

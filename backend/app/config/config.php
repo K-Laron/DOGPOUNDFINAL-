@@ -14,7 +14,7 @@ define('APP_ENV', 'development');
 
 // Application Info
 define('APP_NAME', 'Catarman Dog Pound Management System');
-define('APP_VERSION', '1.0.3');
+define('APP_VERSION', '1.0.4');
 
 // ============================================
 // URL CONFIGURATION

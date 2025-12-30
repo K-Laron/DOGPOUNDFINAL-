@@ -543,16 +543,17 @@ Store.subscribe('user', (newUser, oldUser) => {
 **UI Helpers**:
 
 ```
-┌─────────────────────────────┬────────────────────────────────────┐
-│ Method                      │ Purpose                            │
-├─────────────────────────────┼────────────────────────────────────┤
-│ getStatusBadgeClass(status) │ Status CSS class                   │
-│ getInitials(name)           │ Get "JD" from "John Doe"           │
-│ stringToColor(str)          │ Generate color from string         │
-│ getAnimalPlaceholder(type)  │ Get placeholder image path         │
-│ sleep(ms)                   │ Async delay                        │
-│ announce(message)           │ Screen reader announcement         │
-└─────────────────────────────┴────────────────────────────────────┘
+┌──────────────────────────────────┬────────────────────────────────────┐
+│ Method                           │ Purpose                            │
+├──────────────────────────────────┼────────────────────────────────────┤
+│ getStatusBadgeClass(status)      │ Status CSS class                   │
+│ getAnimalTypeBadgeClass(type)    │ Animal type badge class (Dog/Cat/Other) │
+│ getInitials(name)                │ Get "JD" from "John Doe"           │
+│ stringToColor(str)               │ Generate color from string         │
+│ getAnimalPlaceholder(type)       │ Get placeholder image path         │
+│ sleep(ms)                        │ Async delay                        │
+│ announce(message)                │ Screen reader announcement         │
+└──────────────────────────────────┴────────────────────────────────────┘
 ```
 
 ---

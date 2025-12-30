@@ -108,7 +108,7 @@ const Card = {
                 <div class="card-body">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="card-title" style="margin: 0;">${animal.Name}</h3>
-                        <span class="badge badge-gray">${animal.Type}</span>
+                        <span class="badge ${Utils.getAnimalTypeBadgeClass(animal.Type)}">${animal.Type}</span>
                     </div>
                     <p class="text-secondary" style="font-size: var(--text-sm); margin-bottom: 12px;">
                         ${animal.Breed || 'Unknown breed'} • ${animal.Gender} • ${animal.Age_Group || 'Unknown age'}

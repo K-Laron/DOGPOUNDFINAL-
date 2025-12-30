@@ -193,10 +193,54 @@ class DashboardController extends BaseController {
         $stats['treatments_this_month'] = (int)$stats['medical']['upcoming_count']; // Using upcoming as proxy for now, or need specific query
         $stats['upcoming_treatments'] = (int)$stats['medical']['upcoming_count'];
         
-        // Calculate revenue trend (mock for now or real if desired)
+        // Calculate revenue trend (current month vs last month)
         $stats['revenue_this_month'] = (float)$stats['finance']['collected_this_month'];
-        $stats['revenue_trend'] = 0; // Placeholder
-        $stats['animals_trend'] = 0; // Placeholder
+        
+        // Get last month's revenue
+        $stmt = $this->db->prepare("
+            SELECT COALESCE(SUM(Total_Amount), 0) as last_month_revenue
+            FROM Invoices
+            WHERE Status = 'Paid' 
+            AND Is_Deleted = FALSE
+            AND MONTH(Updated_At) = MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+            AND YEAR(Updated_At) = YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+        ");
+        $stmt->execute();
+        $lastMonthRevenue = (float)$stmt->fetch()['last_month_revenue'];
+        
+        // Calculate revenue trend percentage
+        if ($lastMonthRevenue > 0) {
+            $stats['revenue_trend'] = round((($stats['revenue_this_month'] - $lastMonthRevenue) / $lastMonthRevenue) * 100);
+        } else {
+            $stats['revenue_trend'] = $stats['revenue_this_month'] > 0 ? 100 : 0;
+        }
+        
+        // Get current month animal intakes
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) as count FROM Animals 
+            WHERE Is_Deleted = FALSE
+            AND MONTH(Intake_Date) = MONTH(CURRENT_DATE)
+            AND YEAR(Intake_Date) = YEAR(CURRENT_DATE)
+        ");
+        $stmt->execute();
+        $currentMonthAnimals = (int)$stmt->fetch()['count'];
+        
+        // Get last month animal intakes
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) as count FROM Animals 
+            WHERE Is_Deleted = FALSE
+            AND MONTH(Intake_Date) = MONTH(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+            AND YEAR(Intake_Date) = YEAR(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH))
+        ");
+        $stmt->execute();
+        $lastMonthAnimals = (int)$stmt->fetch()['count'];
+        
+        // Calculate animals trend percentage
+        if ($lastMonthAnimals > 0) {
+            $stats['animals_trend'] = round((($currentMonthAnimals - $lastMonthAnimals) / $lastMonthAnimals) * 100);
+        } else {
+            $stats['animals_trend'] = $currentMonthAnimals > 0 ? 100 : 0;
+        }
         
         Response::success($stats, "Dashboard statistics retrieved");
     }
@@ -223,7 +267,8 @@ class DashboardController extends BaseController {
                     DATE_FORMAT(Intake_Date, '%a') as label, -- Mon, Tue
                     DATE(Intake_Date) as date_val,
                     SUM(CASE WHEN Type = 'Dog' THEN 1 ELSE 0 END) as dogs,
-                    SUM(CASE WHEN Type = 'Cat' THEN 1 ELSE 0 END) as cats
+                    SUM(CASE WHEN Type = 'Cat' THEN 1 ELSE 0 END) as cats,
+                    SUM(CASE WHEN Type = 'Other' THEN 1 ELSE 0 END) as others
                 FROM Animals 
                 WHERE Is_Deleted = FALSE 
                 AND DATE(Intake_Date) BETWEEN :start_date AND :end_date
@@ -248,7 +293,8 @@ class DashboardController extends BaseController {
                     DATE_FORMAT(Intake_Date, '%b %Y') as label, -- Jan 2025
                     DATE_FORMAT(Intake_Date, '%Y-%m') as date_val,
                     SUM(CASE WHEN Type = 'Dog' THEN 1 ELSE 0 END) as dogs,
-                    SUM(CASE WHEN Type = 'Cat' THEN 1 ELSE 0 END) as cats
+                    SUM(CASE WHEN Type = 'Cat' THEN 1 ELSE 0 END) as cats,
+                    SUM(CASE WHEN Type = 'Other' THEN 1 ELSE 0 END) as others
                 FROM Animals 
                 WHERE Is_Deleted = FALSE 
                 AND Intake_Date >= :start_date
@@ -271,7 +317,8 @@ class DashboardController extends BaseController {
                     DATE_FORMAT(Intake_Date, '%Y') as label, -- 2025
                     DATE_FORMAT(Intake_Date, '%Y') as date_val,
                     SUM(CASE WHEN Type = 'Dog' THEN 1 ELSE 0 END) as dogs,
-                    SUM(CASE WHEN Type = 'Cat' THEN 1 ELSE 0 END) as cats
+                    SUM(CASE WHEN Type = 'Cat' THEN 1 ELSE 0 END) as cats,
+                    SUM(CASE WHEN Type = 'Other' THEN 1 ELSE 0 END) as others
                 FROM Animals 
                 WHERE Is_Deleted = FALSE 
                 AND Intake_Date >= :start_date
@@ -326,7 +373,8 @@ class DashboardController extends BaseController {
                     'label' => $label,
                     'date_val' => $key,
                     'dogs' => 0,
-                    'cats' => 0
+                    'cats' => 0,
+                    'others' => 0
                 ];
             }
         }

@@ -1,6 +1,6 @@
 # 🐕 Catarman Dog Pound Management System
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.x-777BB4.svg?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479A1.svg?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?logo=javascript&logoColor=black)

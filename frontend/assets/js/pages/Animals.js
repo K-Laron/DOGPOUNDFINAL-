@@ -277,23 +277,85 @@ const AnimalsPage = {
 
         const { page, perPage, total } = this.state.pagination;
         const totalPages = Math.ceil(total / perPage);
+        const start = ((page - 1) * perPage) + 1;
+        const end = Math.min(page * perPage, total);
 
         if (totalPages <= 1) {
-            container.innerHTML = '';
+            container.innerHTML = `
+                <div class="flex items-center justify-center mt-4 text-secondary" style="font-size: var(--text-sm);">
+                    <span>Showing ${total} animal${total !== 1 ? 's' : ''}</span>
+                </div>
+            `;
             return;
         }
 
+        // Generate page numbers with dots for large sets
+        const pages = this.getPageNumbers(page, totalPages);
+
         container.innerHTML = `
-            <div class="flex items-center justify-center gap-2">
-                <button class="btn btn-secondary btn-sm" onclick="AnimalsPage.goToPage(${page - 1})" ${page === 1 ? 'disabled' : ''}>
-                    Previous
-                </button>
-                <span class="text-secondary px-4">Page ${page} of ${totalPages}</span>
-                <button class="btn btn-secondary btn-sm" onclick="AnimalsPage.goToPage(${page + 1})" ${page === totalPages ? 'disabled' : ''}>
-                    Next
-                </button>
+            <div class="flex items-center justify-between mt-4" style="padding: 0 var(--space-2);">
+                <div class="text-secondary" style="font-size: var(--text-sm);">
+                    Showing ${start} to ${end} of ${total} animals
+                </div>
+                <div class="pagination">
+                    <button class="pagination-btn" onclick="AnimalsPage.goToPage(1)" ${page === 1 ? 'disabled' : ''}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="11 17 6 12 11 7"></polyline><polyline points="18 17 13 12 18 7"></polyline></svg>
+                    </button>
+                    <button class="pagination-btn" onclick="AnimalsPage.goToPage(${page - 1})" ${page === 1 ? 'disabled' : ''}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </button>
+                    ${pages.map(p => {
+            if (p === '...') {
+                return '<span class="pagination-btn" style="cursor: default;">...</span>';
+            }
+            return `
+                            <button class="pagination-btn ${p === page ? 'active' : ''}" onclick="AnimalsPage.goToPage(${p})">
+                                ${p}
+                            </button>
+                        `;
+        }).join('')}
+                    <button class="pagination-btn" onclick="AnimalsPage.goToPage(${page + 1})" ${page === totalPages ? 'disabled' : ''}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                    <button class="pagination-btn" onclick="AnimalsPage.goToPage(${totalPages})" ${page === totalPages ? 'disabled' : ''}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+                    </button>
+                </div>
             </div>
         `;
+    },
+
+    /**
+     * Get page numbers array with ellipsis for large sets
+     * @param {number} current
+     * @param {number} total
+     * @returns {Array}
+     */
+    getPageNumbers(current, total) {
+        const delta = 2;
+        const range = [];
+        const rangeWithDots = [];
+        let l;
+
+        for (let i = 1; i <= total; i++) {
+            if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+                range.push(i);
+            }
+        }
+
+        for (let i of range) {
+            if (l) {
+                if (i - l === 2) {
+                    rangeWithDots.push(l + 1);
+                } else if (i - l !== 1) {
+                    rangeWithDots.push('...');
+                }
+            }
+            rangeWithDots.push(i);
+            l = i;
+        }
+
+        return rangeWithDots;
     },
 
     /**
