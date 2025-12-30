@@ -1247,3 +1247,111 @@ On mobile, animal cards display with:
 - Safe area insets for notched devices
 - Disabled hover effects on touch devices
 
+---
+
+## ♿ Accessibility Features
+
+### ARIA Support
+All interactive elements include proper ARIA attributes:
+
+```
+┌───────────────────────────────┬────────────────────────────────────┐
+│ Element                       │ ARIA Attributes                    │
+├───────────────────────────────┼────────────────────────────────────┤
+│ Icon Buttons                  │ aria-label, title                  │
+│ Profile Avatar                │ role="button", tabindex="0"        │
+│ Theme Toggle                  │ aria-label (dynamic for state)     │
+│ DataTable Actions             │ aria-label with item name          │
+│ Decorative SVGs               │ aria-hidden="true"                 │
+│ Empty States                  │ role="status", aria-label          │
+│ Loading States                │ aria-busy="true"                   │
+└───────────────────────────────┴────────────────────────────────────┘
+```
+
+### Focus States (`enhancements.css`)
+Clear visible focus indicators for all interactive elements:
+- Icon buttons: 2px outline with 4px primary color ring
+- Pagination buttons: Same ring style
+- Dropdown items: Background color change
+- Tabs: Inset 2px primary ring
+- Avatar buttons: 3px primary ring
+- Table rows: Primary color left border
+
+### Motion Preferences
+```css
+@media (prefers-reduced-motion: reduce) {
+    /* All animations reduced to 0.01ms */
+}
+```
+
+### Screen Reader Utilities
+```css
+.visually-hidden   /* Hidden visually but accessible */
+.sr-only           /* Screen reader only content */
+```
+
+---
+
+## 🎨 UI Polish Features
+
+### CSS Tooltips (`enhancements.css`)
+Pure CSS tooltips for buttons with `title` attribute:
+- Appears 8px above element on hover/focus
+- 150ms fade-in animation
+- Styled with theme colors
+- Arrow indicator pointing to element
+
+### Card Animations
+Staggered fade-in animations for grid layouts:
+
+```
+┌────────────────────┬─────────────────────────────────────────┐
+│ Component          │ Animation                               │
+├────────────────────┼─────────────────────────────────────────┤
+│ Stat Cards         │ 50ms delay between each (0-150ms)       │
+│ Animal Grid Cards  │ 30ms delay between each (0-210ms)       │
+│ Table Rows         │ 200ms fade-in                           │
+│ Empty State Icons  │ 3s floating bounce animation            │
+└────────────────────┴─────────────────────────────────────────┘
+```
+
+### Button Loading State
+Add `is-loading` class to show spinner:
+```javascript
+button.classList.add('is-loading');
+// Button text hidden, spinner appears
+```
+
+### Enhanced Empty States (`Card.js`)
+Improved `Card.empty()` method supports:
+- `icon` - Emoji or HTML icon
+- `title` - Main heading
+- `description` - Explanatory text
+- `hint` - Additional help text with links
+- `action` - Primary action button with icon
+- `secondaryAction` - Secondary action button
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+### Global Shortcuts (`app.js`)
+
+```
+┌─────────────────────┬──────────────────────────────────────┐
+│ Shortcut            │ Action                               │
+├─────────────────────┼──────────────────────────────────────┤
+│ /                   │ Focus search input                   │
+│ Ctrl/Cmd + K        │ Focus search (alternative)           │
+│ Escape              │ Close modals, dropdowns, blur inputs │
+│ ?                   │ Show keyboard shortcuts modal        │
+│ g then h            │ Navigate to Dashboard (home)         │
+│ g then a            │ Navigate to Animals                  │
+└─────────────────────┴──────────────────────────────────────┘
+```
+
+### Implementation
+Shortcuts are handled in `App.setupEventListeners()`:
+- Checks if input is focused before triggering shortcuts
+- Uses `_gPressed` flag for chord shortcuts (g+h, g+a)
+- 1 second timeout for chord completion

@@ -322,20 +322,31 @@ const Card = {
             icon = '📭',
             title = 'No data found',
             description = 'There are no items to display.',
-            action = null
+            hint = '',
+            action = null,
+            secondaryAction = null
         } = options;
 
         return `
             <div class="card">
-                <div class="empty-state">
-                    <div class="empty-state-icon" style="font-size: 48px;">${icon}</div>
+                <div class="empty-state" role="status" aria-label="${title}">
+                    <div class="empty-state-icon" aria-hidden="true">${icon}</div>
                     <h3 class="empty-state-title">${title}</h3>
                     <p class="empty-state-description">${description}</p>
                     ${action ? `
-                        <button class="btn btn-primary" onclick="${action.onClick}">
-                            ${action.label}
-                        </button>
+                        <div class="empty-state-action">
+                            <button class="btn btn-primary" onclick="${action.onClick}">
+                                ${action.icon || ''}
+                                ${action.label}
+                            </button>
+                            ${secondaryAction ? `
+                                <button class="btn btn-ghost" onclick="${secondaryAction.onClick}">
+                                    ${secondaryAction.label}
+                                </button>
+                            ` : ''}
+                        </div>
                     ` : ''}
+                    ${hint ? `<p class="empty-state-hint">${hint}</p>` : ''}
                 </div>
             </div>
         `;

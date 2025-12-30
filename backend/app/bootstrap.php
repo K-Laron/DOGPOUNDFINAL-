@@ -85,35 +85,70 @@ class App {
     
     /**
      * Handle CORS (Cross-Origin Resource Sharing) headers
+     * 
+     * CORS is a security mechanism that restricts cross-origin HTTP requests.
+     * Since our frontend (port 3000) and backend (port 8000) run on different
+     * origins, we must explicitly allow the frontend to make API requests.
+     * 
+     * This method also applies global rate limiting to prevent abuse.
      */
     private function handleCors() {
-        // Apply global rate limiting (if enabled)
+        // ====================================================
+        // RATE LIMITING
+        // Limit API requests per IP to prevent abuse/DDoS
+        // ====================================================
         if (defined('RATE_LIMIT_ENABLED') && RATE_LIMIT_ENABLED) {
             require_once APP_PATH . '/utils/RateLimiter.php';
+            // Check if this IP has exceeded the request limit (100/min by default)
+            // If exceeded, RateLimiter will send a 429 response and exit
             RateLimiter::checkGlobal();
         }
         
-        // Get the origin header
+        // ====================================================
+        // CORS ORIGIN VALIDATION
+        // Only allow requests from trusted frontend origins
+        // ====================================================
+        
+        // Get the origin of the incoming request
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
         
-        // Check if origin is allowed
+        // Check if this origin is in our whitelist (defined in config.php)
+        // This prevents malicious sites from making API requests
         if (in_array($origin, ALLOWED_ORIGINS) || in_array('*', ALLOWED_ORIGINS)) {
+            // Origin is trusted - echo it back in the response header
             header("Access-Control-Allow-Origin: " . ($origin ?: '*'));
         } else {
+            // Unknown origin - default to frontend URL for security
             header("Access-Control-Allow-Origin: " . FRONTEND_URL);
         }
         
-        // Set other CORS headers
-        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin");
-        header("Access-Control-Allow-Credentials: true");
-        header("Access-Control-Max-Age: 86400"); // Cache preflight for 24 hours
+        // ====================================================
+        // CORS RESPONSE HEADERS
+        // Tell the browser what's allowed in cross-origin requests
+        // ====================================================
         
-        // Set content type
+        // Which HTTP methods can the frontend use?
+        header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
+        
+        // Which headers can the frontend send?
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin");
+        
+        // Allow cookies/credentials in cross-origin requests
+        header("Access-Control-Allow-Credentials: true");
+        
+        // Cache preflight response for 24 hours (reduces OPTIONS requests)
+        header("Access-Control-Max-Age: 86400");
+        
+        // All API responses are JSON
         header("Content-Type: application/json; charset=UTF-8");
         
-        // Handle preflight OPTIONS request
+        // ====================================================
+        // PREFLIGHT REQUEST HANDLING
+        // Browsers send OPTIONS request before actual request
+        // to check if the request is allowed
+        // ====================================================
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            // Respond with 200 OK to preflight - no body needed
             http_response_code(200);
             exit;
         }

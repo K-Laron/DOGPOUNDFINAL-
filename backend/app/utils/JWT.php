@@ -41,46 +41,65 @@ class JWT {
     /**
      * Verify and decode JWT token
      * 
+     * This method validates the token's signature and expiration.
+     * It ensures the token hasn't been tampered with and is still valid.
+     * 
      * @param string $token JWT token to verify
      * @return array|false Decoded payload or false if invalid
      */
     public static function verify($token) {
-        // Split token into parts
+        // JWTs have 3 parts separated by dots: header.payload.signature
         $parts = explode('.', $token);
         
+        // Invalid format if not exactly 3 parts
         if (count($parts) !== 3) {
             return false;
         }
         
         list($base64Header, $base64Payload, $base64Signature) = $parts;
         
-        // Verify signature
+        // ====================================================
+        // SIGNATURE VERIFICATION
+        // Recreate the signature and compare with the provided one
+        // This ensures the token hasn't been tampered with
+        // ====================================================
         $expectedSignature = self::base64UrlEncode(
             hash_hmac('sha256', "{$base64Header}.{$base64Payload}", JWT_SECRET, true)
         );
         
-        // Use timing-safe comparison
+        // Use timing-safe comparison to prevent timing attacks
+        // (attackers can't guess the signature by measuring response time)
         if (!hash_equals($expectedSignature, $base64Signature)) {
             return false;
         }
         
-        // Decode payload
+        // ====================================================
+        // PAYLOAD EXTRACTION
+        // Decode the base64 payload to get the claims
+        // ====================================================
         $payload = json_decode(self::base64UrlDecode($base64Payload), true);
         
         if (!$payload) {
             return false;
         }
         
-        // Check expiration
+        // ====================================================
+        // EXPIRATION CHECK
+        // Ensure the token hasn't expired
+        // ====================================================
         if (isset($payload['exp']) && $payload['exp'] < time()) {
             return false;
         }
         
-        // Check not before (if set)
+        // ====================================================
+        // NOT BEFORE CHECK (optional claim)
+        // Token isn't valid until this timestamp
+        // ====================================================
         if (isset($payload['nbf']) && $payload['nbf'] > time()) {
             return false;
         }
         
+        // Token is valid - return the payload data
         return $payload;
     }
 

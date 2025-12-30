@@ -1,5 +1,11 @@
 # 🐕 Catarman Dog Pound Management System
 
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![PHP](https://img.shields.io/badge/PHP-8.x-777BB4.svg?logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479A1.svg?logo=mysql&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?logo=javascript&logoColor=black)
+![License](https://img.shields.io/badge/license-Educational-green.svg)
+
 A comprehensive web-based application designed to streamline the operations of the Catarman Dog Pound. This system handles user management, animal records, adoptions, veterinary data, billing, and inventory with a reactive, user-friendly interface.
 
 ## 🚀 Features
@@ -13,8 +19,15 @@ A comprehensive web-based application designed to streamline the operations of t
 *   **Dashboard**: Real-time statistics, activity logs, and overdue task notifications.
 *   **PDF Preview**: Preview all PDF exports before printing or downloading (Medical, Inventory, Billing).
 *   **Modern Interface**: Clean, responsive design with dark/light mode support and smooth animations.
+*   **Keyboard Shortcuts**: Navigate quickly with shortcuts (`/` for search, `?` for help, `g+h` for home).
 
+## ♿ Accessibility
 
+*   ARIA labels on all interactive elements
+*   Clear focus states for keyboard navigation
+*   Screen reader support with live regions
+*   Respects `prefers-reduced-motion` for users sensitive to animations
+*   High contrast mode support
 
 ## 🛠️ Tech Stack
 
@@ -113,17 +126,17 @@ A comprehensive web-based application designed to streamline the operations of t
 
 ## 📚 Documentation
 
-```
-| Document                  | Description                          |
-| ------------------------- | ------------------------------------ |
-| IMPLEMENTATION_PLAN.md    | Complete project implementation plan |
-| PROJECT_STRUCTURE.md      | Detailed directory structure         |
-| BACKEND_DOCUMENTATION.md  | Backend code documentation           |
-| FRONTEND_DOCUMENTATION.md | Frontend code documentation          |
-| DATABASE_DOCUMENTATION.md | Database schema & queries            |
-| SYSTEM_DESIGN_DOCUMENT.md | System architecture and flowcharts   |
-```
+| Document | Location | Description |
+| -------- | -------- | ----------- |
+| CHANGELOG.md | Root | Version history and release notes |
+| IMPLEMENTATION_PLAN.md | Root | Complete project implementation plan |
+| PROJECT_STRUCTURE.md | Root | Detailed directory structure |
+| DATABASE_DOCUMENTATION.md | Root | Database schema & queries |
+| BACKEND_DOCUMENTATION.md | `/docs` | Backend code documentation |
+| FRONTEND_DOCUMENTATION.md | `/docs` | Frontend code documentation |
+| SYSTEM_DESIGN_DOCUMENT.md | `/docs` | System architecture and flowcharts |
 
 ## 📄 License
 
 This project is for educational purposes.
+

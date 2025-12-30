@@ -31,7 +31,7 @@ const Header = {
 
         header.innerHTML = `
             <div class="header-left">
-                <button class="header-toggle btn-icon btn-ghost" onclick="Header.toggleMobileSidebar()">
+                <button class="header-toggle btn-icon btn-ghost" onclick="Header.toggleMobileSidebar()" aria-label="Toggle navigation menu" title="Open menu">
                     ${this.icons.menu}
                 </button>
                 <div>
@@ -79,15 +79,15 @@ const Header = {
 
 
                     
-                    <button class="btn-icon btn-ghost" onclick="Header.toggleTheme()" title="${theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}">
+                    <button class="btn-icon btn-ghost" onclick="Header.toggleTheme()" title="${theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}" aria-label="${theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}">
                         ${theme === 'dark' ? this.icons.sun : this.icons.moon}
                     </button>
                     
 
                     
-                    <div class="avatar avatar-sm" style="cursor: pointer; background: ${user?.avatar_url ? 'transparent' : Utils.stringToColor(user?.email || '')}" onclick="Router.navigate('/profile')">
+                    <div class="avatar avatar-sm" style="cursor: pointer; background: ${user?.avatar_url ? 'transparent' : Utils.stringToColor(user?.email || '')}" onclick="Router.navigate('/profile')" role="button" tabindex="0" aria-label="Go to your profile" title="View profile">
                         ${user?.avatar_url
-                ? `<img src="${user.avatar_url}" alt="Profile" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`
+                ? `<img src="${user.avatar_url}" alt="${user?.first_name || 'User'}'s profile picture" style="width: 100%; height: 100%; object-fit: cover; border-radius: inherit;">`
                 : Utils.getInitials(`${user?.first_name || ''} ${user?.last_name || ''}`)}
                     </div>
                 </div>

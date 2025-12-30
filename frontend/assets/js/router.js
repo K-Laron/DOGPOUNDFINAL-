@@ -345,29 +345,50 @@ const Router = {
 
     /**
      * Extract params from path
-     * @param {string} routePath - Route definition path
-     * @param {string} actualPath - Actual URL path
+     * 
+     * Compares a route definition (e.g., '/animals/:id') against an actual URL
+     * path (e.g., '/animals/123') and extracts the parameter values.
+     * 
+     * @param {string} routePath - Route definition path (may contain :params)
+     * @param {string} actualPath - Actual URL path from browser
      * @returns {Object|null} - Params object or null if no match
+     * 
+     * @example
+     * extractParams('/animals/:id', '/animals/123') 
+     * // Returns: { id: '123' }
+     * 
+     * extractParams('/users/:userId/posts/:postId', '/users/5/posts/42')
+     * // Returns: { userId: '5', postId: '42' }
      */
     extractParams(routePath, actualPath) {
+        // Split both paths into segments for comparison
+        // '/animals/:id' -> ['', 'animals', ':id']
+        // '/animals/123' -> ['', 'animals', '123']
         const routeParts = routePath.split('/');
         const pathParts = actualPath.split('/');
 
+        // If segment counts don't match, this route can't be a match
+        // (e.g., '/animals' won't match '/animals/123')
         if (routeParts.length !== pathParts.length) {
             return null;
         }
 
         const params = {};
 
+        // Compare each segment of the route with the actual path
         for (let i = 0; i < routeParts.length; i++) {
             if (routeParts[i].startsWith(':')) {
-                // This is a parameter
+                // This segment is a parameter placeholder (e.g., ':id')
+                // Extract the param name by removing the colon
                 const paramName = routeParts[i].slice(1);
+                // Store the actual value from the URL
                 params[paramName] = pathParts[i];
             } else if (routeParts[i] !== pathParts[i]) {
-                // Parts don't match
+                // Static segments must match exactly
+                // If they don't, this route doesn't match
                 return null;
             }
+            // If segments match exactly, continue to next segment
         }
 
         return params;
@@ -434,7 +455,7 @@ const Router = {
                 if (route.component && typeof route.component.render === 'function') {
                     const content = await route.component.render(params);
                     pageContent.innerHTML = content;
-                    
+
                     // Add enter transition
                     pageContent.classList.add('page-enter');
                     requestAnimationFrame(() => {

@@ -661,13 +661,15 @@ dogpound/
 ## 📚 Related Documentation
 
 ```
-┌───────────────────────────┬─────────────────────────────────┐
-│ Document                  │ Description                     │
-├───────────────────────────┼─────────────────────────────────┤
-│ README.md                 │ Project overview and quick start│
-│ PROJECT_STRUCTURE.md      │ Detailed directory structure    │
-│ BACKEND_DOCUMENTATION.md  │ Backend code documentation      │
-│ FRONTEND_DOCUMENTATION.md │ Frontend code documentation     │
-│ DATABASE_DOCUMENTATION.md │ Database schema reference       │
-└───────────────────────────┴─────────────────────────────────┘
+┌───────────────────────────┬───────────┬─────────────────────────────────┐
+│ Document                  │ Location  │ Description                     │
+├───────────────────────────┼───────────┼─────────────────────────────────┤
+│ README.md                 │ Root      │ Project overview and quick start│
+│ CHANGELOG.md              │ Root      │ Version history and release notes│
+│ PROJECT_STRUCTURE.md      │ Root      │ Directory structure             │
+│ DATABASE_DOCUMENTATION.md │ Root      │ Database schema reference       │
+│ BACKEND_DOCUMENTATION.md  │ /docs     │ Backend code documentation      │
+│ FRONTEND_DOCUMENTATION.md │ /docs     │ Frontend code documentation     │
+│ SYSTEM_DESIGN_DOCUMENT.md │ /docs     │ System architecture & flows     │
+└───────────────────────────┴───────────┴─────────────────────────────────┘
 ```

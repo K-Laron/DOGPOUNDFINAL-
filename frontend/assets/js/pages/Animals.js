@@ -196,11 +196,23 @@ const AnimalsPage = {
         }
 
         if (this.state.animals.length === 0) {
+            const hasFilters = this.state.filters.search || this.state.filters.type ||
+                this.state.filters.status || this.state.filters.gender;
+
             container.innerHTML = Card.empty({
-                icon: '🐾',
-                title: 'No animals found',
-                description: 'Try adjusting your filters or add a new animal.',
-                action: Auth.isStaff() ? { label: 'Add Animal', onClick: 'AnimalsPage.showAddModal()' } : null
+                icon: hasFilters ? '🔍' : '🐾',
+                title: hasFilters ? 'No matching animals' : 'No animals found',
+                description: hasFilters
+                    ? 'No animals match your current search or filter criteria.'
+                    : 'There are no animals in the shelter yet.',
+                hint: hasFilters
+                    ? 'Try adjusting your filters or <a href="javascript:AnimalsPage.clearFilters()">clear all filters</a>'
+                    : 'Animals added to the shelter will appear here.',
+                action: Auth.isStaff() ? {
+                    label: 'Add First Animal',
+                    onClick: 'AnimalsPage.showAddModal()',
+                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>'
+                } : null
             });
             return;
         }

@@ -5,10 +5,17 @@
 ```
 dogpound/
 ├── 📄 README.md                 # Project documentation
-├── 📄 SYSTEM_DESIGN_DOCUMENT.md # Detailed system architecture & flows
+├── 📄 CHANGELOG.md              # Version history
 ├── 📄 PROJECT_STRUCTURE.md      # This file
-├── 🚀 start.bat              # Start development servers
-├── 🛑 stop.bat               # Stop development servers
+├── 📄 IMPLEMENTATION_PLAN.md    # Implementation details
+├── 📄 DATABASE_DOCUMENTATION.md # Database schema reference
+├── 🚀 start.bat                 # Start development servers
+├── 🛑 stop.bat                  # Stop development servers
+│
+├── 📂 docs/                     # Extended documentation
+│   ├── BACKEND_DOCUMENTATION.md
+│   ├── FRONTEND_DOCUMENTATION.md
+│   └── SYSTEM_DESIGN_DOCUMENT.md
 │
 ├── 🗄️ database/
 │   ├── schema.sql            # Database structure & tables

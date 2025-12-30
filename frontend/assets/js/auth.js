@@ -259,20 +259,33 @@ const Auth = {
 
     /**
      * Start token refresh timer
+     * 
+     * This method schedules an automatic token refresh before the current
+     * access token expires. By refreshing 5 minutes early (REFRESH_THRESHOLD),
+     * we ensure the user never experiences an unexpected session timeout.
      */
     startRefreshTimer() {
-        // Clear existing timer
+        // Clear any existing timer to prevent duplicate refreshes
         this.stopRefreshTimer();
 
+        // Get when the current token expires (in milliseconds since epoch)
         const expiry = this.getTokenExpiry();
         if (!expiry) return;
 
-        // Calculate time until refresh (5 minutes before expiry)
+        // Calculate how long to wait before triggering refresh
+        // We subtract REFRESH_THRESHOLD (5 min) to refresh BEFORE expiry
+        // Example: If token expires at 10:00 AM and threshold is 5 min,
+        //          we schedule refresh for 9:55 AM
         const timeUntilRefresh = expiry - Date.now() - this.REFRESH_THRESHOLD;
 
+        // Only set timer if we haven't already passed the refresh window
         if (timeUntilRefresh > 0) {
             this.refreshTimer = setTimeout(async () => {
+                // Attempt to get a new access token using the refresh token
                 const success = await this.refreshToken();
+
+                // If refresh fails (e.g., refresh token also expired),
+                // force user to re-authenticate
                 if (!success) {
                     Toast.warning('Your session has expired. Please login again.');
                     this.logout();
