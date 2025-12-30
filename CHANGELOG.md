@@ -127,19 +127,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Inventory "Expiring Soon" threshold reduced from 30 days to 7 days for more accurate alerts
 - Stat card now displays "Expiring Soon (7 days)" label for clarity
+- Synchronized `APP_VERSION` to 1.0.3 across `config.php` and backend documentation
 
 ### Added
-- Comprehensive SYSTEM_DIAGRAMS.md with 10 diagram sections:
-  - System Architecture Diagram
-  - Context Diagram (Level 0 DFD)
-  - Functional Decomposition Diagram
-  - Conceptual Data Model (ERD)
-  - Module Interaction Matrix
-  - Data Flow Summary
-  - Key-Based Data Model
-  - Fully Attributed Data Model
-  - Use Case Diagram (all actors)
-  - Event Diagrams (6 event flows)
+- Comprehensive SYSTEM_DIAGRAMS.md with 10 diagram sections (System Architecture, ERD, Use Cases, Event Flows, etc.)
+- Standard CSS `line-clamp` property for better browser compatibility
+
+### Fixed
+- Cleaned up `.gitignore` and removed legacy `USE_CASE_DIAGRAM.md` references
+- Secured sensitive system diagrams and defense guides by handling them as private local files
 
 ---
 
