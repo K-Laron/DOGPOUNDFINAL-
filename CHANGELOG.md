@@ -111,6 +111,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.2] - 2025-12-30
+
+### Fixed
+- Removed horizontal scrolling on desktop tables (Billing, Inventory, Users)
+- Tables now fit within container without overflow on desktop
+
+### Changed
+- Increased table action button size from 28px to 32px for better clickability
+
+---
+
 ## [Unreleased]
 
 ### Planned

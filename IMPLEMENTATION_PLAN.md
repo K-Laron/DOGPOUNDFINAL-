@@ -635,6 +635,7 @@ dogpound/
 ├─────────┼──────────────┼────────────────────────────────────────────────────────┤
 │ 1.0.0   │ Dec 2025     │ Initial release with all core modules                  │
 │ 1.0.1   │ Dec 2025     │ Added rate limiting and input sanitization             │
+│ 1.0.2   │ Dec 30, 2025 │ Fixed table horizontal scroll, larger action buttons   │
 │ 1.1.0   │ Dec 26, 2025 │ Enhanced security module, updated documentation        │
 │ 1.2.0   │ Dec 27, 2025 │ PDF preview, invoices, adoption for all users          │
 │ 1.3.0   │ Dec 27, 2025 │ Role expansion (Vet), accurate stats, overdue logic fix  │
