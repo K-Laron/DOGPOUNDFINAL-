@@ -122,6 +122,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.3] - 2025-12-30
+
+### Changed
+- Inventory "Expiring Soon" threshold reduced from 30 days to 7 days for more accurate alerts
+- Stat card now displays "Expiring Soon (7 days)" label for clarity
+
+### Added
+- Comprehensive SYSTEM_DIAGRAMS.md with 10 diagram sections:
+  - System Architecture Diagram
+  - Context Diagram (Level 0 DFD)
+  - Functional Decomposition Diagram
+  - Conceptual Data Model (ERD)
+  - Module Interaction Matrix
+  - Data Flow Summary
+  - Key-Based Data Model
+  - Fully Attributed Data Model
+  - Use Case Diagram (all actors)
+  - Event Diagrams (6 event flows)
+
+---
+
 ## [Unreleased]
 
 ### Planned

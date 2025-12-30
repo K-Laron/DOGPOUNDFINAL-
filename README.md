@@ -132,6 +132,7 @@ A comprehensive web-based application designed to streamline the operations of t
 | IMPLEMENTATION_PLAN.md | Root | Complete project implementation plan |
 | PROJECT_STRUCTURE.md | Root | Detailed directory structure |
 | DATABASE_DOCUMENTATION.md | Root | Database schema & queries |
+| SYSTEM_DIAGRAMS.md | Root | Architecture, data models, use cases, event flows |
 | BACKEND_DOCUMENTATION.md | `/docs` | Backend code documentation |
 | FRONTEND_DOCUMENTATION.md | `/docs` | Frontend code documentation |
 | SYSTEM_DESIGN_DOCUMENT.md | `/docs` | System architecture and flowcharts |

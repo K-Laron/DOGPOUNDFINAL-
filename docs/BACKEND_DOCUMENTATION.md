@@ -125,7 +125,7 @@ HTTP Request
 ├─────────────────────────┼──────────────────────────────┼──────────────────────────────────────────┤
 │ APP_ENV                 │ Environment mode             │ 'development'                            │
 │ APP_NAME                │ Application name             │ 'Catarman Dog Pound Management System'   │
-│ APP_VERSION             │ Version number               │ '1.0.0'                                  │
+│ APP_VERSION             │ Version number               │ '1.0.3'                                  │
 │ BASE_URL                │ API base URL                 │ 'http://localhost:8000'                  │
 │ FRONTEND_URL            │ Frontend URL for CORS        │ 'http://localhost:3000'                  │
 │ JWT_SECRET              │ Token signing key            │ Should be changed in production!         │

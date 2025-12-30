@@ -194,7 +194,7 @@ class Inventory {
      * @param int $days Days until expiry
      * @return array Expiring items
      */
-    public function getExpiring($days = 30) {
+    public function getExpiring($days = 7) {
         $stmt = $this->db->prepare("
             SELECT *,
                    DATEDIFF(Expiration_Date, CURDATE()) as Days_Until_Expiry
@@ -231,7 +231,7 @@ class Inventory {
      * @param int $expiryDays Days for expiring soon threshold
      * @return array Alerts grouped by type
      */
-    public function getAlerts($expiryDays = 30) {
+    public function getAlerts($expiryDays = 7) {
         return [
             'low_stock' => $this->getLowStock(),
             'expiring_soon' => $this->getExpiring($expiryDays),
@@ -420,7 +420,7 @@ class Inventory {
                 SUM(CASE WHEN Quantity_On_Hand <= Reorder_Level THEN 1 ELSE 0 END) as low_stock_count,
                 SUM(CASE WHEN Quantity_On_Hand = 0 THEN 1 ELSE 0 END) as out_of_stock_count,
                 SUM(CASE WHEN Expiration_Date IS NOT NULL AND Expiration_Date < CURDATE() THEN 1 ELSE 0 END) as expired_count,
-                SUM(CASE WHEN Expiration_Date IS NOT NULL AND Expiration_Date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) as expiring_soon_count,
+                SUM(CASE WHEN Expiration_Date IS NOT NULL AND Expiration_Date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) as expiring_soon_count,
                 SUM(CASE WHEN Category = 'Medical' THEN 1 ELSE 0 END) as medical_items,
                 SUM(CASE WHEN Category = 'Food' THEN 1 ELSE 0 END) as food_items,
                 SUM(CASE WHEN Category = 'Cleaning' THEN 1 ELSE 0 END) as cleaning_items,

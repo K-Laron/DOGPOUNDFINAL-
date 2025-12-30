@@ -9,6 +9,7 @@ dogpound/
 ├── 📄 PROJECT_STRUCTURE.md      # This file
 ├── 📄 IMPLEMENTATION_PLAN.md    # Implementation details
 ├── 📄 DATABASE_DOCUMENTATION.md # Database schema reference
+├── 📄 SYSTEM_DIAGRAMS.md        # Architecture, data models, use cases
 ├── 🚀 start.bat                 # Start development servers
 ├── 🛑 stop.bat                  # Stop development servers
 │
