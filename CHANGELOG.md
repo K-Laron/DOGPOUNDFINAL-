@@ -165,6 +165,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.5] - 2026-01-01
+
+### Security Enhancements
+
+#### Environment Configuration
+- Added `.env` file support for secure configuration management
+- Created `Env.php` utility class to load environment variables
+- JWT secret now configurable via `JWT_SECRET` environment variable
+- Database credentials now configurable via `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASS`
+- Added `TRUSTED_PROXY` option for deployments behind reverse proxies
+- Added `CORS_ORIGINS` option for production CORS configuration
+
+#### Security Headers
+- Added `X-Content-Type-Options: nosniff` to prevent MIME sniffing
+- Added `X-Frame-Options: DENY` to prevent clickjacking
+- Added `X-XSS-Protection: 1; mode=block` for XSS filtering
+- Added `Referrer-Policy: strict-origin-when-cross-origin`
+- Added `Cache-Control: no-store, no-cache` for sensitive responses
+
+#### File Upload Hardening
+- Added MIME type verification using `finfo` extension
+- Added image validation with `getimagesize()` for image uploads
+- Replaced `uniqid()` with cryptographically secure `random_bytes()` for filenames
+
+#### Rate Limiter Security
+- IP detection now only trusts proxy headers when `TRUSTED_PROXY=true`
+- Prevents IP spoofing attacks to bypass rate limiting
+
+#### Production Mode
+- Application now defaults to production mode
+- Debug information hidden from error responses by default
+- Set `APP_ENV=development` in `.env` to enable debugging
+
+### Added
+- `.env.example` - Template for environment configuration
+- `backend/app/utils/Env.php` - Environment variable loader
+
+### Changed
+- `config.php` - Uses environment variables with fallbacks
+- `database.php` - Uses environment variables with fallbacks
+- `bootstrap.php` - Loads .env file and adds security headers
+- `BaseController.php` - Enhanced file upload security
+- `RateLimiter.php` - Hardened IP detection
+
+---
+
 ## [Unreleased]
 
 ### Planned

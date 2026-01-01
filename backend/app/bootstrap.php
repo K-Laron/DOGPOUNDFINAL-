@@ -7,6 +7,15 @@
  */
 
 // ============================================
+// LOAD ENVIRONMENT VARIABLES
+// ============================================
+
+// Load .env file if it exists (for development)
+// .env is in project root (dogpound/.env), APP_PATH is dogpound/backend/app
+require_once APP_PATH . '/utils/Env.php';
+Env::load(dirname(dirname(APP_PATH)) . '/.env');
+
+// ============================================
 // LOAD CONFIGURATION
 // ============================================
 
@@ -141,6 +150,27 @@ class App {
         
         // All API responses are JSON
         header("Content-Type: application/json; charset=UTF-8");
+        
+        // ====================================================
+        // SECURITY HEADERS
+        // Protect against common web vulnerabilities
+        // ====================================================
+        
+        // Prevent MIME type sniffing (stops browsers from guessing content type)
+        header("X-Content-Type-Options: nosniff");
+        
+        // Prevent clickjacking by disallowing iframe embedding
+        header("X-Frame-Options: DENY");
+        
+        // Enable browser XSS filter (legacy but still useful)
+        header("X-XSS-Protection: 1; mode=block");
+        
+        // Control referrer information sent with requests
+        header("Referrer-Policy: strict-origin-when-cross-origin");
+        
+        // Prevent caching of sensitive data
+        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+        header("Pragma: no-cache");
         
         // ====================================================
         // PREFLIGHT REQUEST HANDLING

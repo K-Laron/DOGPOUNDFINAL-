@@ -1,6 +1,6 @@
 # 🐕 Catarman Dog Pound Management System
 
-![Version](https://img.shields.io/badge/version-1.0.4-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.5-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.x-777BB4.svg?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479A1.svg?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?logo=javascript&logoColor=black)
@@ -42,9 +42,12 @@ A comprehensive web-based application designed to streamline the operations of t
 *   Password hashing using `password_hash()` / `password_verify()`
 *   PDO prepared statements for all database queries
 *   Role-based access control middleware
-*   CORS protection with whitelisted origins
+*   CORS protection with whitelisted origins (configurable via `CORS_ORIGINS`)
 *   **Rate Limiting**: Configurable limits for login attempts (10/min) and API requests (100/min)
 *   **Input Sanitization**: Automatic XSS prevention on all incoming request data
+*   **Security Headers**: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy
+*   **Environment Configuration**: Secure `.env` file support for secrets management
+*   **File Upload Validation**: MIME type verification and image validation
 
 ## ⚙️ Installation & Setup
 
@@ -67,9 +70,16 @@ A comprehensive web-based application designed to streamline the operations of t
     *   Import the seed data: `database/seeders.sql`
 
 3.  **Configuration**
-    *   Navigate to `backend/app/config/`
-    *   Update `database.php` with your database credentials
-    *   For production: Update `config.php` with a unique `JWT_SECRET`
+    *   Copy `.env.example` to `.env`: `cp .env.example .env`
+    *   Update `.env` with your database credentials:
+        ```env
+        DB_HOST=127.0.0.1
+        DB_PORT=3307
+        DB_NAME=catarman_dog_pound_db
+        DB_USER=root
+        DB_PASS=
+        ```
+    *   For production: Set a unique `JWT_SECRET` and `APP_ENV=production`
 
 4.  **Running the Application**
     *   Double-click `start.bat` in the root directory

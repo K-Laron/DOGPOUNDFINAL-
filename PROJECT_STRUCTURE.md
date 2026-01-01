@@ -10,6 +10,8 @@ dogpound/
 ├── 📄 IMPLEMENTATION_PLAN.md    # Implementation details
 ├── 📄 DATABASE_DOCUMENTATION.md # Database schema reference
 ├── 📄 SYSTEM_DIAGRAMS.md        # Architecture, data models, use cases
+├── 📄 .env.example              # Environment configuration template
+├── 📄 .env                      # Environment configuration (gitignored)
 ├── 🚀 start.bat                 # Start development servers
 ├── 🛑 stop.bat                  # Stop development servers
 │
@@ -73,6 +75,7 @@ dogpound/
 │   │   │   └── Veterinarian.php
 │   │   │
 │   │   └── utils/            # Utilities
+│   │       ├── Env.php       # Environment variable loader
 │   │       ├── JWT.php       # Token handling
 │   │       ├── RateLimiter.php # Rate limiting (API & login)
 │   │       ├── Response.php  # JSON responses

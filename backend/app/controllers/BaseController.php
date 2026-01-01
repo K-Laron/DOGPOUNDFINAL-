@@ -297,14 +297,43 @@ abstract class BaseController {
             return false;
         }
         
+        // ====================================================
+        // SECURITY: Verify actual MIME type (not just extension)
+        // This prevents uploading PHP files disguised as images
+        // ====================================================
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->file($file['tmp_name']);
+        $allowedMimes = $options['mime_types'] ?? ALLOWED_MIME_TYPES;
+        if (!in_array($mimeType, $allowedMimes)) {
+            error_log("File upload rejected: MIME type {$mimeType} not allowed");
+            return false;
+        }
+        
+        // ====================================================
+        // SECURITY: For images, verify it's actually a valid image
+        // getimagesize() will fail on non-image files
+        // ====================================================
+        $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (in_array($extension, $imageExtensions)) {
+            $imageInfo = @getimagesize($file['tmp_name']);
+            if ($imageInfo === false) {
+                error_log("File upload rejected: Not a valid image file");
+                return false;
+            }
+        }
+        
         // Create destination directory if not exists
         $uploadDir = UPLOAD_PATH . trim($destination, '/') . '/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
         
-        // Generate unique filename
-        $filename = uniqid() . '_' . time() . '.' . $extension;
+        // ====================================================
+        // SECURITY: Generate cryptographically secure filename
+        // Prevents filename guessing attacks
+        // ====================================================
+        $secureRandom = bin2hex(random_bytes(16));
+        $filename = $secureRandom . '_' . time() . '.' . $extension;
         $filepath = $uploadDir . $filename;
         
         // Move file

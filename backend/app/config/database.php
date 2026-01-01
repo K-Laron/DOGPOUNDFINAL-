@@ -8,14 +8,26 @@ class Database {
     // ============================================
     // DATABASE CREDENTIALS
     // ============================================
-    // Update these values for your environment
+    // SECURITY: In production, set environment variables:
+    // DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
     
-    private $host = "127.0.0.1"; // CHANGED: Use IP instead of 'localhost' for custom ports
-    private $port = "3307";      // ADDED: Port 3307 to match your XAMPP MySQL setting
-    private $database_name = "catarman_dog_pound_db";
-    private $username = "root";
-    private $password = "";
+    private $host;
+    private $port;
+    private $database_name;
+    private $username;
+    private $password;
     private $charset = "utf8mb4";
+    
+    /**
+     * Constructor - Initialize credentials from environment or defaults
+     */
+    public function __construct() {
+        $this->host = getenv('DB_HOST') ?: '127.0.0.1';
+        $this->port = getenv('DB_PORT') ?: '3307';
+        $this->database_name = getenv('DB_NAME') ?: 'catarman_dog_pound_db';
+        $this->username = getenv('DB_USER') ?: 'root';
+        $this->password = getenv('DB_PASS') ?: '';
+    }
     
     // ============================================
     // CONNECTION PROPERTIES

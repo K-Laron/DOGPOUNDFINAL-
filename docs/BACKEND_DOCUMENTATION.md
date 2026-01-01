@@ -121,18 +121,18 @@ HTTP Request
 
 ```
 ┌─────────────────────────┬──────────────────────────────┬──────────────────────────────────────────┐
-│ Constant                │ Purpose                      │ Default Value                            │
+│ Constant                │ Purpose                      │ Default / Env Variable                   │
 ├─────────────────────────┼──────────────────────────────┼──────────────────────────────────────────┤
-│ APP_ENV                 │ Environment mode             │ 'development'                            │
+│ APP_ENV                 │ Environment mode             │ getenv('APP_ENV') ?: 'production'        │
 │ APP_NAME                │ Application name             │ 'Catarman Dog Pound Management System'   │
-│ APP_VERSION             │ Version number               │ '1.0.4'                                  │
+│ APP_VERSION             │ Version number               │ '1.0.5'                                  │
 │ BASE_URL                │ API base URL                 │ 'http://localhost:8000'                  │
 │ FRONTEND_URL            │ Frontend URL for CORS        │ 'http://localhost:3000'                  │
-│ JWT_SECRET              │ Token signing key            │ Should be changed in production!         │
+│ JWT_SECRET              │ Token signing key            │ getenv('JWT_SECRET') ?: fallback         │
 │ JWT_EXPIRY              │ Access token life            │ 86400 (24 hours)                         │
 │ JWT_REFRESH_EXPIRY      │ Refresh token life           │ 604800 (7 days)                          │
-│ ALLOWED_ORIGINS         │ CORS whitelist               │ Array of allowed URLs                    │
-│ UPLOAD_PATH             │ File upload directory        │ /uploads/                        │
+│ ALLOWED_ORIGINS         │ CORS whitelist               │ getenv('CORS_ORIGINS') ?: localhost URLs │
+│ UPLOAD_PATH             │ File upload directory        │ /uploads/                                │
 │ MAX_FILE_SIZE           │ Max upload size              │ 5MB                                      │
 │ ALLOWED_EXTENSIONS      │ Permitted file types         │ ['jpg', 'jpeg', 'png', 'gif', 'webp']    │
 │ DEFAULT_PAGE_SIZE       │ Pagination default           │ 20                                       │
@@ -157,14 +157,13 @@ HTTP Request
 
 **Class: `Database`**
 
-**Properties**:
+**Properties** (loaded from environment or defaults in constructor):
 ```php
-private $host = "127.0.0.1";
-private $port = "3307";
-private $database_name = "catarman_dog_pound_db";
-private $username = "root";
-private $password = "";
-private $charset = "utf8mb4";
+$this->host = getenv('DB_HOST') ?: '127.0.0.1';
+$this->port = getenv('DB_PORT') ?: '3307';
+$this->database_name = getenv('DB_NAME') ?: 'catarman_dog_pound_db';
+$this->username = getenv('DB_USER') ?: 'root';
+$this->password = getenv('DB_PASS') ?: '';
 ```
 
 **Methods**:
@@ -174,7 +173,7 @@ private $charset = "utf8mb4";
 │ Method             │ Purpose                                                │
 ├────────────────────┼────────────────────────────────────────────────────────┤
 │ getConnection()    │ Returns PDO instance (lazy loading)                    │
-│ getInstance()      │ Singleton pattern - returns single Database instance     │
+│ getInstance()      │ Singleton pattern - returns single Database instance   │
 │ beginTransaction() │ Starts database transaction                            │
 │ commit()           │ Commits current transaction                            │
 │ rollback()         │ Rolls back current transaction                         │

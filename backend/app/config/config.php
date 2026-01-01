@@ -10,7 +10,8 @@
 // ============================================
 
 // Environment: 'development' or 'production'
-define('APP_ENV', 'development');
+// SECURITY: Set to 'production' before deployment to hide debug info
+define('APP_ENV', getenv('APP_ENV') ?: 'production');
 
 // Application Info
 define('APP_NAME', 'Catarman Dog Pound Management System');
@@ -31,7 +32,8 @@ define('FRONTEND_URL', 'http://localhost:3000');
 // ============================================
 
 // Secret key for JWT signing (64-character secure key)
-define('JWT_SECRET', 'CdP@2025$Mgmt!Sys#Jwt&SecretKey^X9kL2mN4pQ6rS8tU0vW1xY3zA5bC7dE9f');
+// SECURITY: In production, set JWT_SECRET environment variable
+define('JWT_SECRET', getenv('JWT_SECRET') ?: 'CdP@2025$Mgmt!Sys#Jwt&SecretKey^X9kL2mN4pQ6rS8tU0vW1xY3zA5bC7dE9f');
 
 // Token expiry times (in seconds)
 define('JWT_EXPIRY', 86400);           // 24 hours
@@ -41,17 +43,24 @@ define('JWT_REFRESH_EXPIRY', 604800);  // 7 days
 // CORS CONFIGURATION
 // ============================================
 
-// Allowed origins for CORS
-define('ALLOWED_ORIGINS', [
-    'http://localhost',
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://localhost:8080',
-    'http://127.0.0.1',
-    'http://127.0.0.1:5500',
-    FRONTEND_URL
-    // In production, add your actual domain here and remove localhost entries
-]);
+// SECURITY: In production, set CORS_ORIGINS env var to your domain only
+// Example: CORS_ORIGINS=https://yourdomain.com
+$corsOrigins = getenv('CORS_ORIGINS');
+if ($corsOrigins) {
+    // Production: Use configured origins (comma-separated)
+    define('ALLOWED_ORIGINS', array_map('trim', explode(',', $corsOrigins)));
+} else {
+    // Development: Allow localhost origins
+    define('ALLOWED_ORIGINS', [
+        'http://localhost',
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://localhost:8080',
+        'http://127.0.0.1',
+        'http://127.0.0.1:5500',
+        FRONTEND_URL
+    ]);
+}
 
 // ============================================
 // FILE UPLOAD SETTINGS

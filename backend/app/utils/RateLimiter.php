@@ -211,31 +211,45 @@ class RateLimiter {
     /**
      * Get client IP address
      * 
+     * SECURITY: Only trust proxy headers if explicitly configured
+     * This prevents IP spoofing attacks to bypass rate limiting
+     * 
      * @return string Client IP
      */
     private static function getClientIP() {
-        // Check for forwarded IP (behind proxy/load balancer)
-        $headers = [
-            'HTTP_CF_CONNECTING_IP',     // Cloudflare
-            'HTTP_X_FORWARDED_FOR',      // Standard proxy header
-            'HTTP_X_REAL_IP',            // Nginx proxy
-            'HTTP_CLIENT_IP',            // General
-            'REMOTE_ADDR'                // Direct connection
-        ];
+        // ====================================================
+        // SECURITY: Only trust forwarded headers if behind a known proxy
+        // Set TRUSTED_PROXY=true in .env if behind reverse proxy
+        // ====================================================
+        $trustProxy = getenv('TRUSTED_PROXY') === 'true';
         
-        foreach ($headers as $header) {
-            if (!empty($_SERVER[$header])) {
-                // X-Forwarded-For can contain multiple IPs, take the first
-                $ip = $_SERVER[$header];
-                if (strpos($ip, ',') !== false) {
-                    $ip = trim(explode(',', $ip)[0]);
-                }
-                
-                // Validate IP
-                if (filter_var($ip, FILTER_VALIDATE_IP)) {
-                    return $ip;
+        if ($trustProxy) {
+            // Check for forwarded IP (behind trusted proxy/load balancer)
+            $proxyHeaders = [
+                'HTTP_CF_CONNECTING_IP',     // Cloudflare
+                'HTTP_X_FORWARDED_FOR',      // Standard proxy header
+                'HTTP_X_REAL_IP',            // Nginx proxy
+            ];
+            
+            foreach ($proxyHeaders as $header) {
+                if (!empty($_SERVER[$header])) {
+                    $ip = $_SERVER[$header];
+                    // X-Forwarded-For can contain multiple IPs, take the first
+                    if (strpos($ip, ',') !== false) {
+                        $ip = trim(explode(',', $ip)[0]);
+                    }
+                    
+                    // Validate IP
+                    if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                        return $ip;
+                    }
                 }
             }
+        }
+        
+        // Default: Use direct connection IP (most secure)
+        if (!empty($_SERVER['REMOTE_ADDR']) && filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP)) {
+            return $_SERVER['REMOTE_ADDR'];
         }
         
         return 'unknown';
