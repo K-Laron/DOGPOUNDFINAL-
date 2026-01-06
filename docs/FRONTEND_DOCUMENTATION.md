@@ -546,7 +546,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 ┌──────────────────────────────────┬────────────────────────────────────┐
 │ Method                           │ Purpose                            │
 ├──────────────────────────────────┼────────────────────────────────────┤
-│ getStatusBadgeClass(status)      │ Status CSS class                   │
+│ getStatusBadgeClass(status)      │ Status CSS class (includes 'Reserved') │
 │ getAnimalTypeBadgeClass(type)    │ Animal type badge class (Dog/Cat/Other) │
 │ getInitials(name)                │ Get "JD" from "John Doe"           │
 │ stringToColor(str)               │ Generate color from string         │
@@ -907,6 +907,7 @@ PDFPreview.show(doc, filename);
 - Approve/reject requests
 - View request details
 - Submit new request (Adopter)
+- **Conditional Actions**: 'Process' button hidden for final statuses (Completed, Cancelled, Rejected)
 
 ---
 

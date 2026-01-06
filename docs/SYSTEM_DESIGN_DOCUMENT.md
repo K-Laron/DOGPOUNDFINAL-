@@ -490,11 +490,11 @@ User
       |                       |                  v
       v                       v           [( Update Animal )]
  [( Update Status )]   [( Update Status )]  [( Status:Adopted)]
- [( Set Date      )]          |                  |
+ [( Set Date      )]   [( Rsrvd / Avail )]       |
       |                       |                  v
-      |                       |           [( Reject Others )]
-      |                       |           [( For This Animal)]
-      |                       |                  |
+      |                       v           [( Reject Others )]
+      |              [( Reject Others )]  [( For This Animal)]
+      |              [( if Approved   )]         |
       +-----------+-----------+------------------+
                   |
                   v
@@ -508,6 +508,33 @@ User
                   |
                   v
                ( End )
+```
+
+### Cancel Request (`PUT /adoptions/{id}/cancel`)
+```ascii
+       ( Start )
+           |
+           v
+     [( Fetch Request )] --(Not Found)--> [ Return 404 ] --> ( End )
+           |
+           v
+       < Owner? > --(No)--> [ Return 403 ] --> ( End )
+           | (Yes)
+           v
+       < Pending? > --(No)--> [ Return 400 ] --> ( End )
+           | (Yes)
+           v
+     [( Set Status  )]
+     [( 'Cancelled' )]
+           |
+           v
+     [( Log Activity )]
+           |
+           v
+      / Return Success /
+           |
+           v
+        ( End )
 ```
 
 ---

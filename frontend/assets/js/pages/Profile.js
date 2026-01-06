@@ -713,25 +713,15 @@ const ProfilePage = {
                 <div class="mb-8 pt-8 border-t">
                     <h4 class="font-semibold mb-4">Regional Settings</h4>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="form-group">
-                            <label class="form-label">Language</label>
-                            <select name="language" class="form-select">
-                                <option value="en" ${preferences.language === 'en' ? 'selected' : ''}>English</option>
-                                <option value="fil" ${preferences.language === 'fil' ? 'selected' : ''}>Filipino</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label">Date Format</label>
-                            <select name="date_format" class="form-select">
-                                <option value="MMM DD, YYYY" ${preferences.date_format === 'MMM DD, YYYY' ? 'selected' : ''}>MMM DD, YYYY (Dec 21, 2025)</option>
-                                <option value="MMMM DD, YYYY" ${preferences.date_format === 'MMMM DD, YYYY' ? 'selected' : ''}>MMMM DD, YYYY (December 21, 2025)</option>
-                                <option value="MM/DD/YYYY" ${preferences.date_format === 'MM/DD/YYYY' ? 'selected' : ''}>MM/DD/YYYY (12/21/2025)</option>
-                                <option value="DD/MM/YYYY" ${preferences.date_format === 'DD/MM/YYYY' ? 'selected' : ''}>DD/MM/YYYY (21/12/2025)</option>
-                                <option value="YYYY-MM-DD" ${preferences.date_format === 'YYYY-MM-DD' ? 'selected' : ''}>YYYY-MM-DD (2025-12-21)</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Date Format</label>
+                        <select name="date_format" class="form-select">
+                            <option value="MMM DD, YYYY" ${preferences.date_format === 'MMM DD, YYYY' ? 'selected' : ''}>MMM DD, YYYY (Dec 21, 2025)</option>
+                            <option value="MMMM DD, YYYY" ${preferences.date_format === 'MMMM DD, YYYY' ? 'selected' : ''}>MMMM DD, YYYY (December 21, 2025)</option>
+                            <option value="MM/DD/YYYY" ${preferences.date_format === 'MM/DD/YYYY' ? 'selected' : ''}>MM/DD/YYYY (12/21/2025)</option>
+                            <option value="DD/MM/YYYY" ${preferences.date_format === 'DD/MM/YYYY' ? 'selected' : ''}>DD/MM/YYYY (21/12/2025)</option>
+                            <option value="YYYY-MM-DD" ${preferences.date_format === 'YYYY-MM-DD' ? 'selected' : ''}>YYYY-MM-DD (2025-12-21)</option>
+                        </select>
                     </div>
                 </div>
                 
@@ -752,7 +742,6 @@ const ProfilePage = {
             // Populate form data
             try {
                 const safePreferences = {
-                    language: preferences.language || 'en',
                     date_format: preferences.date_format || 'MMM DD, YYYY'
                 };
                 Form.setData(form, safePreferences);
@@ -1052,7 +1041,6 @@ const ProfilePage = {
                 email_notifications: data.email_notifications,
                 adoption_notifications: data.adoption_notifications,
                 new_animal_notifications: data.new_animal_notifications,
-                language: data.language,
                 date_format: data.date_format
             };
 

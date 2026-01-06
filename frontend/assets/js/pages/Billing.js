@@ -116,12 +116,68 @@ const BillingPage = {
      * After render callback
      */
     async afterRender() {
+        // Restore filters from sessionStorage
+        const savedFilters = sessionStorage.getItem('billing_filters');
+        if (savedFilters) {
+            this.state.filters = JSON.parse(savedFilters);
+        }
+        const savedTab = sessionStorage.getItem('billing_activeTab');
+        if (savedTab) {
+            this.state.activeTab = savedTab;
+        }
+        this.state.pagination.page = 1;
+
         await Promise.all([
             this.loadStats(),
             this.loadInvoices()
         ]);
 
         this.setupEventListeners();
+        this.syncFilterUI();
+    },
+
+    /**
+     * Sync filter UI with state
+     */
+    syncFilterUI() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && this.state.filters.search) {
+            searchInput.value = this.state.filters.search;
+        }
+        const statusSelect = document.getElementById('filter-status');
+        if (statusSelect && this.state.filters.status) {
+            statusSelect.value = this.state.filters.status;
+        }
+        const typeSelect = document.getElementById('filter-type');
+        if (typeSelect && this.state.filters.type) {
+            typeSelect.value = this.state.filters.type;
+        }
+        const methodSelect = document.getElementById('filter-method');
+        if (methodSelect && this.state.filters.payment_method) {
+            methodSelect.value = this.state.filters.payment_method;
+        }
+        // Sync active tab
+        const tabs = document.getElementById('billing-tabs');
+        if (tabs && this.state.activeTab) {
+            tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            const activeTabBtn = tabs.querySelector(`[data-tab="${this.state.activeTab}"]`);
+            if (activeTabBtn) activeTabBtn.classList.add('active');
+            // Show/hide appropriate filters
+            const invoiceFilters = document.getElementById('invoice-filters');
+            const paymentFilters = document.getElementById('payment-filters');
+            if (this.state.activeTab === 'payments') {
+                if (invoiceFilters) invoiceFilters.style.display = 'none';
+                if (paymentFilters) paymentFilters.style.display = 'block';
+            }
+        }
+    },
+
+    /**
+     * Save filters to sessionStorage
+     */
+    saveFilters() {
+        sessionStorage.setItem('billing_filters', JSON.stringify(this.state.filters));
+        sessionStorage.setItem('billing_activeTab', this.state.activeTab);
     },
 
     /**
@@ -191,6 +247,7 @@ const BillingPage = {
             searchInput.addEventListener('input', Utils.debounce((e) => {
                 this.state.filters.search = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadCurrentTab();
             }, 300));
         }
@@ -201,6 +258,7 @@ const BillingPage = {
             statusFilter.addEventListener('change', (e) => {
                 this.state.filters.status = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadInvoices();
             });
         }
@@ -211,6 +269,7 @@ const BillingPage = {
             typeFilter.addEventListener('change', (e) => {
                 this.state.filters.type = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadInvoices();
             });
         }
@@ -221,6 +280,7 @@ const BillingPage = {
             methodFilter.addEventListener('change', (e) => {
                 this.state.filters.payment_method = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadPayments();
             });
         }
@@ -246,6 +306,7 @@ const BillingPage = {
     switchTab(tab) {
         this.state.activeTab = tab;
         this.state.pagination.page = 1;
+        this.saveFilters();
 
         const invoiceFilters = document.getElementById('invoice-filters');
         const paymentFilters = document.getElementById('payment-filters');

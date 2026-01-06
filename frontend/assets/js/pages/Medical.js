@@ -123,6 +123,17 @@ const MedicalPage = {
      * After render callback
      */
     async afterRender() {
+        // Restore filters from sessionStorage
+        const savedFilters = sessionStorage.getItem('medical_filters');
+        if (savedFilters) {
+            this.state.filters = JSON.parse(savedFilters);
+        }
+        const savedTab = sessionStorage.getItem('medical_activeTab');
+        if (savedTab) {
+            this.state.activeTab = savedTab;
+        }
+        this.state.pagination.page = 1;
+
         await Promise.all([
             this.loadDropdownData(),
             this.loadStats(),
@@ -130,6 +141,44 @@ const MedicalPage = {
         ]);
 
         this.setupEventListeners();
+        this.syncFilterUI();
+    },
+
+    /**
+     * Sync filter UI with state
+     */
+    syncFilterUI() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && this.state.filters.search) {
+            searchInput.value = this.state.filters.search;
+        }
+        const typeSelect = document.getElementById('filter-type');
+        if (typeSelect && this.state.filters.diagnosis_type) {
+            typeSelect.value = this.state.filters.diagnosis_type;
+        }
+        const animalSelect = document.getElementById('filter-animal');
+        if (animalSelect && this.state.filters.animal_id) {
+            animalSelect.value = this.state.filters.animal_id;
+        }
+        const vetSelect = document.getElementById('filter-vet');
+        if (vetSelect && this.state.filters.vet_id) {
+            vetSelect.value = this.state.filters.vet_id;
+        }
+        // Sync active tab
+        const tabs = document.getElementById('medical-tabs');
+        if (tabs && this.state.activeTab) {
+            tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            const activeTabBtn = tabs.querySelector(`[data-tab="${this.state.activeTab}"]`);
+            if (activeTabBtn) activeTabBtn.classList.add('active');
+        }
+    },
+
+    /**
+     * Save filters to sessionStorage
+     */
+    saveFilters() {
+        sessionStorage.setItem('medical_filters', JSON.stringify(this.state.filters));
+        sessionStorage.setItem('medical_activeTab', this.state.activeTab);
     },
 
     /**
@@ -276,6 +325,7 @@ const MedicalPage = {
             searchInput.addEventListener('input', Utils.debounce((e) => {
                 this.state.filters.search = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadRecords();
             }, 300));
         }
@@ -289,6 +339,7 @@ const MedicalPage = {
                         filter === 'animal' ? 'animal_id' : 'vet_id';
                     this.state.filters[filterKey] = e.target.value;
                     this.state.pagination.page = 1;
+                    this.saveFilters();
                     this.loadRecords();
                 });
             }
@@ -303,6 +354,7 @@ const MedicalPage = {
                     tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     tab.classList.add('active');
                     this.state.activeTab = tab.dataset.tab;
+                    this.saveFilters();
                     this.handleTabChange(tab.dataset.tab);
                 }
             });

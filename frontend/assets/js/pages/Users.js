@@ -88,6 +88,15 @@ const UsersPage = {
      * After render callback
      */
     async afterRender() {
+        // Restore filters from sessionStorage
+        const savedFilters = sessionStorage.getItem('users_filters');
+        if (savedFilters) {
+            this.state.filters = JSON.parse(savedFilters);
+        } else {
+            this.state.filters = { role: '', status: '', search: '' };
+        }
+        this.state.pagination.page = 1;
+
         await Promise.all([
             this.loadRoles(),
             this.loadStats(),
@@ -95,6 +104,34 @@ const UsersPage = {
         ]);
 
         this.setupEventListeners();
+
+        // Sync UI with restored filters
+        this.syncFilterUI();
+    },
+
+    /**
+     * Sync filter UI with state
+     */
+    syncFilterUI() {
+        const roleFilter = document.getElementById('filter-role');
+        if (roleFilter && this.state.filters.role_id) {
+            roleFilter.value = this.state.filters.role_id;
+        }
+        const statusFilter = document.getElementById('filter-status');
+        if (statusFilter && this.state.filters.status) {
+            statusFilter.value = this.state.filters.status;
+        }
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && this.state.filters.search) {
+            searchInput.value = this.state.filters.search;
+        }
+    },
+
+    /**
+     * Save filters to sessionStorage
+     */
+    saveFilters() {
+        sessionStorage.setItem('users_filters', JSON.stringify(this.state.filters));
     },
 
     /**
@@ -212,6 +249,7 @@ const UsersPage = {
             searchInput.addEventListener('input', Utils.debounce((e) => {
                 this.state.filters.search = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadUsers();
             }, 300));
         }
@@ -222,6 +260,7 @@ const UsersPage = {
             roleFilter.addEventListener('change', (e) => {
                 this.state.filters.role_id = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadUsers();
             });
         }
@@ -232,6 +271,7 @@ const UsersPage = {
             statusFilter.addEventListener('change', (e) => {
                 this.state.filters.status = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadUsers();
             });
         }
@@ -356,7 +396,7 @@ const UsersPage = {
                     {
                         name: 'status',
                         label: 'Change Status',
-                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>'
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect><circle cx="16" cy="12" r="3"></circle></svg>'
                     }
                 ]
             },

@@ -273,13 +273,36 @@ class AdoptionController extends BaseController {
                 ]);
             }
             
+            // If approved, update animal status to Reserved and reject other pending requests
+            if ($newStatus === 'Approved') {
+                // Update animal status to Reserved
+                $stmt = $this->db->prepare("UPDATE Animals SET Current_Status = 'Reserved' WHERE AnimalID = :id");
+                $stmt->execute(['id' => $request['AnimalID']]);
+                
+                // Reject other pending requests for this animal
+                $stmt = $this->db->prepare("
+                    UPDATE Adoption_Requests 
+                    SET Status = 'Rejected', 
+                        Staff_Comments = 'Another applicant has been approved for this animal',
+                        Processed_By_UserID = :staff_id
+                    WHERE AnimalID = :animal_id 
+                    AND RequestID != :request_id 
+                    AND Status IN ('Pending', 'Interview Scheduled')
+                ");
+                $stmt->execute([
+                    'staff_id' => $this->user['UserID'],
+                    'animal_id' => $request['AnimalID'],
+                    'request_id' => $id
+                ]);
+            }
+            
             // If completed, update animal status and reject other pending requests
             if ($newStatus === 'Completed') {
                 // Update animal status
                 $stmt = $this->db->prepare("UPDATE Animals SET Current_Status = 'Adopted' WHERE AnimalID = :id");
                 $stmt->execute(['id' => $request['AnimalID']]);
                 
-                // Reject other pending requests for this animal
+                // Reject other pending requests for this animal (in case any slipped through)
                 $stmt = $this->db->prepare("
                     UPDATE Adoption_Requests 
                     SET Status = 'Rejected', 
@@ -294,6 +317,23 @@ class AdoptionController extends BaseController {
                     'animal_id' => $request['AnimalID'],
                     'request_id' => $id
                 ]);
+            }
+            
+            // If rejected and this was the only approved request, set animal back to Available
+            if ($newStatus === 'Rejected' && $request['Status'] === 'Approved') {
+                // Check if there are any other approved requests
+                $stmt = $this->db->prepare("
+                    SELECT COUNT(*) as count FROM Adoption_Requests 
+                    WHERE AnimalID = :animal_id AND Status = 'Approved' AND RequestID != :request_id
+                ");
+                $stmt->execute(['animal_id' => $request['AnimalID'], 'request_id' => $id]);
+                $result = $stmt->fetch();
+                
+                if ($result['count'] == 0) {
+                    // No other approved requests, set animal back to Available
+                    $stmt = $this->db->prepare("UPDATE Animals SET Current_Status = 'Available' WHERE AnimalID = :id");
+                    $stmt->execute(['id' => $request['AnimalID']]);
+                }
             }
             
             $this->db->commit();

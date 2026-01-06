@@ -224,8 +224,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 <summary><b>4. Adoption Module</b></summary>
 
 - [x] Adoption request submission
-- [x] Request status tracking (Pending → Approved → Completed)
-- [x] Staff review and processing
+- [x] Request status tracking (Pending → Approved(Reserved) → Completed(Adopted))
+- [x] Staff review with automated animal status updates
 - [x] Interview scheduling
 - [x] Adoption history per animal
 - [x] Adopter's own requests view

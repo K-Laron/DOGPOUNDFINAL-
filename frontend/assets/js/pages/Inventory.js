@@ -101,6 +101,17 @@ const InventoryPage = {
      * After render callback
      */
     async afterRender() {
+        // Restore filters from sessionStorage
+        const savedFilters = sessionStorage.getItem('inventory_filters');
+        if (savedFilters) {
+            this.state.filters = JSON.parse(savedFilters);
+        }
+        const savedTab = sessionStorage.getItem('inventory_activeTab');
+        if (savedTab) {
+            this.state.activeTab = savedTab;
+        }
+        this.state.pagination.page = 1;
+
         await Promise.all([
             this.loadStats(),
             this.loadAlerts(),
@@ -108,6 +119,36 @@ const InventoryPage = {
         ]);
 
         this.setupEventListeners();
+        this.syncFilterUI();
+    },
+
+    /**
+     * Sync filter UI with state
+     */
+    syncFilterUI() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && this.state.filters.search) {
+            searchInput.value = this.state.filters.search;
+        }
+        const categorySelect = document.getElementById('filter-category');
+        if (categorySelect && this.state.filters.category) {
+            categorySelect.value = this.state.filters.category;
+        }
+        // Sync active tab
+        const tabs = document.getElementById('inventory-tabs');
+        if (tabs && this.state.activeTab) {
+            tabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            const activeTabBtn = tabs.querySelector(`[data-tab="${this.state.activeTab}"]`);
+            if (activeTabBtn) activeTabBtn.classList.add('active');
+        }
+    },
+
+    /**
+     * Save filters to sessionStorage
+     */
+    saveFilters() {
+        sessionStorage.setItem('inventory_filters', JSON.stringify(this.state.filters));
+        sessionStorage.setItem('inventory_activeTab', this.state.activeTab);
     },
 
     /**
@@ -264,6 +305,7 @@ const InventoryPage = {
             searchInput.addEventListener('input', Utils.debounce((e) => {
                 this.state.filters.search = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadItems();
             }, 300));
         }
@@ -274,6 +316,7 @@ const InventoryPage = {
             categoryFilter.addEventListener('change', (e) => {
                 this.state.filters.category = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadItems();
             });
         }
@@ -304,6 +347,7 @@ const InventoryPage = {
         const filtersCard = document.getElementById('inventory-filters-card');
 
         this.state.activeTab = tab;
+        this.saveFilters();
 
         switch (tab) {
             case 'all':
@@ -464,7 +508,7 @@ const InventoryPage = {
                     {
                         name: 'adjust',
                         label: 'Adjust Stock',
-                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>'
+                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><line x1="12" y1="5" x2="12" y2="12"></line><line x1="5" y1="19" x2="19" y2="19"></line></svg>'
                     }
                 ],
                 edit: true,

@@ -1316,6 +1316,32 @@ a:focus-visible {
     transform: translateX(-50%) translateY(0);
 }
 
+/* Table action buttons - tooltip should appear aligned to RIGHT edge (not centered) */
+.table td .btn-icon[title]::after,
+.table td .btn[title]::after,
+.table-container .btn-icon[title]::after {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(4px);
+}
+
+.table td .btn-icon[title]::before,
+.table td .btn[title]::before,
+.table-container .btn-icon[title]::before {
+    left: auto;
+    right: 12px;
+    transform: translateX(0);
+}
+
+.table td .btn-icon[title]:hover::after,
+.table td .btn-icon[title]:focus-visible::after,
+.table td .btn[title]:hover::after,
+.table td .btn[title]:focus-visible::after,
+.table-container .btn-icon[title]:hover::after,
+.table-container .btn-icon[title]:focus-visible::after {
+    transform: translateX(0) translateY(0);
+}
+
 /* ==========================================
    ENHANCED BUTTON FOCUS STATES
    ========================================== */

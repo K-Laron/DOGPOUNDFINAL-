@@ -1225,6 +1225,7 @@ const Utils = {
         const statusMap = {
             // Animal statuses
             'Available': 'badge-success',
+            'Reserved': 'badge-primary',
             'Adopted': 'badge-info',
             'In Treatment': 'badge-warning',
             'Quarantine': 'badge-danger',

@@ -20,6 +20,15 @@ const LoginPage = {
         this.mode = Router.getCurrentPath() === '/register' ? 'register' : 'login';
 
         return `
+            <!-- Floating Orbs for Liquid Glass Effect -->
+            <div class="auth-orbs">
+                <div class="auth-orb auth-orb--1"></div>
+                <div class="auth-orb auth-orb--2"></div>
+                <div class="auth-orb auth-orb--3"></div>
+                <div class="auth-orb auth-orb--4"></div>
+                <div class="auth-orb auth-orb--5"></div>
+            </div>
+            
             <div class="auth-card animate-fade-in">
                 <div class="auth-logo">
                     <div class="auth-logo-icon">

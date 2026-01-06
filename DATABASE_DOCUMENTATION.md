@@ -155,6 +155,7 @@ This document provides a detailed explanation of the database schema, tables, re
 
 **Current Status Values**:
 - `Available` - Ready for adoption
+- `Reserved` - Adoption approved, pending processing
 - `Adopted` - Already adopted
 - `Deceased` - Animal has died
 - `In Treatment` - Under medical care

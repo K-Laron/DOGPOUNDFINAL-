@@ -628,6 +628,12 @@ $id = Sanitizer::integer($input['id']);
 │ PATCH  │ /adoptions/{id}/status  │ Staff+       │ Approve/reject          │
 │ GET    │ /adoptions/my/requests  │ Adopter      │ Own requests            │
 └────────┴─────────────────────────┴──────────────┴─────────────────────────┘
+
+**Key Features**:
+- **Automated Workflow**:
+  - **Approved**: Sets animal status to 'Reserved' and rejects competing requests.
+  - **Completed**: Sets animal status to 'Adopted'.
+  - **Rejected**: Returns animal status to 'Available' (if no other approved requests).
 ```
 
 ---

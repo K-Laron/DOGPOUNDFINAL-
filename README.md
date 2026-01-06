@@ -1,6 +1,6 @@
 # 🐕 Catarman Dog Pound Management System
 
-![Version](https://img.shields.io/badge/version-1.0.5-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.6-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.x-777BB4.svg?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479A1.svg?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?logo=javascript&logoColor=black)
@@ -12,7 +12,7 @@ A comprehensive web-based application designed to streamline the operations of t
 
 *   **User Management**: Role-based access control (Admin, Staff, Veterinarian, Adopter) with secure JWT authentication and profile management.
 *   **Animal Management**: Complete lifecycle tracking from intake to adoption, including image uploads, unique type-specific placeholders, and status updates.
-*   **Adoption Portal**: All authenticated users can browse and adopt animals, with staff/admin approval workflow.
+*   **Adoption Portal**: Automated workflow where approval reserves the animal and completion marks it as adopted. All authenticated users can browse and submit requests.
 *   **Medical Records**: Detailed veterinary logs for each animal, with PDF export and preview.
 *   **Billing System**: Invoice generation, payment tracking, individual invoice printing, and PDF reports with preview before download.
 *   **Inventory System**: Track supplies, monitor stock levels, and receive low-stock alerts with PDF export.

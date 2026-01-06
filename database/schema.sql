@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS Animals (
     Weight DECIMAL(5,2),
     Intake_Date DATETIME DEFAULT CURRENT_TIMESTAMP,
     Intake_Status ENUM('Stray', 'Surrendered', 'Confiscated') NOT NULL,
-    Current_Status ENUM('Available', 'Adopted', 'Deceased', 'In Treatment', 'Quarantine', 'Reclaimed') DEFAULT 'Available',
+    Current_Status ENUM('Available', 'Reserved', 'Adopted', 'Deceased', 'In Treatment', 'Quarantine', 'Reclaimed') DEFAULT 'Available',
     Image_URL VARCHAR(255),
     Is_Deleted BOOLEAN DEFAULT FALSE,
     Created_At DATETIME DEFAULT CURRENT_TIMESTAMP,

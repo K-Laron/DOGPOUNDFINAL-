@@ -165,6 +165,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.6] - 2026-01-06
+
+### Added
+- **Reserved Status**: Added 'Reserved' status for animals that have an approved adoption request but are not yet finalized.
+- **Adoption Automation**: Approving an adoption request now automatically sets the animal status to 'Reserved' and rejects all other pending requests for that animal.
+- **Completion Workflow**: Completing an adoption request now automatically sets the animal status to 'Adopted'.
+- **Badge Styling**: Added specific styling for 'Reserved' status badge (blue-600).
+
+### Changed
+- **Database Schema**: Updated `Animals` table `Current_Status` ENUM to include 'Reserved'.
+- **Adoption UI**: "Process" button is now hidden for adoption requests in final states (Completed, Cancelled, Rejected) to prevent accidental modifications.
+- **Profile UI**: Removed "Language" setting from user preferences as multi-language support is planned for a future release.
+
+---
+
 ## [1.0.5] - 2026-01-01
 
 ### Security Enhancements

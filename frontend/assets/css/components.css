@@ -548,10 +548,17 @@
 
 .table-container {
     overflow-x: auto;
+    overflow-y: visible;
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-color);
     background-color: var(--bg-primary);
     box-shadow: var(--shadow-card);
+    position: relative;
+}
+
+/* Ensure tooltips are visible above table overflow */
+.table-container [data-tooltip]::after {
+    position: fixed;
 }
 
 .table {
@@ -963,6 +970,32 @@
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(-8px);
+}
+
+/* Tooltip positioned to the left (for right-edge elements) */
+[data-tooltip-position="left"]::after,
+.table td:last-child [data-tooltip]::after,
+.actions [data-tooltip]::after {
+    left: auto;
+    right: 0;
+    transform: translateX(0) translateY(-4px);
+}
+
+[data-tooltip-position="left"]:hover::after,
+.table td:last-child [data-tooltip]:hover::after,
+.actions [data-tooltip]:hover::after {
+    transform: translateX(0) translateY(-8px);
+}
+
+/* Tooltip positioned to the right (for left-edge elements) */
+[data-tooltip-position="right"]::after {
+    left: 0;
+    right: auto;
+    transform: translateX(0) translateY(-4px);
+}
+
+[data-tooltip-position="right"]:hover::after {
+    transform: translateX(0) translateY(-8px);
 }
 
 /* ==========================================

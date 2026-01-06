@@ -76,13 +76,39 @@ const AdoptionsPage = {
      * After render callback
      */
     async afterRender() {
+        // Restore filters from sessionStorage (persist across navigation)
+        const savedFilters = sessionStorage.getItem('adoptions_filters');
+        if (savedFilters) {
+            this.state.filters = JSON.parse(savedFilters);
+        } else {
+            this.state.filters = { status: '', search: '' };
+        }
+        this.state.pagination.page = 1;
+
         this.setupEventListeners();
+
+        // Sync UI dropdowns with restored state
+        const statusFilter = document.getElementById('filter-status');
+        if (statusFilter && this.state.filters.status) {
+            statusFilter.value = this.state.filters.status;
+        }
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && this.state.filters.search) {
+            searchInput.value = this.state.filters.search;
+        }
 
         if (Auth.isStaff()) {
             await this.loadStats();
         }
 
         await this.loadAdoptions();
+    },
+
+    /**
+     * Save filters to sessionStorage
+     */
+    saveFilters() {
+        sessionStorage.setItem('adoptions_filters', JSON.stringify(this.state.filters));
     },
 
     /**
@@ -95,6 +121,7 @@ const AdoptionsPage = {
             searchInput.addEventListener('input', Utils.debounce((e) => {
                 this.state.filters.search = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadAdoptions();
             }, 300));
         }
@@ -105,6 +132,7 @@ const AdoptionsPage = {
             statusFilter.addEventListener('change', (e) => {
                 this.state.filters.status = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadAdoptions();
             });
         }
@@ -286,15 +314,25 @@ const AdoptionsPage = {
             ],
             data: this.state.adoptions.map(a => ({ ...a, id: a.RequestID })),
             pagination: this.state.pagination,
-            actions: isStaff ? {
-                view: true,
-                custom: [
-                    {
-                        name: 'process',
-                        label: 'Process',
-                        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>'
-                    }
-                ]
+            actions: isStaff ? (row) => {
+                const finalStatuses = ['Completed', 'Cancelled', 'Rejected'];
+                const canProcess = !finalStatuses.includes(row.Status);
+
+                let buttons = `
+                    <button class="btn-icon btn-ghost btn-sm" onclick="DataTable.action('adoptions-table', 'view', '${row.id}')" title="View">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                `;
+
+                if (canProcess) {
+                    buttons += `
+                        <button class="btn-icon btn-ghost btn-sm" onclick="DataTable.action('adoptions-table', 'process', '${row.id}')" title="Process">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        </button>
+                    `;
+                }
+
+                return `<div class="flex items-center gap-1">${buttons}</div>`;
             } : {
                 view: true
             },

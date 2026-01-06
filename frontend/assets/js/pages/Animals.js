@@ -65,6 +65,7 @@ const AnimalsPage = {
                         <select class="form-select" id="filter-status" style="width: auto;">
                             <option value="">All Statuses</option>
                             <option value="Available" ${this.state.filters.status === 'Available' ? 'selected' : ''}>Available</option>
+                            <option value="Reserved" ${this.state.filters.status === 'Reserved' ? 'selected' : ''}>Reserved</option>
                             <option value="Adopted" ${this.state.filters.status === 'Adopted' ? 'selected' : ''}>Adopted</option>
                             <option value="In Treatment" ${this.state.filters.status === 'In Treatment' ? 'selected' : ''}>In Treatment</option>
                             <option value="Quarantine" ${this.state.filters.status === 'Quarantine' ? 'selected' : ''}>Quarantine</option>
@@ -102,8 +103,49 @@ const AnimalsPage = {
      * After render callback
      */
     async afterRender() {
+        // Restore filters from sessionStorage
+        const savedFilters = sessionStorage.getItem('animals_filters');
+        if (savedFilters) {
+            this.state.filters = JSON.parse(savedFilters);
+        }
+        const savedViewMode = sessionStorage.getItem('animals_viewMode');
+        if (savedViewMode) {
+            this.state.viewMode = savedViewMode;
+        }
+        this.state.pagination.page = 1;
+
         this.setupEventListeners();
+        this.syncFilterUI();
         await this.loadAnimals();
+    },
+
+    /**
+     * Sync filter UI with state
+     */
+    syncFilterUI() {
+        ['type', 'status', 'gender'].forEach(filter => {
+            const select = document.getElementById(`filter-${filter}`);
+            if (select && this.state.filters[filter]) {
+                select.value = this.state.filters[filter];
+            }
+        });
+        const searchInput = document.getElementById('search-input');
+        if (searchInput && this.state.filters.search) {
+            searchInput.value = this.state.filters.search;
+        }
+        // Update view mode buttons
+        document.getElementById('view-mode-grid')?.classList.toggle('btn-primary', this.state.viewMode === 'grid');
+        document.getElementById('view-mode-grid')?.classList.toggle('btn-ghost', this.state.viewMode !== 'grid');
+        document.getElementById('view-mode-table')?.classList.toggle('btn-primary', this.state.viewMode === 'table');
+        document.getElementById('view-mode-table')?.classList.toggle('btn-ghost', this.state.viewMode !== 'table');
+    },
+
+    /**
+     * Save filters to sessionStorage
+     */
+    saveFilters() {
+        sessionStorage.setItem('animals_filters', JSON.stringify(this.state.filters));
+        sessionStorage.setItem('animals_viewMode', this.state.viewMode);
     },
 
     /**
@@ -116,6 +158,7 @@ const AnimalsPage = {
             searchInput.addEventListener('input', Utils.debounce((e) => {
                 this.state.filters.search = e.target.value;
                 this.state.pagination.page = 1;
+                this.saveFilters();
                 this.loadAnimals();
             }, 300));
         }
@@ -127,6 +170,7 @@ const AnimalsPage = {
                 select.addEventListener('change', (e) => {
                     this.state.filters[filter] = e.target.value;
                     this.state.pagination.page = 1;
+                    this.saveFilters();
                     this.loadAnimals();
                 });
             }
@@ -572,6 +616,7 @@ const AnimalsPage = {
             {
                 type: 'select', name: 'current_status', label: 'Current Status', options: [
                     { value: 'Available', label: 'Available' },
+                    { value: 'Reserved', label: 'Reserved' },
                     { value: 'In Treatment', label: 'In Treatment' },
                     { value: 'Quarantine', label: 'Quarantine' }
                 ]
