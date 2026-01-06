@@ -39,6 +39,29 @@ const AnimalDetailPage = {
      */
     async afterRender(params) {
         const { id } = params;
+
+        // --- OPTIMISTIC UI (McMaster-Carr style) ---
+        // Check if we have prefetched data from hover
+        const prefetchKey = `prefetch-animal-${id}`;
+        if (window.HoverPreview && HoverPreview.cache.has(prefetchKey)) {
+            const cachedResponse = HoverPreview.cache.get(prefetchKey);
+            // Only use if it's actual data (not 'loading' placeholder)
+            if (cachedResponse && cachedResponse !== 'loading' && cachedResponse.data) {
+                console.log('[Optimistic UI] Using prefetched data for instant render');
+                this.animal = cachedResponse.data;
+                this.renderAnimalDetail();
+
+                // Still load related data
+                await Promise.all([
+                    this.loadMedicalRecords(id),
+                    this.loadFeedingRecords(id),
+                    this.loadAdoptionHistory(id)
+                ]);
+                return; // Skip the network request since we already have data
+            }
+        }
+
+        // Fallback: Load normally if no prefetch available
         await this.loadAnimalData(id);
     },
 

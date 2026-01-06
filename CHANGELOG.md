@@ -224,6 +224,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseController.php` - Enhanced file upload security
 - `RateLimiter.php` - Hardened IP detection
 
+## [1.0.7] - 2026-01-06
+
+### Added
+
+#### Performance Optimizations
+- **Smart Caching**: Implemented browser-level caching for static API resources (e.g., animal lists, inventory) by making cache-busting optional.
+- **Predictive Prefetching**: Added "McMaster-Carr style" hover prefetching. Full animal profiles are warmed in the background when a user hovers over a card or row.
+- **Optimistic UI**: Implemented instant rendering for transition pages. The system now displays prefetched data immediately, eliminating loading spinners for cached profiles.
+- **Visual Stability**: Enforced strict dimensions on skeleton loaders to prevent Layout Shift (CLS) during data loading.
+
+### Technical
+- Enhanced `api.js` with structured caching options.
+- Added `prefetchDetail` logic to `HoverPreview.js`.
+- Integrated optimistic rendering hooks into `AnimalDetail.js` lifecycle.
+
 ---
 
 ## [Unreleased]
@@ -233,3 +248,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Password reset via email
 - Multi-language support
 - Mobile app version
+- Advanced parametric search filters (Breed/Age/Status combinations)

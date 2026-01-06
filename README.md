@@ -1,6 +1,6 @@
 # 🐕 Catarman Dog Pound Management System
 
-![Version](https://img.shields.io/badge/version-1.0.6-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.x-777BB4.svg?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479A1.svg?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?logo=javascript&logoColor=black)
@@ -17,6 +17,7 @@ A comprehensive web-based application designed to streamline the operations of t
 *   **Billing System**: Invoice generation, payment tracking, individual invoice printing, and PDF reports with preview before download.
 *   **Inventory System**: Track supplies, monitor stock levels, and receive low-stock alerts with PDF export.
 *   **Dashboard**: Real-time statistics, activity logs, and overdue task notifications.
+*   **Performance Optimized**: McMaster-Carr inspired prefetching, smart caching, and Optimistic UI for instant page transitions.
 *   **PDF Preview**: Preview all PDF exports before printing or downloading (Medical, Inventory, Billing).
 *   **Modern Interface**: Clean, responsive design with dark/light mode support and smooth animations.
 *   **Keyboard Shortcuts**: Navigate quickly with shortcuts (`/` for search, `?` for help, `g+h` for home).

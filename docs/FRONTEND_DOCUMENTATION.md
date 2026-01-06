@@ -1199,6 +1199,44 @@ afterMount() {
 
 ---
 
+## ⚡ Performance Optimizations (v1.0.7)
+
+The system implements several advanced performance patterns inspired by high-traffic web applications like McMaster-Carr to reduce perceived latency and server load.
+
+### 1. Smart Caching (`api.js`)
+**Purpose**: Reduce redundant network requests for semi-static data.
+
+**How it works**:
+- The `API.get()` method accepts an `options.cache` flag.
+- When `cache: true`, the default timestamp cache-buster (`_t=[time]`) is omitted from the URL.
+- This allows the browser to serve the response from its internal cache (304 Not Modified or Memory Cache).
+
+### 2. Predictive Prefetching (`HoverPreview.js`)
+**Purpose**: Predict user intent and "warm" the cache before a click occurs.
+
+**Implementation**:
+- Monitors `mouseover` events on links/cards with `data-preview` attributes.
+- When a user hovers for >200ms, `prefetchDetail(type, id)` is triggered.
+- It initiates a background `API.get()` request with `cache: true`.
+- The response is stored in `HoverPreview.cache` (a Map) and the browser's network cache.
+
+### 3. Optimistic UI (`AnimalDetail.js`)
+**Purpose**: Instant page transitions without loading spinners.
+
+**Implementation**:
+- The `afterRender` lifecycle hook checks for prefetched data in `HoverPreview.cache`.
+- If valid data exists, it renders the core profile **immediately** before any new network requests.
+- Related data (medical, feeding, etc.) continues to load in the background to ensure consistency.
+
+### 4. Zero Layout Shift (CLS)
+**Purpose**: Prevent visual "jank" as data loads.
+
+**Implementation**:
+- Skeleton loaders (`Loading.skeleton`) use fixed aspect ratios and `min-height` properties.
+- CSS variables ensure that placeholders exactly match the dimensions of the final rendered content.
+
+---
+
 ## 📱 Mobile Responsive Design
 
 ### Overview

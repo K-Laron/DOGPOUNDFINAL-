@@ -41,10 +41,60 @@ const HoverPreview = {
         // Clear any existing timer
         clearTimeout(this.hoverTimer);
 
+        // --- PREDICTIVE PREFETCHING (McMaster-Carr style) ---
+        // Start warming the cache for the detail page immediately
+        const type = target.dataset.preview;
+        const id = target.dataset.previewId;
+        if (type && id) {
+            this.prefetchDetail(type, id);
+        }
+
         // Set delay before showing preview
         this.hoverTimer = setTimeout(() => {
             this.showPreview(target);
         }, 300);
+    },
+
+    /**
+     * Prefetch detail data for instant navigation
+     * @param {string} type
+     * @param {string} id
+     */
+    prefetchDetail(type, id) {
+        const cacheKey = `prefetch-${type}-${id}`;
+
+        // Don't prefetch if already in cache
+        if (this.cache.has(cacheKey)) return;
+
+        // Mark as prefetching to avoid duplicate requests
+        this.cache.set(cacheKey, 'loading');
+
+        // Prefetch with caching enabled (no cache-busting timestamp)
+        let endpoint = '';
+        switch (type) {
+            case 'animal':
+                endpoint = `/animals/${id}`;
+                break;
+            case 'user':
+                endpoint = `/users/${id}`;
+                break;
+            case 'adoption':
+                endpoint = `/adoptions/${id}`;
+                break;
+            default:
+                return;
+        }
+
+        // Fire-and-forget: prefetch to warm the browser cache
+        API.get(endpoint, null, { cache: true })
+            .then(data => {
+                this.cache.set(cacheKey, data);
+                console.log(`[Prefetch] Warmed cache for ${type} #${id}`);
+            })
+            .catch(() => {
+                // Silently ignore prefetch errors
+                this.cache.delete(cacheKey);
+            });
     },
 
     /**
@@ -266,10 +316,10 @@ const HoverPreview = {
         return `
             <div class="hover-preview-header">
                 <div class="hover-preview-avatar" style="background: ${gradient}">
-                    ${user.Avatar_URL ? 
-                        `<img src="${user.Avatar_URL}" alt="${fullName}">` : 
-                        `<span>${initials}</span>`
-                    }
+                    ${user.Avatar_URL ?
+                `<img src="${user.Avatar_URL}" alt="${fullName}">` :
+                `<span>${initials}</span>`
+            }
                 </div>
                 <div class="hover-preview-info">
                     <h4>${fullName}</h4>

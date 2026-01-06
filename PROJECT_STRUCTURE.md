@@ -169,5 +169,7 @@ dogpound/
 │ database/schema.sql                 │ Full database schema                     │
 │ frontend/index.html                 │ SPA entry point                          │
 │ frontend/assets/js/app.js           │ Main application bootstrap               │
+│ frontend/assets/js/api.js           │ API client with Smart Caching (v1.0.7)   │
+│ frontend/assets/js/components/HoverPreview.js │ Predictive Prefetching logic (v1.0.7)  │
 └─────────────────────────────────────┴──────────────────────────────────────────┘
 ```

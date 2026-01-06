@@ -82,8 +82,11 @@ const API = {
                     }
                 });
             }
-            // Add cache busting
-            params.append('_t', new Date().getTime());
+            // Add cache busting ONLY if caching is not explicitly enabled
+            // This allows specific requests to benefit from browser caching
+            if (!options.cache) {
+                params.append('_t', new Date().getTime());
+            }
 
             const queryString = params.toString();
             if (queryString) {
