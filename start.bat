@@ -26,4 +26,5 @@ echo.
 echo ⚠️  Servers are running in the background (Hidden).
 echo ⚠️  Run 'stop.bat' to stop the servers.
 echo.
-pause
+echo This window will close in 10 seconds...
+timeout /t 10 >nul
