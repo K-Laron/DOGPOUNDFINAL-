@@ -8,7 +8,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ## 📌 Project Overview
 
-```
+```text
 ┌───────────────────┬─────────────────────────────────────────────┐
 │ Property          │ Value                                       │
 ├───────────────────┼─────────────────────────────────────────────┤
@@ -24,7 +24,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ## 🎯 Goals & Objectives
 
-```
+```text
 ┌───┬───────────────────────┬────────────────────────────────────────────────────┐
 │ # │ Goal                  │ Description                                        │
 ├───┼───────────────────────┼────────────────────────────────────────────────────┤
@@ -34,6 +34,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 │ 4 │ Track Medical Records │ Maintain complete veterinary history per animal    │
 │ 5 │ Manage Finances       │ Track billing, invoices, and payments              │
 │ 6 │ Monitor Inventory     │ Track supplies and receive low-stock alerts        │
+│ 7 │ Manage Inventory      │ Track supplies and receive low-stock alerts        │
 └───┴───────────────────────┴────────────────────────────────────────────────────┘
 ```
 
@@ -41,7 +42,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ## 🏗️ System Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                           SYSTEM ARCHITECTURE                               │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -80,7 +81,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ## 🛠️ Technology Stack
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                           TECHNOLOGY STACK                                   │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -104,7 +105,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
                     ╚═══════════════════╝
 ```
 
-```
+```text
 ┌───────────────┬────────────────────────┬────────────────────────────┐
 │ Layer         │ Technology             │ Purpose                    │
 ├───────────────┼────────────────────────┼────────────────────────────┤
@@ -120,7 +121,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ## 👥 User Roles & Access Matrix
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         USER ROLES HIERARCHY                                 │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -148,7 +149,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
              └─────────────┘
 ```
 
-```
+```text
 ┌──────────────┬───────────┬───────┬─────────┬───────────┬─────────┬─────────┬───────────┐
 │ Role         │ Dashboard │ Users │ Animals │ Adoptions │ Medical │ Billing │ Inventory │
 ├──────────────┼───────────┼───────┼─────────┼───────────┼─────────┼─────────┼───────────┤
@@ -165,7 +166,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ### Core Modules
 
-```
+```text
 ┌────────────────────┬──────────────┬────────────────────────────────────────────────────────┐
 │ Module             │ Status       │ Features                                               │
 ├────────────────────┼──────────────┼────────────────────────────────────────────────────────┤
@@ -185,8 +186,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ### Detailed Checklist
 
-<details>
-<summary><b>1. Authentication Module</b></summary>
+#### 1. Authentication Module
 
 - [x] User login with email/username
 - [x] User registration (creates Adopter account)
@@ -194,10 +194,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Password hashing (bcrypt)
 - [x] Role-based access control
 - [x] Rate limiting for login attempts
-</details>
 
-<details>
-<summary><b>2. User Management Module</b></summary>
+#### 2. User Management Module
 
 - [x] List all users (Admin)
 - [x] Create user accounts (Admin)
@@ -206,10 +204,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Activate/deactivate accounts
 - [x] Avatar upload
 - [x] Profile self-management
-</details>
 
-<details>
-<summary><b>3. Animal Management Module</b></summary>
+#### 3. Animal Management Module
 
 - [x] Animal registry (CRUD operations)
 - [x] Image uploads for animals
@@ -219,10 +215,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Animal search and filtering
 - [x] Type-specific placeholder images (Dog, Cat, Other)
 - [x] Public "Available for Adoption" listing
-</details>
 
-<details>
-<summary><b>4. Adoption Module</b></summary>
+#### 4. Adoption Module
 
 - [x] Adoption request submission
 - [x] Request status tracking (Pending → Approved(Reserved) → Completed(Adopted))
@@ -230,10 +224,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Interview scheduling
 - [x] Adoption history per animal
 - [x] Adopter's own requests view
-</details>
 
-<details>
-<summary><b>5. Medical Records Module</b></summary>
+#### 5. Medical Records Module
 
 - [x] Veterinary record creation
 - [x] Diagnosis types (Checkup, Vaccination, Surgery, etc.)
@@ -241,10 +233,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Next due date tracking
 - [x] Medical history per animal
 - [x] Veterinarian assignment
-</details>
 
-<details>
-<summary><b>6. Billing Module</b></summary>
+#### 6. Billing Module
 
 - [x] Invoice generation
 - [x] Payment recording
@@ -254,10 +244,8 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] PDF filename format: ReportType_FirstName_LastName_Date.pdf
 - [x] Payment methods (Cash, GCash, Bank Transfer)
 - [x] Adoption fee calculation
-</details>
 
-<details>
-<summary><b>7. Inventory Module</b></summary>
+#### 7. Inventory Module
 
 - [x] Inventory item management
 - [x] Category organization (Medical, Food, Cleaning, Supplies)
@@ -265,29 +253,23 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Low-stock alerts
 - [x] Expiration date tracking
 - [x] Stock adjustment
-</details>
 
-<details>
-<summary><b>8. Dashboard Module</b></summary>
+#### 8. Dashboard Module
 
 - [x] Real-time statistics
 - [x] Activity feed
 - [x] Charts (intake trends, status distribution)
 - [x] Pending tasks/overdue items
 - [x] Quick actions
-</details>
 
-<details>
-<summary><b>9. Notifications Module</b></summary>
+#### 9. Notifications Module
 
 - [x] User notifications
 - [x] Unread count
 - [x] Mark as read
 - [x] Notification history
-</details>
 
-<details>
-<summary><b>10. Security Module</b></summary>
+#### 10. Security Module
 
 - [x] Rate limiting for login attempts (10/min per IP)
 - [x] Rate limiting for API requests (100/min per IP)
@@ -296,20 +278,16 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] Control character removal
 - [x] File-based rate limit storage
 - [x] HTTP 429 responses with Retry-After headers
-</details>
 
-<details open>
-<summary><b>11. End-Game Refinements (Dec 27 Updates)</b></summary>
+#### 11. End-Game Refinements (Dec 27 Updates)
 
 - [x] **Vet Role Expansion**: Grant Vets view access to adoption requests and history
 - [x] **Accurate Stats**: Fix User Profile stats to use `Activity_Logs` and specific DB columns
 - [x] **Medical Overdue**: Improve logic to catch ALL overdue records, not just latest
 - [x] **Data Fixes**: Ensure deceased animals and adoption history load correctly
 - [x] **Image Placeholders**: Fix correct fallback mapping for "Other" animal types
-</details>
 
-<details open>
-<summary><b>12. Mobile Responsive UI (Dec 27 Updates)</b></summary>
+#### 12. Mobile Responsive UI (Dec 27 Updates)
 
 - [x] **Card Layout Tables**: Convert all data tables to stacked cards on mobile (≤768px)
 - [x] **Full-Width Animal Images**: Animal cards show edge-to-edge images on mobile
@@ -317,13 +295,12 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 - [x] **No Horizontal Scroll**: All pages fit within viewport on mobile
 - [x] **Responsive Containers**: Adoptions, Medical, Billing, Inventory, Users
 - [x] **Performance Layer (v1.5.0)**: Smart Caching, Predictive Prefetching, Optimistic UI
-</details>
 
 ---
 
 ## 🔐 Security Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         REQUEST SECURITY FLOW                                │
 └─────────────────────────────────────────────────────────────────────────────┘
@@ -355,7 +332,7 @@ This document outlines the complete implementation plan for the Catarman Dog Pou
 
 ### Security Features
 
-```
+```text
 ┌─────────────────────────┬────────┬─────────────────────────────┬────────────────────┐
 │ Feature                 │ Status │ Implementation              │ File               │
 ├─────────────────────────┼────────┼─────────────────────────────┼────────────────────┤
@@ -386,7 +363,7 @@ define('RATE_LIMIT_API_WINDOW', 60);     // Per 60 seconds
 
 ## 📁 Project Structure
 
-```
+```text
 dogpound/
 │
 ├── 📂 backend/
@@ -424,7 +401,7 @@ dogpound/
 
 ### Entity Relationship Diagram
 
-```
+```text
 ┌─────────────┐       ┌─────────────────┐       ┌──────────────────┐
 │   ROLES     │       │     USERS       │       │   VETERINARIANS  │
 ├─────────────┤       ├─────────────────┤       ├──────────────────┤
@@ -478,7 +455,7 @@ dogpound/
 
 ### Relationships
 
-```
+```text
 ┌───────────────────┬───────────────────┬──────────────┬───────────────────────────────────┐
 │ Parent Table      │ Child Table       │ Relationship │ Description                       │
 ├───────────────────┼───────────────────┼──────────────┼───────────────────────────────────┤
@@ -496,7 +473,7 @@ dogpound/
 
 ### Core Tables (12)
 
-```
+```text
 ┌───────────────────┬─────────┬──────────────────────────┐
 │ Table             │ Records │ Purpose                  │
 ├───────────────────┼─────────┼──────────────────────────┤
@@ -521,7 +498,7 @@ dogpound/
 
 ### Authentication
 
-```
+```text
 ┌────────┬──────────────────┬──────┬───────────────────┐
 │ Method │ Endpoint         │ Auth │ Description       │
 ├────────┼──────────────────┼──────┼───────────────────┤
@@ -534,7 +511,7 @@ dogpound/
 
 ### Resources
 
-```
+```text
 ┌────────────────┬──────────────────────┬────────┬────────────────────────┐
 │ Method         │ Endpoint             │ Auth   │ Description            │
 ├────────────────┼──────────────────────┼────────┼────────────────────────┤
@@ -558,7 +535,7 @@ dogpound/
 
 ### Development Setup ✅
 
-```
+```text
 ┌─────────────────┬────────┬──────────────────────────────────┐
 │ Step            │ Status │ Command/Action                   │
 ├─────────────────┼────────┼──────────────────────────────────┤
@@ -573,7 +550,7 @@ dogpound/
 
 ### Production Checklist ⏳
 
-```
+```text
 ┌───────────────────────────┬────────┬──────────┐
 │ Task                      │ Status │ Priority │
 ├───────────────────────────┼────────┼──────────┤
@@ -592,7 +569,7 @@ dogpound/
 
 ## 📊 Testing
 
-```
+```text
 ┌───────────────────┬───────────────────┬────────┐
 │ Category          │ Tests             │ Status │
 ├───────────────────┼───────────────────┼────────┤
@@ -613,7 +590,7 @@ dogpound/
 
 ## 📈 Future Roadmap
 
-```
+```text
 ┌────────────────────────┬──────────┬────────┬───────────┐
 │ Feature                │ Priority │ Status │ Target    │
 ├────────────────────────┼──────────┼────────┼───────────┤
@@ -631,7 +608,7 @@ dogpound/
 
 ## 📝 Version History
 
-```
+```text
 ┌─────────┬──────────────┬────────────────────────────────────────────────────────┐
 │ Version │ Date         │ Changes                                                │
 ├─────────┼──────────────┼────────────────────────────────────────────────────────┤
@@ -651,7 +628,7 @@ dogpound/
 
 ## 👨‍💻 Project Info
 
-```
+```text
 ┌───────────────┬────────────────────────────────┐
 │ Property      │ Value                          │
 ├───────────────┼────────────────────────────────┤
@@ -665,7 +642,7 @@ dogpound/
 
 ## 📚 Related Documentation
 
-```
+```text
 ┌───────────────────────────┬───────────┬─────────────────────────────────┐
 │ Document                  │ Location  │ Description                     │
 ├───────────────────────────┼───────────┼─────────────────────────────────┤

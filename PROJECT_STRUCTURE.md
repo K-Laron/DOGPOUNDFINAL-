@@ -2,7 +2,7 @@
 
 ## Catarman Dog Pound Management System
 
-```
+```text
 dogpound/
 ├── 📄 README.md                 # Project documentation
 ├── 📄 CHANGELOG.md              # Version history
@@ -111,6 +111,7 @@ dogpound/
         │   ├── favicon.svg
         │   ├── placeholder-cat.png    # Cat-specific placeholder
         │   ├── placeholder-dog.png    # Dog-specific placeholder
+        │   ├── placeholder-other.png  # Other animals placeholder
         │   └── placeholder-other.png  # Other animals placeholder
         │
         ├── js/               # JavaScript
@@ -156,7 +157,7 @@ dogpound/
 
 ## 🔑 Key Files
 
-```
+```text
 ┌─────────────────────────────────────┬──────────────────────────────────────────┐
 │ File                                │ Purpose                                  │
 ├─────────────────────────────────────┼──────────────────────────────────────────┤

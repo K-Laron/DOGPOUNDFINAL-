@@ -8,7 +8,7 @@ This document provides a detailed explanation of every frontend file, its purpos
 
 ## 📂 Directory Overview
 
-```
+```text
 frontend/
 ├── index.html                 # SPA entry point
 └── assets/
@@ -60,10 +60,9 @@ frontend/
 
 ---
 
-
 ## 🏗️ Frontend Architecture
 
-```
+```text
 ┌──────────────────────────────────────────────────────────┐
 │                   SINGLE PAGE APPLICATION                 │
 └────────────────────────────┬─────────────────────────────┘
@@ -97,6 +96,7 @@ frontend/
 ## 🏠 Entry Point
 
 ### `index.html`
+
 **Purpose**: Single Page Application (SPA) entry point
 
 **What it includes**:
@@ -107,6 +107,7 @@ frontend/
    - Theme color (#007AFF)
 
 2. **CSS Files** (loaded in order):
+
    ```html
    <link rel="stylesheet" href="assets/css/variables.css">
    <link rel="stylesheet" href="assets/css/main.css">
@@ -123,6 +124,7 @@ frontend/
    - jsPDF-AutoTable - For PDF tables
 
 4. **DOM Structure**:
+
    ```html
    <div id="loading-screen">     <!-- Initial loading -->
    <div id="auth-container">     <!-- Login/Register pages -->
@@ -146,10 +148,12 @@ frontend/
 ## 🚀 Core JavaScript Files
 
 ### `assets/js/app.js`
+
 **Purpose**: Main application bootstrap and initialization
 
 **Properties**:
-```
+
+```text
 ┌─────────────┬────────────────────────────────────────┐
 │ Property    │ Purpose                                │
 ├─────────────┼────────────────────────────────────────┤
@@ -160,7 +164,7 @@ frontend/
 
 **Methods**:
 
-```
+```text
 ┌─────────────────────────┬────────────────────────┐
 │ Method                  │ Purpose                │
 ├─────────────────────────┼────────────────────────┤
@@ -177,7 +181,8 @@ frontend/
 ```
 
 **Initialization Flow**:
-```
+
+```text
 1. Show loading screen
 2. Load persisted state (localStorage)
 3. Initialize Auth (check tokens)
@@ -190,9 +195,11 @@ frontend/
 ---
 
 ### `assets/js/api.js`
+
 **Purpose**: HTTP client for all backend API calls
 
 **Configuration**:
+
 ```javascript
 baseURL: 'http://localhost:8000'
 timeout: 30000 (30 seconds)
@@ -201,7 +208,7 @@ defaultHeaders: { 'Content-Type': 'application/json' }
 
 **Core Methods**:
 
-```
+```text
 ┌─────────────────────────────────────────────┬───────────────────┐
 │ Method                                      │ Purpose           │
 ├─────────────────────────────────────────────┼───────────────────┤
@@ -218,7 +225,7 @@ defaultHeaders: { 'Content-Type': 'application/json' }
 
 **API Namespaces**:
 
-```
+```text
 ┌─────────────────────┬────────────────────────────────────────────┐
 │ Namespace           │ Endpoints                                  │
 ├─────────────────────┼────────────────────────────────────────────┤
@@ -235,6 +242,7 @@ defaultHeaders: { 'Content-Type': 'application/json' }
 ```
 
 **Usage Example**:
+
 ```javascript
 // Get all animals
 const response = await API.animals.list({ page: 1, status: 'Available' });
@@ -248,6 +256,7 @@ const animal = await API.animals.create({
 ```
 
 **Features**:
+
 - Automatic JWT token injection
 - Request timeout with AbortController
 - Cache busting for GET requests
@@ -257,9 +266,11 @@ const animal = await API.animals.create({
 ---
 
 ### `assets/js/auth.js`
+
 **Purpose**: Authentication handler for login, logout, and session management
 
 **Storage Keys**:
+
 ```javascript
 TOKEN_KEY: 'access_token'
 REFRESH_TOKEN_KEY: 'refresh_token'
@@ -268,7 +279,7 @@ USER_KEY: 'user'
 
 **Methods**:
 
-```
+```text
 ┌─────────────────────────────┬────────────────────────────────────────┐
 │ Method                      │ Purpose                                │
 ├─────────────────────────────┼────────────────────────────────────────┤
@@ -292,6 +303,7 @@ USER_KEY: 'user'
 ```
 
 **Route Guards**:
+
 ```javascript
 Auth.requireAuth()    // Must be logged in
 Auth.requireGuest()   // Must NOT be logged in
@@ -300,6 +312,7 @@ Auth.requireStaff()   // Must be Admin or Staff
 ```
 
 **Token Refresh Flow**:
+
 1. Access token expires after 24 hours
 2. Auto-refresh 5 minutes before expiry
 3. Uses refresh token (7 day expiry)
@@ -308,9 +321,11 @@ Auth.requireStaff()   // Must be Admin or Staff
 ---
 
 ### `assets/js/router.js`
+
 **Purpose**: Client-side routing for SPA navigation
 
 **Route Structure**:
+
 ```javascript
 {
     page: 'dashboard',           // Page identifier
@@ -323,7 +338,7 @@ Auth.requireStaff()   // Must be Admin or Staff
 
 **Registered Routes**:
 
-```
+```text
 ┌────────────────┬───────────────────┬───────┬──────────┐
 │ Path           │ Component         │ Guard │ Layout   │
 ├────────────────┼───────────────────┼───────┼──────────┤
@@ -345,7 +360,7 @@ Auth.requireStaff()   // Must be Admin or Staff
 
 **Methods**:
 
-```
+```text
 ┌─────────────────────────┬──────────────────────┐
 │ Method                  │ Purpose              │
 ├─────────────────────────┼──────────────────────┤
@@ -361,7 +376,8 @@ Auth.requireStaff()   // Must be Admin or Staff
 ```
 
 **Navigation Flow**:
-```
+
+```text
 1. User clicks link or calls navigate()
 2. Router matches path to registered route
 3. Check route guard (authentication)
@@ -374,9 +390,11 @@ Auth.requireStaff()   // Must be Admin or Staff
 ---
 
 ### `assets/js/store.js`
+
 **Purpose**: Centralized state management with reactive updates
 
 **Initial State**:
+
 ```javascript
 {
     user: null,
@@ -401,7 +419,7 @@ Auth.requireStaff()   // Must be Admin or Staff
 
 **Core Methods**:
 
-```
+```text
 ┌───────────────────┬───────────────────────────────────────┐
 │ Method            │ Purpose                               │
 ├───────────────────┼───────────────────────────────────────┤
@@ -414,7 +432,7 @@ Auth.requireStaff()   // Must be Admin or Staff
 
 **Subscription Methods**:
 
-```
+```text
 ┌──────────────────────────────┬────────────────────────────┐
 │ Method                       │ Purpose                    │
 ├──────────────────────────────┼────────────────────────────┤
@@ -426,7 +444,7 @@ Auth.requireStaff()   // Must be Admin or Staff
 
 **Persistence Methods**:
 
-```
+```text
 ┌──────────────────────┬────────────────────────┐
 │ Method               │ Purpose                │
 ├──────────────────────┼────────────────────────┤
@@ -437,6 +455,7 @@ Auth.requireStaff()   // Must be Admin or Staff
 ```
 
 **Usage Example**:
+
 ```javascript
 // Get value
 const user = Store.get('user');
@@ -454,11 +473,12 @@ Store.subscribe('user', (newUser, oldUser) => {
 ---
 
 ### `assets/js/utils.js`
+
 **Purpose**: Helper utility functions used throughout the application
 
 **DOM Utilities**:
 
-```
+```text
 ┌──────────────────────────────────────┬──────────────────────┐
 │ Method                               │ Purpose              │
 ├──────────────────────────────────────┼──────────────────────┤
@@ -475,7 +495,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 
 **String Utilities**:
 
-```
+```text
 ┌────────────────────────┬──────────────────────┐
 │ Method                 │ Purpose              │
 ├────────────────────────┼──────────────────────┤
@@ -490,7 +510,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 
 **Number/Currency**:
 
-```
+```text
 ┌────────────────────────┬──────────────────────┐
 │ Method                 │ Purpose              │
 ├────────────────────────┼──────────────────────┤
@@ -502,7 +522,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 
 **Date/Time**:
 
-```
+```text
 ┌────────────────────────────┬──────────────────────┐
 │ Method                     │ Purpose              │
 ├────────────────────────────┼──────────────────────┤
@@ -515,7 +535,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 
 **Object Utilities**:
 
-```
+```text
 ┌────────────────────────┬──────────────────────┐
 │ Method                 │ Purpose              │
 ├────────────────────────┼──────────────────────┤
@@ -530,7 +550,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 
 **Validation**:
 
-```
+```text
 ┌──────────────┬────────────────┐
 │ Method       │ Purpose        │
 ├──────────────┼────────────────┤
@@ -542,7 +562,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 
 **UI Helpers**:
 
-```
+```text
 ┌──────────────────────────────────┬────────────────────────────────────┐
 │ Method                           │ Purpose                            │
 ├──────────────────────────────────┼────────────────────────────────────┤
@@ -561,11 +581,13 @@ Store.subscribe('user', (newUser, oldUser) => {
 ## 🧩 Components
 
 ### `components/Toast.js`
+
 **Purpose**: Notification system for displaying messages
 
 **Types**: `success`, `error`, `warning`, `info`
 
 **Methods**:
+
 ```javascript
 Toast.show({ type, title, message, duration })
 Toast.success(message)
@@ -577,7 +599,8 @@ Toast.dismissAll()
 ```
 
 **Options**:
-```
+
+```text
 ┌──────────────┬─────────────┬────────────────────────┐
 │ Option       │ Default     │ Purpose                │
 ├──────────────┼─────────────┼────────────────────────┤
@@ -591,9 +614,11 @@ Toast.dismissAll()
 ---
 
 ### `components/Modal.js`
+
 **Purpose**: Modal dialog system
 
 **Methods**:
+
 ```javascript
 Modal.open({ title, content, footer, size, onConfirm, onCancel })
 Modal.close(id)
@@ -605,7 +630,8 @@ Modal.alert({ title, message })
 **Sizes**: `sm`, `default`, `lg`, `xl`, `full`
 
 **Options**:
-```
+
+```text
 ┌────────────────┬─────────┬─────────────────────────┐
 │ Option         │ Default │ Purpose                 │
 ├────────────────┼─────────┼─────────────────────────┤
@@ -619,9 +645,11 @@ Modal.alert({ title, message })
 ---
 
 ### `components/DataTable.js`
+
 **Purpose**: Data table with sorting, pagination, and actions
 
 **Usage**:
+
 ```javascript
 DataTable.render({
     id: 'animals-table',
@@ -641,6 +669,7 @@ DataTable.render({
 ```
 
 **Features**:
+
 - Sortable columns
 - Row selection (checkbox)
 - Custom cell rendering
@@ -651,15 +680,18 @@ DataTable.render({
 ---
 
 ### `components/Form.js`
+
 **Purpose**: Form generation and validation
 
 **Field Types**:
+
 - `text`, `email`, `password`, `number`, `tel`, `url`
 - `date`, `datetime-local`, `time`
 - `textarea`, `select`, `checkbox`, `radio`
 - `file`, `hidden`
 
 **Usage**:
+
 ```javascript
 const fields = [
     { name: 'name', label: 'Name', type: 'text', required: true },
@@ -671,6 +703,7 @@ const html = Form.generate(fields, existingData);
 ```
 
 **Validation**:
+
 ```javascript
 const { isValid, data, errors } = Form.validate(formElement, rules);
 ```
@@ -678,11 +711,12 @@ const { isValid, data, errors } = Form.validate(formElement, rules);
 ---
 
 ### `components/Card.js`
+
 **Purpose**: Card UI components
 
 **Card Types**:
 
-```
+```text
 ┌─────────────────────────┬─────────────────────────┐
 │ Method                  │ Purpose                 │
 ├─────────────────────────┼─────────────────────────┤
@@ -697,9 +731,11 @@ const { isValid, data, errors } = Form.validate(formElement, rules);
 ---
 
 ### `components/Charts.js`
+
 **Purpose**: Chart.js wrapper with consistent styling
 
 **Chart Types**:
+
 ```javascript
 Charts.line(canvasId, { labels, datasets })
 Charts.bar(canvasId, { labels, datasets })
@@ -709,6 +745,7 @@ Charts.area(canvasId, { labels, datasets })
 ```
 
 **Color Palette**:
+
 ```javascript
 {
     primary: '#007AFF',
@@ -723,9 +760,11 @@ Charts.area(canvasId, { labels, datasets })
 ---
 
 ### `components/Header.js`
+
 **Purpose**: Top navigation header
 
 **Features**:
+
 - Page title display
 - Quick action dropdown (Add Animal, Medical Record)
 - Theme toggle (light/dark)
@@ -734,9 +773,11 @@ Charts.area(canvasId, { labels, datasets })
 ---
 
 ### `components/Sidebar.js`
+
 **Purpose**: Main navigation sidebar
 
 **Navigation Structure**:
+
 ```javascript
 [
     {
@@ -769,9 +810,11 @@ Charts.area(canvasId, { labels, datasets })
 ---
 
 ### `components/Loading.js`
+
 **Purpose**: Loading indicators and skeleton screens
 
 **Methods**:
+
 ```javascript
 Loading.spinner({ size: 'md', text: 'Loading...' })
 Loading.dots()
@@ -785,9 +828,11 @@ Loading.skeleton('stats', { count: 4 })
 ---
 
 ### `components/PDFPreview.js`
+
 **Purpose**: PDF preview modal with Print and Download options
 
 **Methods**:
+
 ```javascript
 PDFPreview.show(doc, filename)   // Show PDF preview modal
 PDFPreview.print()                // Print current PDF
@@ -795,6 +840,7 @@ PDFPreview.download()             // Download current PDF
 ```
 
 **Usage**:
+
 ```javascript
 // Generate PDF with jsPDF
 const doc = new jsPDF();
@@ -806,6 +852,7 @@ PDFPreview.show(doc, filename);
 ```
 
 **Features**:
+
 - Embedded PDF viewer in modal
 - Print button opens print dialog
 - Download button saves PDF with custom filename
@@ -817,12 +864,14 @@ PDFPreview.show(doc, filename);
 ## 📄 Pages
 
 ### `pages/Login.js`
+
 **Purpose**: Login and registration page
 
 **Modes**: `login`, `register`
 
 **Methods**:
-```
+
+```text
 ┌──────────────────┬────────────────────────────┐
 │ Method           │ Purpose                    │
 ├──────────────────┼────────────────────────────┤
@@ -836,9 +885,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Dashboard.js`
+
 **Purpose**: Main dashboard with statistics
 
 **Sections**:
+
 - Statistics cards (total animals, adoptions, etc.)
 - Intake chart (line/bar)
 - Status distribution (doughnut)
@@ -848,7 +899,8 @@ PDFPreview.show(doc, filename);
 - Quick actions
 
 **Methods**:
-```
+
+```text
 ┌────────────────┬──────────────────────┐
 │ Method         │ Purpose              │
 ├────────────────┼──────────────────────┤
@@ -863,9 +915,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Animals.js`
+
 **Purpose**: Animal listing and management
 
 **Features**:
+
 - Grid/table view toggle
 - Filters (type, status, gender, search)
 - Pagination
@@ -873,6 +927,7 @@ PDFPreview.show(doc, filename);
 - Image upload
 
 **State**:
+
 ```javascript
 {
     animals: [],
@@ -886,9 +941,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/AnimalDetail.js`
+
 **Purpose**: Single animal details page
 
 **Sections**:
+
 - Image gallery
 - Basic info
 - Medical records
@@ -899,9 +956,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Adoptions.js`
+
 **Purpose**: Adoption request management
 
 **Features**:
+
 - List all adoption requests
 - Filter by status
 - Approve/reject requests
@@ -912,9 +971,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Medical.js`
+
 **Purpose**: Medical record management
 
 **Features**:
+
 - List medical records
 - Filter by animal, type, date
 - Add new record (Veterinarian)
@@ -924,9 +985,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Inventory.js`
+
 **Purpose**: Inventory/supplies management
 
 **Features**:
+
 - List inventory items
 - Low stock alerts
 - Add/edit items
@@ -936,11 +999,13 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Billing.js`
+
 **Purpose**: Invoice and payment management
 
 **Tabs**: `invoices`, `payments`
 
 **Features**:
+
 - Invoice creation
 - Payment recording
 - PDF report generation with preview (summary, detailed, unpaid)
@@ -951,9 +1016,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Users.js`
+
 **Purpose**: User management (Admin only)
 
 **Features**:
+
 - List all users
 - Create user accounts
 - Edit user details
@@ -963,9 +1030,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Profile.js`
+
 **Purpose**: User profile management
 
 **Features**:
+
 - View profile info
 - Edit profile
 - Upload avatar
@@ -975,9 +1044,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `pages/Settings.js`
+
 **Purpose**: Application settings
 
 **Features**:
+
 - Theme toggle (light/dark)
 - Notification preferences
 - Language settings
@@ -988,9 +1059,11 @@ PDFPreview.show(doc, filename);
 ## 🎨 CSS Files
 
 ### `css/variables.css`
+
 **Purpose**: CSS custom properties (design tokens)
 
 **Categories**:
+
 - **Colors**: Primary, secondary, semantic (success, warning, danger, info)
 - **Backgrounds**: Primary, secondary, elevated, sidebar
 - **Text**: Primary, secondary, tertiary
@@ -1002,6 +1075,7 @@ PDFPreview.show(doc, filename);
 - **Z-index**: Layer management
 
 **Dark Mode**:
+
 ```css
 [data-theme="dark"] {
     --bg-primary: #1C1C1E;
@@ -1014,9 +1088,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `css/main.css`
+
 **Purpose**: Base styles and CSS reset
 
 **Includes**:
+
 - Box-sizing reset
 - Typography defaults
 - Link styles
@@ -1026,9 +1102,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `css/components.css`
+
 **Purpose**: UI component styles
 
 **Components Styled**:
+
 - Buttons (`.btn`, `.btn-primary`, `.btn-secondary`)
 - Forms (`.form-input`, `.form-select`, `.form-group`)
 - Cards (`.card`, `.stat-card`, `.animal-card`)
@@ -1041,9 +1119,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `css/layouts.css`
+
 **Purpose**: Page layout structures
 
 **Layouts**:
+
 - Auth layout (centered login page)
 - Main layout (sidebar + header + content)
 - Grid layouts (`.stats-grid`, `.content-grid`)
@@ -1052,9 +1132,11 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `css/animations.css`
+
 **Purpose**: Transitions and animations
 
 **Animations**:
+
 - `animate-fade-in`
 - `animate-slide-up`
 - `animate-slide-down`
@@ -1068,10 +1150,12 @@ PDFPreview.show(doc, filename);
 ---
 
 ### `css/responsive.css`
+
 **Purpose**: Media queries for responsive design
 
 **Breakpoints**:
-```
+
+```text
 ┌──────┬────────┐
 │ Size │ Width  │
 ├──────┼────────┤
@@ -1087,7 +1171,8 @@ PDFPreview.show(doc, filename);
 ## 🔄 Application Flow
 
 ### Page Load
-```
+
+```text
 1. index.html loads
 2. CSS files load (variables → main → components → layouts → animations → responsive)
 3. External libraries load (Chart.js, jsPDF)
@@ -1098,7 +1183,8 @@ PDFPreview.show(doc, filename);
 ```
 
 ### Authentication Flow
-```
+
+```text
 1. App.init() calls Auth.init()
 2. Auth checks for stored token
 3. If token exists, validate with API
@@ -1109,7 +1195,8 @@ PDFPreview.show(doc, filename);
 ```
 
 ### Navigation Flow
-```
+
+```text
 1. User clicks link or calls Router.navigate()
 2. Router.handleRoute() is called
 3. Route guard checks (requireAuth, requireAdmin, etc.)
@@ -1121,6 +1208,7 @@ PDFPreview.show(doc, filename);
 ```
 
 ### Data Fetching Pattern
+
 ```javascript
 async loadData() {
     this.state.loading = true;
@@ -1144,6 +1232,7 @@ async loadData() {
 ## 📝 Code Conventions
 
 ### Page Component Structure
+
 ```javascript
 const ExamplePage = {
     // State
@@ -1177,6 +1266,7 @@ const ExamplePage = {
 ```
 
 ### Event Handler Pattern
+
 ```javascript
 afterMount() {
     // Form submission
@@ -1204,34 +1294,42 @@ afterMount() {
 The system implements several advanced performance patterns inspired by high-traffic web applications like McMaster-Carr to reduce perceived latency and server load.
 
 ### 1. Smart Caching (`api.js`)
+
 **Purpose**: Reduce redundant network requests for semi-static data.
 
 **How it works**:
+
 - The `API.get()` method accepts an `options.cache` flag.
 - When `cache: true`, the default timestamp cache-buster (`_t=[time]`) is omitted from the URL.
 - This allows the browser to serve the response from its internal cache (304 Not Modified or Memory Cache).
 
 ### 2. Predictive Prefetching (`HoverPreview.js`)
+
 **Purpose**: Predict user intent and "warm" the cache before a click occurs.
 
 **Implementation**:
+
 - Monitors `mouseover` events on links/cards with `data-preview` attributes.
 - When a user hovers for >200ms, `prefetchDetail(type, id)` is triggered.
 - It initiates a background `API.get()` request with `cache: true`.
 - The response is stored in `HoverPreview.cache` (a Map) and the browser's network cache.
 
 ### 3. Optimistic UI (`AnimalDetail.js`)
+
 **Purpose**: Instant page transitions without loading spinners.
 
 **Implementation**:
+
 - The `afterRender` lifecycle hook checks for prefetched data in `HoverPreview.cache`.
 - If valid data exists, it renders the core profile **immediately** before any new network requests.
 - Related data (medical, feeding, etc.) continues to load in the background to ensure consistency.
 
 ### 4. Zero Layout Shift (CLS)
+
 **Purpose**: Prevent visual "jank" as data loads.
 
 **Implementation**:
+
 - Skeleton loaders (`Loading.skeleton`) use fixed aspect ratios and `min-height` properties.
 - CSS variables ensure that placeholders exactly match the dimensions of the final rendered content.
 
@@ -1240,12 +1338,14 @@ The system implements several advanced performance patterns inspired by high-tra
 ## 📱 Mobile Responsive Design
 
 ### Overview
+
 The application is fully responsive with special attention to data tables on mobile devices.
 
 ### Responsive CSS (`responsive.css`)
 
 **Breakpoints**:
-```
+
+```text
 ┌──────────────┬─────────────────────────────────────────────┐
 │ Breakpoint   │ Target                                      │
 ├──────────────┼─────────────────────────────────────────────┤
@@ -1257,9 +1357,11 @@ The application is fully responsive with special attention to data tables on mob
 ```
 
 ### Mobile Table Card Layout
+
 On screens ≤768px, data tables transform into stacked card layouts:
 
 **Affected Pages**:
+
 - Adoptions (`#adoptions-container`)
 - Medical Records (`#records-container`)
 - Billing (`#billing-content`)
@@ -1267,6 +1369,7 @@ On screens ≤768px, data tables transform into stacked card layouts:
 - Users (`#users-container`)
 
 **CSS Transformation**:
+
 ```css
 /* Tables become vertical cards */
 table tbody { display: flex; flex-direction: column; }
@@ -1276,12 +1379,15 @@ table td::before { content: attr(data-label); } /* Column labels */
 ```
 
 ### Animal Cards (Mobile)
+
 On mobile, animal cards display with:
+
 - Full-width images (200px height)
 - Vertical stacking (image on top, info below)
 - Proper border radius on top corners only
 
 ### Touch Enhancements (`main.css`)
+
 - `-webkit-overflow-scrolling: touch` for momentum scrolling
 - Minimum 44px touch targets on interactive elements
 - Safe area insets for notched devices
@@ -1292,9 +1398,10 @@ On mobile, animal cards display with:
 ## ♿ Accessibility Features
 
 ### ARIA Support
+
 All interactive elements include proper ARIA attributes:
 
-```
+```text
 ┌───────────────────────────────┬────────────────────────────────────┐
 │ Element                       │ ARIA Attributes                    │
 ├───────────────────────────────┼────────────────────────────────────┤
@@ -1309,7 +1416,9 @@ All interactive elements include proper ARIA attributes:
 ```
 
 ### Focus States (`enhancements.css`)
+
 Clear visible focus indicators for all interactive elements:
+
 - Icon buttons: 2px outline with 4px primary color ring
 - Pagination buttons: Same ring style
 - Dropdown items: Background color change
@@ -1318,6 +1427,7 @@ Clear visible focus indicators for all interactive elements:
 - Table rows: Primary color left border
 
 ### Motion Preferences
+
 ```css
 @media (prefers-reduced-motion: reduce) {
     /* All animations reduced to 0.01ms */
@@ -1325,6 +1435,7 @@ Clear visible focus indicators for all interactive elements:
 ```
 
 ### Screen Reader Utilities
+
 ```css
 .visually-hidden   /* Hidden visually but accessible */
 .sr-only           /* Screen reader only content */
@@ -1335,16 +1446,19 @@ Clear visible focus indicators for all interactive elements:
 ## 🎨 UI Polish Features
 
 ### CSS Tooltips (`enhancements.css`)
+
 Pure CSS tooltips for buttons with `title` attribute:
+
 - Appears 8px above element on hover/focus
 - 150ms fade-in animation
 - Styled with theme colors
 - Arrow indicator pointing to element
 
 ### Card Animations
+
 Staggered fade-in animations for grid layouts:
 
-```
+```text
 ┌────────────────────┬─────────────────────────────────────────┐
 │ Component          │ Animation                               │
 ├────────────────────┼─────────────────────────────────────────┤
@@ -1356,14 +1470,18 @@ Staggered fade-in animations for grid layouts:
 ```
 
 ### Button Loading State
+
 Add `is-loading` class to show spinner:
+
 ```javascript
 button.classList.add('is-loading');
 // Button text hidden, spinner appears
 ```
 
 ### Enhanced Empty States (`Card.js`)
+
 Improved `Card.empty()` method supports:
+
 - `icon` - Emoji or HTML icon
 - `title` - Main heading
 - `description` - Explanatory text
@@ -1377,7 +1495,7 @@ Improved `Card.empty()` method supports:
 
 ### Global Shortcuts (`app.js`)
 
-```
+```text
 ┌─────────────────────┬──────────────────────────────────────┐
 │ Shortcut            │ Action                               │
 ├─────────────────────┼──────────────────────────────────────┤
@@ -1391,7 +1509,9 @@ Improved `Card.empty()` method supports:
 ```
 
 ### Implementation
+
 Shortcuts are handled in `App.setupEventListeners()`:
+
 - Checks if input is focused before triggering shortcuts
 - Uses `_gPressed` flag for chord shortcuts (g+h, g+a)
 - 1 second timeout for chord completion

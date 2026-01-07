@@ -17,7 +17,7 @@ This document provides a detailed explanation of the database schema, tables, re
 
 ## 📊 Entity Relationship Diagram
 
-```
+```text
 ┌─────────────┐       ┌─────────────┐
 │   Roles     │───────│   Users     │
 └─────────────┘       └──────┬──────┘
@@ -57,9 +57,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ### 1. User Management & Security
 
 #### `Roles`
+
 **Purpose**: Define user roles for access control
 
-```
+```text
 ┌─────────────┬─────────────┬───────────────────────┐
 │ Column      │ Type        │ Description           │
 ├─────────────┼─────────────┼───────────────────────┤
@@ -71,6 +72,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Default Roles**:
+
 - Admin
 - Staff
 - Veterinarian
@@ -79,9 +81,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ---
 
 #### `Users`
+
 **Purpose**: Store all system users
 
-```
+```text
 ┌────────────────┬──────────────┬──────────────────────────────────────┐
 │ Column         │ Type         │ Description                          │
 ├────────────────┼──────────────┼──────────────────────────────────────┤
@@ -104,6 +107,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Indexes**:
+
 - `idx_users_email` on Email
 - `idx_users_status` on (Account_Status, Is_Deleted)
 - `idx_users_role` on RoleID
@@ -111,9 +115,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ---
 
 #### `Veterinarians`
+
 **Purpose**: Additional veterinarian details (extends Users)
 
-```
+```text
 ┌──────────────────┬──────────────┬─────────────────────────────┐
 │ Column           │ Type         │ Description                 │
 ├──────────────────┼──────────────┼─────────────────────────────┤
@@ -132,9 +137,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ### 2. Animal Profiling
 
 #### `Animals`
+
 **Purpose**: Core animal records
 
-```
+```text
 ┌────────────────┬──────────────┬────────────────────────────────────────┐
 │ Column         │ Type         │ Description                            │
 ├────────────────┼──────────────┼────────────────────────────────────────┤
@@ -154,6 +160,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Current Status Values**:
+
 - `Available` - Ready for adoption
 - `Reserved` - Adoption approved, pending processing
 - `Adopted` - Already adopted
@@ -163,6 +170,7 @@ This document provides a detailed explanation of the database schema, tables, re
 - `Reclaimed` - Returned to original owner
 
 **Indexes**:
+
 - `idx_animals_status` on (Current_Status, Is_Deleted)
 - `idx_animals_type` on Type
 - `idx_animals_intake_date` on Intake_Date
@@ -170,9 +178,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ---
 
 #### `Impound_Records`
+
 **Purpose**: Details about how animal was received
 
-```
+```text
 ┌──────────────────────┬──────────────┬────────────────────────┐
 │ Column               │ Type         │ Description            │
 ├──────────────────────┼──────────────┼────────────────────────┤
@@ -190,9 +199,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ### 3. Medical & Health
 
 #### `Medical_Records`
+
 **Purpose**: Track all medical procedures and treatments
 
-```
+```text
 ┌──────────────────┬──────────────┬─────────────────────────────┐
 │ Column           │ Type         │ Description                 │
 ├──────────────────┼──────────────┼─────────────────────────────┤
@@ -208,6 +218,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Diagnosis Types**:
+
 - Checkup
 - Vaccination
 - Surgery
@@ -217,6 +228,7 @@ This document provides a detailed explanation of the database schema, tables, re
 - Spay/Neuter
 
 **Indexes**:
+
 - `idx_medical_animal` on AnimalID
 - `idx_medical_date` on Date_Performed
 - `idx_medical_next_due` on Next_Due_Date
@@ -224,9 +236,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ---
 
 #### `Feeding_Records`
+
 **Purpose**: Track animal feeding schedule
 
-```
+```text
 ┌─────────────────┬──────────────┬───────────────────────────┐
 │ Column          │ Type         │ Description               │
 ├─────────────────┼──────────────┼───────────────────────────┤
@@ -244,9 +257,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ### 4. Adoption Module
 
 #### `Adoption_Requests`
+
 **Purpose**: Track adoption applications
 
-```
+```text
 ┌─────────────────────┬──────────┬───────────────────────┐
 │ Column              │ Type     │ Description           │
 ├─────────────────────┼──────────┼───────────────────────┤
@@ -262,6 +276,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Status Values**:
+
 - `Pending` - Awaiting review
 - `Interview Scheduled` - Interview set
 - `Approved` - Approved for adoption
@@ -270,6 +285,7 @@ This document provides a detailed explanation of the database schema, tables, re
 - `Cancelled` - Cancelled by adopter
 
 **Indexes**:
+
 - `idx_adoption_status` on Status
 - `idx_adoption_animal` on AnimalID
 - `idx_adoption_adopter` on Adopter_UserID
@@ -279,9 +295,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ### 5. Inventory Management
 
 #### `Inventory`
+
 **Purpose**: Track supplies and materials
 
-```
+```text
 ┌──────────────────┬──────────────┬───────────────────────────────────────────┐
 │ Column           │ Type         │ Description                               │
 ├──────────────────┼──────────────┼───────────────────────────────────────────┤
@@ -297,6 +314,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Indexes**:
+
 - `idx_inventory_category` on Category
 - `idx_inventory_stock` on (Quantity_On_Hand, Reorder_Level)
 - `idx_inventory_expiry` on Expiration_Date
@@ -306,9 +324,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ### 6. Billing & Finance
 
 #### `Invoices`
+
 **Purpose**: Track all charges/fees
 
-```
+```text
 ┌───────────────────┬───────────────┬───────────────────────────────┐
 │ Column            │ Type          │ Description                   │
 ├───────────────────┼───────────────┼───────────────────────────────┤
@@ -325,15 +344,17 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Indexes**:
+
 - `idx_invoices_status` on (Status, Is_Deleted)
 - `idx_invoices_payer` on Payer_UserID
 
 ---
 
 #### `Payments`
+
 **Purpose**: Track payments against invoices
 
-```
+```text
 ┌────────────────────┬───────────────┬──────────────────────────────────┐
 │ Column             │ Type          │ Description                      │
 ├────────────────────┼───────────────┼──────────────────────────────────┤
@@ -348,6 +369,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Indexes**:
+
 - `idx_payments_invoice` on InvoiceID
 - `idx_payments_date` on Payment_Date
 
@@ -356,9 +378,10 @@ This document provides a detailed explanation of the database schema, tables, re
 ### 7. System Logs
 
 #### `Activity_Logs`
+
 **Purpose**: Audit trail of all user actions
 
-```
+```text
 ┌─────────────┬─────────────┬───────────────────────────┐
 │ Column      │ Type        │ Description               │
 ├─────────────┼─────────────┼───────────────────────────┤
@@ -372,6 +395,7 @@ This document provides a detailed explanation of the database schema, tables, re
 ```
 
 **Common Action Types**:
+
 - LOGIN_SUCCESS
 - LOGIN_FAILED
 - LOGOUT
@@ -387,6 +411,7 @@ This document provides a detailed explanation of the database schema, tables, re
 - PAYMENT_RECORD
 
 **Indexes**:
+
 - `idx_activity_user` on UserID
 - `idx_activity_date` on Log_Date
 - `idx_activity_type` on Action_Type
@@ -437,6 +462,7 @@ Activity_Logs.UserID → Users.UserID
 ## 📈 Common Queries
 
 ### Get Available Animals
+
 ```sql
 SELECT * FROM Animals 
 WHERE Current_Status = 'Available' 
@@ -445,6 +471,7 @@ ORDER BY Intake_Date DESC;
 ```
 
 ### Get Pending Adoptions
+
 ```sql
 SELECT ar.*, a.Name as Animal_Name, 
        CONCAT(u.FirstName, ' ', u.LastName) as Adopter_Name
@@ -456,6 +483,7 @@ ORDER BY ar.Request_Date ASC;
 ```
 
 ### Get Low Stock Items
+
 ```sql
 SELECT * FROM Inventory
 WHERE Quantity_On_Hand <= Reorder_Level
@@ -463,6 +491,7 @@ ORDER BY Quantity_On_Hand ASC;
 ```
 
 ### Get Unpaid Invoices
+
 ```sql
 SELECT i.*, 
        CONCAT(u.FirstName, ' ', u.LastName) as Customer_Name,
@@ -475,6 +504,7 @@ ORDER BY i.Created_At DESC;
 ```
 
 ### Get Dashboard Statistics
+
 ```sql
 -- Total animals by status
 SELECT Current_Status, COUNT(*) as count 
@@ -518,10 +548,10 @@ The `seeders.sql` file contains:
    - Admin, Staff, Veterinarian, Adopter
 
 2. **Test Users**:
-   - admin@dogpound.com (Admin)
-   - staff@dogpound.com (Staff)
-   - vet@dogpound.com (Veterinarian)
-   - adopter@dogpound.com (Adopter)
+   - `admin@dogpound.com` (Admin)
+   - `staff@dogpound.com` (Staff)
+   - `vet@dogpound.com` (Veterinarian)
+   - `adopter@dogpound.com` (Adopter)
 
 3. **Sample Animals**:
    - Various dogs and cats with different statuses

@@ -3,6 +3,7 @@
 This document provides detailed logic flow diagrams for the major functions of the Catarman Dog Pound Management System, using standard flowchart symbols.
 
 **Legend:**
+
 - `( Text )` : Start / End (Terminator)
 - `[ Text ]` : Process / Action
 - `/ Text /` : Input / Output
@@ -12,6 +13,7 @@ This document provides detailed logic flow diagrams for the major functions of t
 ## 0. System Architecture
 
 ### High-Level Overview
+
 ```ascii
 +-----------------------------------------------------------------------+
 |                   USER BROWSER (Frontend - SPA)                       |
@@ -90,6 +92,7 @@ This document provides detailed logic flow diagrams for the major functions of t
 ```
 
 ### Detailed Data Flow - Example: Login
+
 ```ascii
 User
  |
@@ -135,6 +138,7 @@ User
 ## 1. Authentication Module
 
 ### Login Flow (`POST /auth/login`)
+
 ```ascii
       ( Start )
            |
@@ -177,6 +181,7 @@ User
 ```
 
 ### Registration Flow (`POST /auth/register`)
+
 ```ascii
        ( Start )
            |
@@ -211,6 +216,7 @@ User
 ```
 
 ### Token Refresh Flow (`POST /auth/refresh`)
+
 ```ascii
        ( Start )
            |
@@ -248,6 +254,7 @@ User
 ```
 
 ### Logout Flow (`POST /auth/logout`)
+
 ```ascii
        ( Start )
            |
@@ -270,6 +277,7 @@ User
 ```
 
 ### Logout All Flow (`POST /auth/logout-all`)
+
 ```ascii
        ( Start )
            |
@@ -302,6 +310,7 @@ User
 ## 2. Animal Management Module
 
 ### List Animals (`GET /animals`)
+
 ```ascii
        ( Start )
            |
@@ -330,6 +339,7 @@ User
 ```
 
 ### View Animal (`GET /animals/{id}`)
+
 ```ascii
        ( Start )
            |
@@ -352,6 +362,7 @@ User
 ```
 
 ### Create Animal (`POST /animals`)
+
 ```ascii
        ( Start )
            |
@@ -376,6 +387,7 @@ User
 ```
 
 ### Update Status (`PATCH /animals/{id}/status`)
+
 ```ascii
        ( Start )
            |
@@ -405,6 +417,7 @@ User
 ```
 
 ### Impound Animal (`POST /animals/{id}/impound`)
+
 ```ascii
        ( Start )
            |
@@ -441,6 +454,7 @@ User
 ## 3. Adoption Process Module
 
 ### Submit Request (`POST /adoptions`)
+
 ```ascii
        ( Start )
            |
@@ -475,6 +489,7 @@ User
 ```
 
 ### Process Request (`PUT /adoptions/{id}/process`)
+
 ```ascii
        ( Start )
            |
@@ -519,6 +534,7 @@ User
 ```
 
 ### Cancel Request (`PUT /adoptions/{id}/cancel`)
+
 ```ascii
        ( Start )
            |
@@ -550,6 +566,7 @@ User
 ## 4. Medical Module
 
 ### Create Record (`POST /medical`)
+
 ```ascii
        ( Start )
            |
@@ -576,6 +593,7 @@ User
 ```
 
 ### Upcoming Treatments (`GET /medical/upcoming`)
+
 ```ascii
        ( Start )
            |
@@ -603,6 +621,7 @@ User
 ```
 
 ### Record Feeding (`POST /feeding`)
+
 ```ascii
        ( Start )
            |
@@ -631,6 +650,7 @@ User
 ## 5. Inventory Module
 
 ### List Inventory (`GET /inventory`)
+
 ```ascii
        ( Start )
            |
@@ -654,6 +674,7 @@ User
 ```
 
 ### Create Item (`POST /inventory`)
+
 ```ascii
        ( Start )
            |
@@ -677,6 +698,7 @@ User
 ```
 
 ### Update Item (`PUT /inventory/{id}`)
+
 ```ascii
        ( Start )
            |
@@ -700,6 +722,7 @@ User
 ```
 
 ### Delete Item (`DELETE /inventory/{id}`)
+
 ```ascii
        ( Start )
            |
@@ -720,6 +743,7 @@ User
 ```
 
 ### Adjust Stock (`PATCH /inventory/{id}/adjust`)
+
 ```ascii
        ( Start )
            |
@@ -757,6 +781,7 @@ User
 ```
 
 ### Alert Logic (`GET /inventory/alerts`)
+
 ```ascii
        ( Start )
            |
@@ -789,6 +814,7 @@ User
 ## 6. Billing Module
 
 ### List Invoices (`GET /invoices`)
+
 ```ascii
        ( Start )
            |
@@ -812,6 +838,7 @@ User
 ```
 
 ### Create Invoice (`POST /invoices`)
+
 ```ascii
        ( Start )
            |
@@ -836,6 +863,7 @@ User
 ```
 
 ### Record Payment (`POST /payments`)
+
 ```ascii
        ( Start )
            |
@@ -879,6 +907,7 @@ User
 ```
 
 ### Cancel Invoice (`PUT /invoices/{id}/cancel`)
+
 ```ascii
        ( Start )
            |
@@ -906,6 +935,7 @@ User
 ```
 
 ### Financial Report (`GET /billing/report`)
+
 ```ascii
        ( Start )
            |
@@ -938,6 +968,7 @@ User
 ## 7. User Management Module
 
 ### List Users (`GET /users`)
+
 ```ascii
        ( Start )
            |
@@ -963,6 +994,7 @@ User
 ```
 
 ### Create User (`POST /users`) - Admin Only
+
 ```ascii
        ( Start )
            |
@@ -1004,6 +1036,7 @@ User
 ```
 
 ### Update User (`PUT /users/{id}`)
+
 ```ascii
        ( Start )
            |
@@ -1042,6 +1075,7 @@ User
 ```
 
 ### Soft Delete User (`DELETE /users/{id}`)
+
 ```ascii
        ( Start )
            |
@@ -1069,6 +1103,7 @@ User
 ```
 
 ### Profile Update (`PUT /profile`)
+
 ```ascii
        ( Start )
            |
@@ -1099,6 +1134,7 @@ User
 ## 8. Dashboard & Notification Module
 
 ### Dashboard Stats (`GET /dashboard/stats`)
+
 ```ascii
        ( Start )
            |
@@ -1131,6 +1167,7 @@ User
 ```
 
 ### Fetch Notifications (`GET /notifications`)
+
 ```ascii
        ( Start )
            |

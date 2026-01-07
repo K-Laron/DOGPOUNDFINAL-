@@ -8,7 +8,7 @@ This document provides a detailed explanation of every backend file, its purpose
 
 ## 📂 Directory Overview
 
-```
+```text
 backend/
 ├── .htaccess              # Apache URL rewriting rules
 ├── app/
@@ -32,9 +32,11 @@ backend/
 ## 🚀 Entry Point
 
 ### `public/index.php`
+
 **Purpose**: Single entry point for all API requests (Front Controller pattern)
 
 **What it does**:
+
 1. Prevents CLI execution (security)
 2. Handles PHP built-in server for static files
 3. Defines base paths (`BASE_PATH`, `APP_PATH`, `PUBLIC_PATH`)
@@ -44,7 +46,8 @@ backend/
 7. Shows debug info only in development mode
 
 **Flow**:
-```
+
+```text
 HTTP Request
       │
       ▼
@@ -80,11 +83,13 @@ HTTP Request
 ## ⚙️ Core Application
 
 ### `app/bootstrap.php`
+
 **Purpose**: Initializes all core components and handles application lifecycle
 
 **What it does**:
 
 1. **Loads Configuration**
+
    ```php
    require_once APP_PATH . '/config/config.php';
    ```
@@ -104,6 +109,7 @@ HTTP Request
    - `run()`: Dispatches the request to the router
 
 **CORS Headers Set**:
+
 - `Access-Control-Allow-Origin`: Allows specific frontend origins
 - `Access-Control-Allow-Methods`: GET, POST, PUT, DELETE, PATCH, OPTIONS
 - `Access-Control-Allow-Headers`: Content-Type, Authorization, etc.
@@ -115,11 +121,12 @@ HTTP Request
 ## 🔧 Configuration
 
 ### `app/config/config.php`
+
 **Purpose**: Central configuration for the entire application
 
 **Sections**:
 
-```
+```text
 ┌─────────────────────────┬──────────────────────────────┬──────────────────────────────────────────┐
 │ Constant                │ Purpose                      │ Default / Env Variable                   │
 ├─────────────────────────┼──────────────────────────────┼──────────────────────────────────────────┤
@@ -153,11 +160,13 @@ HTTP Request
 ---
 
 ### `app/config/database.php`
+
 **Purpose**: Database connection configuration and PDO wrapper
 
 **Class: `Database`**
 
 **Properties** (loaded from environment or defaults in constructor):
+
 ```php
 $this->host = getenv('DB_HOST') ?: '127.0.0.1';
 $this->port = getenv('DB_PORT') ?: '3307';
@@ -168,7 +177,7 @@ $this->password = getenv('DB_PASS') ?: '';
 
 **Methods**:
 
-```
+```text
 ┌────────────────────┬────────────────────────────────────────────────────────┐
 │ Method             │ Purpose                                                │
 ├────────────────────┼────────────────────────────────────────────────────────┤
@@ -181,6 +190,7 @@ $this->password = getenv('DB_PASS') ?: '';
 ```
 
 **PDO Options Set**:
+
 - `ERRMODE_EXCEPTION`: Throws exceptions on errors
 - `FETCH_ASSOC`: Returns associative arrays
 - `EMULATE_PREPARES`: true (supports reused named parameters)
@@ -191,17 +201,20 @@ $this->password = getenv('DB_PASS') ?: '';
 ## 🛠️ Utilities
 
 ### `app/utils/Router.php`
+
 **Purpose**: URL routing and request dispatching
 
 **How Routing Works**:
 
 1. **Route Registration**: Controllers register routes with HTTP method, path, handler, and required roles
+
    ```php
    $router->get('/animals', 'AnimalController@index', ['Admin', 'Staff']);
    $router->post('/auth/login', 'AuthController@login'); // No auth required
    ```
 
 2. **Path Parameters**: `{id}` in path becomes regex capture group
+
    ```php
    '/animals/{id}' → '#^/animals/(?P<id>[^/]+)$#'
    ```
@@ -216,7 +229,7 @@ $this->password = getenv('DB_PASS') ?: '';
 
 **Methods**:
 
-```
+```text
 ┌─────────────────────────────────┬──────────────────────────────────────────┐
 │ Method                          │ Purpose                                  │
 ├─────────────────────────────────┼──────────────────────────────────────────┤
@@ -232,6 +245,7 @@ $this->password = getenv('DB_PASS') ?: '';
 ```
 
 **Role Authorization**:
+
 - `null`: No authentication required (public route)
 - `['*']`: Any authenticated user
 - `['Admin']`: Only Admin role
@@ -240,11 +254,12 @@ $this->password = getenv('DB_PASS') ?: '';
 ---
 
 ### `app/utils/Response.php`
+
 **Purpose**: Standardized JSON API response formatting
 
 **Methods**:
 
-```
+```text
 ┌──────────────────────────────────────────────┬───────────┬─────────────────────────┐
 │ Method                                       │ HTTP Code │ Purpose                 │
 ├──────────────────────────────────────────────┼───────────┼─────────────────────────┤
@@ -261,6 +276,7 @@ $this->password = getenv('DB_PASS') ?: '';
 ```
 
 **Response Format**:
+
 ```json
 {
   "success": true,
@@ -271,6 +287,7 @@ $this->password = getenv('DB_PASS') ?: '';
 ```
 
 **Paginated Response**:
+
 ```json
 {
   "success": true,
@@ -292,6 +309,7 @@ $this->password = getenv('DB_PASS') ?: '';
 ---
 
 ### `app/utils/JWT.php`
+
 **Purpose**: JSON Web Token generation and verification
 
 **How JWT Works**:
@@ -310,7 +328,7 @@ $this->password = getenv('DB_PASS') ?: '';
 
 **Methods**:
 
-```
+```text
 ┌─────────────────────────────────┬──────────────────────────────────────────┐
 │ Method                          │ Purpose                                  │
 ├─────────────────────────────────┼──────────────────────────────────────────┤
@@ -324,6 +342,7 @@ $this->password = getenv('DB_PASS') ?: '';
 ```
 
 **Security Features**:
+
 - Uses `hash_equals()` for timing-safe signature comparison
 - Random `jti` prevents token replay attacks
 - Checks `exp` and `nbf` (not before) claims
@@ -331,9 +350,11 @@ $this->password = getenv('DB_PASS') ?: '';
 ---
 
 ### `app/utils/Validator.php`
+
 **Purpose**: Input validation with chainable methods
 
 **Usage**:
+
 ```php
 $validator = Validator::make($data, [
     'email' => 'required|email',
@@ -348,7 +369,7 @@ if ($validator->fails()) {
 
 **Available Rules**:
 
-```
+```text
 ┌───────────────────────┬────────────────────────────────┬────────────────────────────────────┐
 │ Rule                  │ Purpose                        │ Example                            │
 ├───────────────────────┼────────────────────────────────┼────────────────────────────────────┤
@@ -372,9 +393,11 @@ if ($validator->fails()) {
 ---
 
 ### `app/utils/RateLimiter.php`
+
 **Purpose**: Rate limiting utility to prevent brute force attacks and API abuse
 
 **Features**:
+
 - File-based storage (no database required)
 - Configurable limits per endpoint type
 - IP-based tracking for unauthenticated requests
@@ -382,7 +405,7 @@ if ($validator->fails()) {
 
 **Methods**:
 
-```
+```text
 ┌───────────────────────────────────────────┬────────────────────────────────────┐
 │ Method                                    │ Purpose                            │
 ├───────────────────────────────────────────┼────────────────────────────────────┤
@@ -396,6 +419,7 @@ if ($validator->fails()) {
 ```
 
 **Usage**:
+
 ```php
 // Check login rate limit (10 attempts per 60 seconds)
 RateLimiter::checkLogin();
@@ -405,6 +429,7 @@ RateLimiter::check('api', $userId, 100, 60);
 ```
 
 **Response on Limit Exceeded** (HTTP 429):
+
 ```json
 {
   "success": false,
@@ -416,9 +441,11 @@ RateLimiter::check('api', $userId, 100, 60);
 ---
 
 ### `app/utils/Sanitizer.php`
+
 **Purpose**: Input sanitization utility to prevent XSS and injection attacks
 
 **Features**:
+
 - Automatic HTML entity escaping
 - Control character removal
 - Recursive array sanitization
@@ -427,7 +454,7 @@ RateLimiter::check('api', $userId, 100, 60);
 
 **Methods**:
 
-```
+```text
 ┌───────────────────────────────┬───────────────────────────────────────────┐
 │ Method                        │ Purpose                                   │
 ├───────────────────────────────┼───────────────────────────────────────────┤
@@ -446,6 +473,7 @@ RateLimiter::check('api', $userId, 100, 60);
 ```
 
 **Usage**:
+
 ```php
 // Sanitize entire request automatically (done in BaseController)
 $data = Sanitizer::request($_POST);
@@ -463,11 +491,12 @@ $id = Sanitizer::integer($input['id']);
 ## 🔐 Middleware
 
 ### `app/middleware/AuthMiddleware.php`
+
 **Purpose**: JWT authentication and role-based access control
 
 **Methods**:
 
-```
+```text
 ┌───────────────────────┬──────────────────────────────────────┐
 │ Method                │ Purpose                              │
 ├───────────────────────┼──────────────────────────────────────┤
@@ -484,6 +513,7 @@ $id = Sanitizer::integer($input['id']);
 ```
 
 **Authentication Flow**:
+
 1. Extract Bearer token from `Authorization` header
 2. Verify JWT signature and expiration
 3. Query database to ensure user exists and is active
@@ -495,16 +525,18 @@ $id = Sanitizer::integer($input['id']);
 ## 🎮 Controllers
 
 ### `app/controllers/BaseController.php`
+
 **Purpose**: Abstract base class with common functionality for all controllers
 
 **Properties**:
+
 - `$db`: PDO database connection
 - `$user`: Current authenticated user
 - `$requestData`: Parsed request body
 
 **Helper Methods**:
 
-```
+```text
 ┌─────────────────────────────────┬─────────────────────────────────┐
 │ Method                          │ Purpose                         │
 ├─────────────────────────────────┼─────────────────────────────────┤
@@ -526,11 +558,12 @@ $id = Sanitizer::integer($input['id']);
 ---
 
 ### `app/controllers/AuthController.php`
+
 **Purpose**: Handles authentication (login, register, tokens)
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬───────────────────────────────────────┐
 │ Method │ Endpoint                │ Purpose                               │
 ├────────┼─────────────────────────┼───────────────────────────────────────┤
@@ -545,6 +578,7 @@ $id = Sanitizer::integer($input['id']);
 ```
 
 **Login Flow**:
+
 1. Validate input (email/username + password)
 2. Find user in database
 3. Verify password with `password_verify()`
@@ -556,11 +590,12 @@ $id = Sanitizer::integer($input['id']);
 ---
 
 ### `app/controllers/UserController.php`
+
 **Purpose**: User CRUD operations and profile management
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬──────────────┬───────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose               │
 ├────────┼─────────────────────────┼──────────────┼───────────────────────┤
@@ -575,24 +610,26 @@ $id = Sanitizer::integer($input['id']);
 │ PUT    │ /users/{id}/status      │ Admin        │ Change account status │
 │ PUT    │ /users/{id}/role        │ Admin        │ Change user role      │
 └────────┴─────────────────────────┴──────────────┴───────────────────────┘
+```
 
 **Key Features**:
-- **Profile Stats**: 
+
+- **Profile Stats**:
   - Adopters: Adoption requests, completed adoptions, pending requests
   - Veterinarians: Medical records, animals treated, records this month
   - Staff/Admin: Verified counts from Activity Logs and database tables
 - **Avatar Management**: Upload, delete, and validation
 - **Role Management**: Admin can assign/revoke roles
-```
 
 ---
 
 ### `app/controllers/AnimalController.php`
+
 **Purpose**: Animal record management
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬──────────────┬────────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose                │
 ├────────┼─────────────────────────┼──────────────┼────────────────────────┤
@@ -602,7 +639,7 @@ $id = Sanitizer::integer($input['id']);
 │ GET    │ /animals/stats/summary  │ Staff+       │ Statistics             │
 │ POST   │ /animals                │ Staff+       │ Create animal          │
 │ PUT    │ /animals/{id}           │ Staff+       │ Update animal          │
-│ DELETE │ /animals/{id}             │ Admin        │ Soft delete            │
+│ DELETE │ /animals/{id}           │ Admin        │ Soft delete            │
 │ PATCH  │ /animals/{id}/status    │ Staff+       │ Update status only     │
 │ POST   │ /animals/{id}/image     │ Staff+       │ Upload image           │
 │ POST   │ /animals/{id}/impound   │ Staff+       │ Add impound record     │
@@ -612,11 +649,12 @@ $id = Sanitizer::integer($input['id']);
 ---
 
 ### `app/controllers/AdoptionController.php`
+
 **Purpose**: Adoption request management
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬──────────────┬─────────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose                 │
 ├────────┼─────────────────────────┼──────────────┼─────────────────────────┤
@@ -628,22 +666,24 @@ $id = Sanitizer::integer($input['id']);
 │ PATCH  │ /adoptions/{id}/status  │ Staff+       │ Approve/reject          │
 │ GET    │ /adoptions/my/requests  │ Adopter      │ Own requests            │
 └────────┴─────────────────────────┴──────────────┴─────────────────────────┘
+```
 
 **Key Features**:
+
 - **Automated Workflow**:
   - **Approved**: Sets animal status to 'Reserved' and rejects competing requests.
   - **Completed**: Sets animal status to 'Adopted'.
   - **Rejected**: Returns animal status to 'Available' (if no other approved requests).
-```
 
 ---
 
 ### `app/controllers/MedicalController.php`
+
 **Purpose**: Medical record management
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬──────────────┬────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose            │
 ├────────┼─────────────────────────┼──────────────┼────────────────────┤
@@ -651,25 +691,26 @@ $id = Sanitizer::integer($input['id']);
 │ GET    │ /medical/{id}           │ Staff+       │ Get record details │
 │ POST   │ /medical                │ Vet          │ Create record      │
 │ PUT    │ /medical/{id}           │ Vet          │ Update record      │
-│ DELETE │ /medical/{id}             │ Admin        │ Delete record      │
+│ DELETE │ /medical/{id}           │ Admin        │ Delete record      │
 │ GET    │ /medical/animal/{id}    │ Staff+       │ Records for animal │
 │ GET    │ /medical/veterinarians  │ Staff+       │ List veterinarians │
 └────────┴─────────────────────────┴──────────────┴────────────────────┘
+```
 
 **Key Features**:
+
 - **Overdue Tracking**: Intelligently identifies all animals with past-due treatments, regardless of their latest record status.
 - **Veterinarian Integration**: Links medical records to veterinarian profiles.
-
-```
 
 ---
 
 ### `app/controllers/InventoryController.php`
+
 **Purpose**: Inventory/supplies management
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬──────────────┬────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose            │
 ├────────┼─────────────────────────┼──────────────┼────────────────────┤
@@ -686,11 +727,12 @@ $id = Sanitizer::integer($input['id']);
 ---
 
 ### `app/controllers/BillingController.php`
+
 **Purpose**: Invoice and payment management
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬──────────────┬────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose            │
 ├────────┼─────────────────────────┼──────────────┼────────────────────┤
@@ -708,11 +750,12 @@ $id = Sanitizer::integer($input['id']);
 ---
 
 ### `app/controllers/DashboardController.php`
+
 **Purpose**: Dashboard statistics and activity logs
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬─────────────────────────┬──────────────┬────────────────────┐
 │ Method │ Endpoint                │ Auth         │ Purpose            │
 ├────────┼─────────────────────────┼──────────────┼────────────────────┤
@@ -726,11 +769,12 @@ $id = Sanitizer::integer($input['id']);
 ---
 
 ### `app/controllers/NotificationController.php`
+
 **Purpose**: User notification management
 
 **Endpoints**:
 
-```
+```text
 ┌────────┬────────────────────────────┬──────────┬─────────────────────┐
 │ Method │ Endpoint                   │ Auth     │ Purpose             │
 ├────────┼────────────────────────────┼──────────┼─────────────────────┤
@@ -747,9 +791,11 @@ $id = Sanitizer::integer($input['id']);
 ## 📊 Models
 
 ### `app/models/User.php`
+
 **Purpose**: User database operations
 
 **Methods**:
+
 - `find($id)` - Find by ID
 - `findByEmail($email)` - Find by email
 - `findByUsername($username)` - Find by username
@@ -763,9 +809,11 @@ $id = Sanitizer::integer($input['id']);
 ---
 
 ### `app/models/Animal.php`
+
 **Purpose**: Animal database operations
 
 **Methods**:
+
 - `find($id)` - Find by ID
 - `findWithRelations($id)` - Find with medical, impound, feeding records
 - `paginate($page, $perPage, $filters)` - Get paginated list
@@ -780,7 +828,7 @@ $id = Sanitizer::integer($input['id']);
 
 ### Other Models
 
-```
+```text
 ┌─────────────────────┬───────────────────┬───────────────────────┐
 │ Model               │ Table             │ Purpose               │
 ├─────────────────────┼───────────────────┼───────────────────────┤
@@ -802,39 +850,48 @@ $id = Sanitizer::integer($input['id']);
 ## 🛣️ API Routes
 
 ### `app/api/auth.php`
+
 Defines authentication routes (login, register, tokens)
 
 ### `app/api/users.php`
+
 Defines user management routes
 
 ### `app/api/animals.php`
+
 Defines animal CRUD routes
 
 **Adoption Menu Access**:
+
 - Admin, Staff: Full access to all requests
 - Veterinarian: View access to requests and histories
 - Adopter: Access to their own requests only
 
 ### `app/api/medical.php`
+
 Defines medical record routes
 
 ### `app/api/inventory.php`
+
 Defines inventory management routes
 
 ### `app/api/billing.php`
+
 Defines invoice and payment routes
 
 ### `app/api/dashboard.php`
+
 Defines dashboard statistics routes
 
 ### `app/api/notifications.php`
+
 Defines notification routes
 
 ---
 
 ## 🔒 Security Summary
 
-```
+```text
 ┌────────────────────┬─────────────────────────────────────────────────────────┐
 │ Feature            │ Implementation                                          │
 ├────────────────────┼─────────────────────────────────────────────────────────┤
@@ -855,6 +912,7 @@ Defines notification routes
 ## 📝 Request/Response Examples
 
 ### Login Request
+
 ```http
 POST /auth/login
 Content-Type: application/json
@@ -866,6 +924,7 @@ Content-Type: application/json
 ```
 
 ### Login Response
+
 ```json
 {
   "success": true,
@@ -888,12 +947,14 @@ Content-Type: application/json
 ```
 
 ### Authenticated Request
+
 ```http
 GET /animals
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
 ### Error Response
+
 ```json
 {
   "success": false,

@@ -10,90 +10,98 @@ A comprehensive web-based application designed to streamline the operations of t
 
 ## 🚀 Features
 
-*   **User Management**: Role-based access control (Admin, Staff, Veterinarian, Adopter) with secure JWT authentication and profile management.
-*   **Animal Management**: Complete lifecycle tracking from intake to adoption, including image uploads, unique type-specific placeholders, and status updates.
-*   **Adoption Portal**: Automated workflow where approval reserves the animal and completion marks it as adopted. All authenticated users can browse and submit requests.
-*   **Medical Records**: Detailed veterinary logs for each animal, with PDF export and preview.
-*   **Billing System**: Invoice generation, payment tracking, individual invoice printing, and PDF reports with preview before download.
-*   **Inventory System**: Track supplies, monitor stock levels, and receive low-stock alerts with PDF export.
-*   **Dashboard**: Real-time statistics, activity logs, and overdue task notifications.
-*   **Performance Optimized**: McMaster-Carr inspired prefetching, smart caching, and Optimistic UI for instant page transitions.
-*   **PDF Preview**: Preview all PDF exports before printing or downloading (Medical, Inventory, Billing).
-*   **Modern Interface**: Clean, responsive design with dark/light mode support and smooth animations.
-*   **Keyboard Shortcuts**: Navigate quickly with shortcuts (`/` for search, `?` for help, `g+h` for home).
+* **User Management**: Role-based access control (Admin, Staff, Veterinarian, Adopter) with secure JWT authentication and profile management.
+* **Animal Management**: Complete lifecycle tracking from intake to adoption, including image uploads, unique type-specific placeholders, and status updates.
+* **Adoption Portal**: Automated workflow where approval reserves the animal and completion marks it as adopted. All authenticated users can browse and submit requests.
+* **Medical Records**: Detailed veterinary logs for each animal, with PDF export and preview.
+* **Billing System**: Invoice generation, payment tracking, individual invoice printing, and PDF reports with preview before download.
+* **Inventory System**: Track supplies, monitor stock levels, and receive low-stock alerts with PDF export.
+* **Dashboard**: Real-time statistics, activity logs, and overdue task notifications.
+* **Performance Optimized**: McMaster-Carr inspired prefetching, smart caching, and Optimistic UI for instant page transitions.
+* **PDF Preview**: Preview all PDF exports before printing or downloading (Medical, Inventory, Billing).
+* **Modern Interface**: Clean, responsive design with dark/light mode support and smooth animations.
+* **Keyboard Shortcuts**: Navigate quickly with shortcuts (`/` for search, `?` for help, `g+h` for home).
 
 ## ♿ Accessibility
 
-*   ARIA labels on all interactive elements
-*   Clear focus states for keyboard navigation
-*   Screen reader support with live regions
-*   Respects `prefers-reduced-motion` for users sensitive to animations
-*   High contrast mode support
+* ARIA labels on all interactive elements
+* Clear focus states for keyboard navigation
+* Screen reader support with live regions
+* Respects `prefers-reduced-motion` for users sensitive to animations
+* High contrast mode support
 
 ## 🛠️ Tech Stack
 
-*   **Frontend**: HTML5, CSS3 (Custom Design System), Vanilla JavaScript (ES6+, SPA Architecture)
-*   **Backend**: PHP 8.x (Custom MVC Framework), RESTful API with JWT Authentication
-*   **Database**: MySQL with PDO prepared statements (SQL injection protected)
-*   **Environment**: XAMPP (Apache/MySQL/PHP)
+* **Frontend**: HTML5, CSS3 (Custom Design System), Vanilla JavaScript (ES6+, SPA Architecture)
+* **Backend**: PHP 8.x (Custom MVC Framework), RESTful API with JWT Authentication
+* **Database**: MySQL with PDO prepared statements (SQL injection protected)
+* **Environment**: XAMPP (Apache/MySQL/PHP)
 
 ## 🔐 Security Features
 
-*   JWT-based authentication with token refresh
-*   Password hashing using `password_hash()` / `password_verify()`
-*   PDO prepared statements for all database queries
-*   Role-based access control middleware
-*   CORS protection with whitelisted origins (configurable via `CORS_ORIGINS`)
-*   **Rate Limiting**: Configurable limits for login attempts (10/min) and API requests (100/min)
-*   **Input Sanitization**: Automatic XSS prevention on all incoming request data
-*   **Security Headers**: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy
-*   **Environment Configuration**: Secure `.env` file support for secrets management
-*   **File Upload Validation**: MIME type verification and image validation
+* JWT-based authentication with token refresh
+* Password hashing using `password_hash()` / `password_verify()`
+* PDO prepared statements for all database queries
+* Role-based access control middleware
+* CORS protection with whitelisted origins (configurable via `CORS_ORIGINS`)
+* **Rate Limiting**: Configurable limits for login attempts (10/min) and API requests (100/min)
+* **Input Sanitization**: Automatic XSS prevention on all incoming request data
+* **Security Headers**: X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy
+* **Environment Configuration**: Secure `.env` file support for secrets management
+* **File Upload Validation**: MIME type verification and image validation
 
 ## ⚙️ Installation & Setup
 
 ### Prerequisites
-*   XAMPP (or similar PHP/MySQL stack)
-*   PHP 8.0+
-*   MySQL 5.7+
+
+* XAMPP (or similar PHP/MySQL stack)
+* PHP 8.0+
+* MySQL 5.7+
 
 ### Steps
 
-1.  **Clone the Repository**
-    ```bash
-    git clone https://github.com/K-Laron/DOGPOUNDFINAL-.git
-    cd DOGPOUNDFINAL-
-    ```
+1. **Clone the Repository**
 
-2.  **Database Setup**
-    *   Create a new MySQL database named `catarman_dog_pound_db`.
-    *   Import the schema: `database/schema.sql`
-    *   Import the seed data: `database/seeders.sql`
+   ```bash
+   git clone https://github.com/K-Laron/DOGPOUNDFINAL-.git
+   cd DOGPOUNDFINAL-
+   ```
 
-3.  **Configuration**
-    *   Copy `.env.example` to `.env`: `cp .env.example .env`
-    *   Update `.env` with your database credentials:
-        ```env
-        DB_HOST=127.0.0.1
-        DB_PORT=3307
-        DB_NAME=catarman_dog_pound_db
-        DB_USER=root
-        DB_PASS=
-        ```
-    *   For production: Set a unique `JWT_SECRET` and `APP_ENV=production`
+2. **Database Setup**
 
-4.  **Running the Application**
-    *   Double-click `start.bat` in the root directory
-    *   The application will launch in background mode (hidden windows)
-    *   The browser will automatically open at `http://localhost:3000`
+   * Create a new MySQL database named `catarman_dog_pound_db`.
+   * Import the schema: `database/schema.sql`
+   * Import the seed data: `database/seeders.sql`
 
-5.  **Stopping the Application**
-    *   Double-click `stop.bat` to gracefully shut down the background servers
-    *   **Note**: Closing the browser does NOT stop the servers. You must use `stop.bat`
+3. **Configuration**
 
-##  Project Structure
+   * Copy `.env.example` to `.env`: `cp .env.example .env`
+   * Update `.env` with your database credentials:
 
-```
+     ```env
+     DB_HOST=127.0.0.1
+     DB_PORT=3307
+     DB_NAME=catarman_dog_pound_db
+     DB_USER=root
+     DB_PASS=
+     ```
+
+   * For production: Set a unique `JWT_SECRET` and `APP_ENV=production`
+
+4. **Running the Application**
+
+   * Double-click `start.bat` in the root directory
+   * The application will launch in background mode (hidden windows)
+   * The browser will automatically open at `http://localhost:3000`
+
+5. **Stopping the Application**
+
+   * Double-click `stop.bat` to gracefully shut down the background servers
+   * **Note**: Closing the browser does NOT stop the servers. You must use `stop.bat`
+
+## Project Structure
+
+```text
 ├── backend/
 │   ├── app/
 │   │   ├── api/          # API endpoints
@@ -119,7 +127,7 @@ A comprehensive web-based application designed to streamline the operations of t
 
 ## 📝 API Endpoints
 
-```
+```text
 ┌────────────────────┬───────────────────────────────────────────┐
 │ Endpoint           │ Description                               │
 ├────────────────────┼───────────────────────────────────────────┤
@@ -151,4 +159,3 @@ A comprehensive web-based application designed to streamline the operations of t
 ## 📄 License
 
 This project is for educational purposes.
-
