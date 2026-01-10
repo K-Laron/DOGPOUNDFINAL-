@@ -492,7 +492,8 @@ $id = Sanitizer::integer($input['id']);
 
 ### `app/middleware/AuthMiddleware.php`
 
-**Purpose**: JWT authentication and role-based access control
+**Purpose**: JWT authentication and role-based access control.
+**Note**: Uses strict return types (`: bool`, `: array`) for security critical checks.
 
 **Methods**:
 
@@ -526,7 +527,8 @@ $id = Sanitizer::integer($input['id']);
 
 ### `app/controllers/BaseController.php`
 
-**Purpose**: Abstract base class with common functionality for all controllers
+**Purpose**: Abstract base class with common functionality for all controllers.
+**Note**: Implements strict PHP 7+ return types for all helper methods to ensure stability.
 
 **Properties**:
 
@@ -792,7 +794,7 @@ $id = Sanitizer::integer($input['id']);
 
 ### `app/models/User.php`
 
-**Purpose**: User database operations
+**Purpose**: User database operations. Optimized with strict return types.
 
 **Methods**:
 
@@ -962,3 +964,22 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
   "timestamp": "2025-12-25T10:00:00+08:00"
 }
 ```
+
+---
+
+## 🛡️ Code Quality Standards
+
+### Strict Type Hinting
+
+All backend PHP code adheres to strict typing to ensure robustness and prevent type-related bugs.
+
+- **Return Types**: All methods and functions must specify return types (e.g., `: void`, `: array`, `: ?int`).
+- **Param Types**: All parameters must be typed.
+- **Strict Mode**: `declare(strict_types=1);` is used where appropriate to enforce type safety at the file level.
+
+### Security Best Practices
+
+- **Input Sanitization**: Never trust user input. Use the `Sanitizer` class.
+- **Output Escaping**: Escape all data before outputting to HTML or JSON.
+- **Prepared Statements**: Always use PDO prepared statements for SQL.
+- **Environment Variables**: Store secrets in `.env`, never in code.

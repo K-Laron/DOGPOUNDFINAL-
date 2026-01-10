@@ -165,7 +165,7 @@ const AnimalDetailPage = {
             <!-- Main Content -->
             <div class="grid gap-6" style="grid-template-columns: 1fr 2fr;">
                 <!-- Left Column - Photo & Basic Info -->
-                <div class="flex flex-col gap-6">
+                <div class="flex flex-col gap-3">
                     <!-- Photo -->
                     <div class="card">
                         <div class="card-body p-0">
@@ -180,11 +180,11 @@ const AnimalDetailPage = {
                     
                     <!-- Basic Info -->
                     <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Basic Information</h3>
+                        <div class="card-header" style="padding: 10px 16px;">
+                            <h3 class="card-title" style="font-size: var(--text-base);">Basic Information</h3>
                         </div>
-                        <div class="card-body">
-                            <div class="space-y-4">
+                        <div class="card-body" style="padding: 4px 16px 8px;">
+                            <div class="space-y-0">
                                 ${this.renderInfoRow('Type', animal.Type)}
                                 ${this.renderInfoRow('Breed', animal.Breed || 'Unknown')}
                                 ${this.renderInfoRow('Gender', animal.Gender)}
@@ -199,11 +199,11 @@ const AnimalDetailPage = {
                     <!-- Impound Record -->
                     ${animal.impound_record ? `
                         <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Impound Record</h3>
+                            <div class="card-header" style="padding: 12px 16px;">
+                                <h3 class="card-title" style="font-size: var(--text-base);">Impound Record</h3>
                             </div>
-                            <div class="card-body">
-                                <div class="space-y-4">
+                            <div class="card-body" style="padding: 8px 16px;">
+                                <div class="space-y-1">
                                     ${this.renderInfoRow('Capture Date', Utils.formatDate(animal.impound_record.Capture_Date))}
                                     ${this.renderInfoRow('Location Found', animal.impound_record.Location_Found)}
                                     ${this.renderInfoRow('Officer', animal.impound_record.Impounding_Officer)}
@@ -416,7 +416,7 @@ const AnimalDetailPage = {
                 <div class="text-2xl">🍖</div>
                 <div class="flex-1">
                     <p class="font-medium">${record.Food_Type}</p>
-                    <p class="text-secondary text-sm">${record.Quantity_Used} units</p>
+                    <p class="text-secondary text-sm">${record.Quantity_Used}g</p>
                 </div>
                 <div class="text-right">
                     <p class="text-sm">${Utils.formatDateTime(record.Feeding_Time)}</p>
@@ -617,7 +617,7 @@ const AnimalDetailPage = {
                         'Dry Food', 'Wet Food', 'Mixed', 'Special Diet'
                     ]
                 },
-                { type: 'number', name: 'quantity_used', label: 'Quantity', required: true, min: 1 },
+                { type: 'number', name: 'quantity_used', label: 'Quantity (grams)', required: true, min: 1, placeholder: 'Enter amount in grams', hint: 'Amount of food given in grams' },
                 { type: 'datetime-local', name: 'feeding_time', label: 'Feeding Time' }
             ])}
                 </form>

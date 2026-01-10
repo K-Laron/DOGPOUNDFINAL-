@@ -1,6 +1,6 @@
 # 🐕 Catarman Dog Pound Management System
 
-![Version](https://img.shields.io/badge/version-1.0.7-blue.svg)
+![Version](https://img.shields.io/badge/version-1.0.8-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.x-777BB4.svg?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479A1.svg?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?logo=javascript&logoColor=black)
@@ -152,6 +152,8 @@ A comprehensive web-based application designed to streamline the operations of t
 | PROJECT_STRUCTURE.md | Root | Detailed directory structure |
 | DATABASE_DOCUMENTATION.md | Root | Database schema & queries |
 | SYSTEM_DIAGRAMS.md | Root | Architecture, data models, use cases, event flows |
+| DEFENSE_GUIDE.md | Root | Security defenses, Q&A, and threat analysis |
+| PIECES_QUESTIONNAIRE.md | Root | Comprehensive system analysis (PIECES framework) |
 | BACKEND_DOCUMENTATION.md | `/docs` | Backend code documentation |
 | FRONTEND_DOCUMENTATION.md | `/docs` | Frontend code documentation |
 | SYSTEM_DESIGN_DOCUMENT.md | `/docs` | System architecture and flowcharts |

@@ -91,7 +91,8 @@ INSERT INTO Animals (Name, Type, Breed, Gender, Age_Group, Weight, Intake_Date, 
 ('Brownie', 'Dog', 'Aspin', 'Female', 'Puppy', 4.50, NOW() - INTERVAL 3 DAY, 'Stray', 'Quarantine'),
 ('Kitty', 'Cat', 'Puspin', 'Female', 'Adult', 4.00, NOW() - INTERVAL 45 DAY, 'Stray', 'Adopted'),
 ('Rocky', 'Dog', 'German Shepherd Mix', 'Male', 'Adult', 25.00, NOW() - INTERVAL 60 DAY, 'Surrendered', 'Adopted'),
-('Coco', 'Dog', 'Poodle Mix', 'Female', 'Senior', 6.50, NOW() - INTERVAL 40 DAY, 'Surrendered', 'Reclaimed');
+('Coco', 'Dog', 'Poodle Mix', 'Female', 'Senior', 6.50, NOW() - INTERVAL 40 DAY, 'Surrendered', 'Reclaimed'),
+('Bella', 'Dog', 'Golden Retriever', 'Female', 'Adult', 22.00, NOW() - INTERVAL 12 DAY, 'Surrendered', 'Reserved');
 
 -- =====================================================
 -- 5. INSERT IMPOUND RECORDS
@@ -164,7 +165,8 @@ INSERT INTO Adoption_Requests (AnimalID, Adopter_UserID, Request_Date, Status, S
 (8, 4, NOW() - INTERVAL 40 DAY, 'Completed', 'Adoption completed successfully. Follow-up scheduled in 2 weeks.', 2),
 (9, 4, NOW() - INTERVAL 55 DAY, 'Completed', 'Great match! Adopter has experience with large dogs.', 2),
 (1, 4, NOW() - INTERVAL 5 DAY, 'Pending', NULL, NULL),
-(2, 4, NOW() - INTERVAL 3 DAY, 'Interview Scheduled', 'Interview scheduled for next week.', 2);
+(2, 4, NOW() - INTERVAL 3 DAY, 'Interview Scheduled', 'Interview scheduled for next week.', 2),
+(11, 4, NOW() - INTERVAL 2 DAY, 'Approved', 'Application approved. Pending pickup.', 2);
 
 -- =====================================================
 -- 9. INSERT SAMPLE INVOICES

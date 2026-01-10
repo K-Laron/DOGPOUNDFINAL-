@@ -234,6 +234,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.8] - 2026-01-10
+
+### Added (Security)
+
+- Frontend: Added `escapeHTML()` utility in `utils.js` for defense-in-depth XSS prevention when rendering dynamic content
+- Documentation: Updated `FRONTEND_DOCUMENTATION.md` to include security utility details
+
+### Changed (Code Quality)
+
+- Backend Core: Enforced strict PHP 7+ return type declarations (`: bool`, `: array`, `: ?int`) across 40+ methods
+- Backend: Updated `BaseController.php` helper methods to return explicit types
+- Backend: Updated `User.php` model methods to guarantee return types
+- Backend: Updated `AuthMiddleware.php` to enforce type safety in authentication flows
+- Documentation: Updated `BACKEND_DOCUMENTATION.md` to reflect strict typing standards
+
+---
+
 ## [Unreleased]
 
 ### Planned

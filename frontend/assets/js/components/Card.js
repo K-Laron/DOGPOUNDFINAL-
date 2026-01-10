@@ -101,14 +101,14 @@ const Card = {
             <div class="card card-hover animal-card ${square ? 'square' : ''}" onclick="Router.navigate('/animals/${animal.AnimalID}')">
                 <div class="animal-card-image">
                     <img src="${imageUrl}" alt="${animal.Name}" onerror="this.src='${placeholder}'">
-                    <span class="badge ${statusClass}" style="position: absolute; top: 12px; right: 12px;">
-                        ${animal.Current_Status}
-                    </span>
                 </div>
                 <div class="card-body">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="card-title" style="margin: 0;">${animal.Name}</h3>
-                        <span class="badge ${Utils.getAnimalTypeBadgeClass(animal.Type)}">${animal.Type}</span>
+                    <div class="flex items-center justify-between gap-2 mb-2" style="overflow: hidden;">
+                        <h3 class="card-title" style="margin: 0; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${animal.Name}</h3>
+                        <div class="flex items-center gap-1" style="flex-shrink: 0;">
+                            <span class="badge ${statusClass}" style="font-size: 10px; padding: 2px 6px;">${animal.Current_Status}</span>
+                            <span class="badge ${Utils.getAnimalTypeBadgeClass(animal.Type)}" style="font-size: 10px; padding: 2px 6px;">${animal.Type}</span>
+                        </div>
                     </div>
                     <p class="text-secondary" style="font-size: var(--text-sm); margin-bottom: 12px;">
                         ${animal.Breed || 'Unknown breed'} • ${animal.Gender} • ${animal.Age_Group || 'Unknown age'}
@@ -127,6 +127,8 @@ const Card = {
             </div>
         `;
     },
+
+
 
     /**
      * Render user card
@@ -382,7 +384,20 @@ cardStyles.textContent = `
     .animal-card:hover .animal-card-image img {
         transform: scale(1.05);
     }
+    
+    /* Enhanced status badge on animal cards */
+    .animal-card-image .badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 6px 12px;
+        letter-spacing: 0.02em;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15);
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
 `;
+
 
 document.head.appendChild(cardStyles);
 

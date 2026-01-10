@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Authentication Middleware
  * Handles JWT authentication and role-based authorization
@@ -9,17 +10,18 @@
 require_once __DIR__ . '/../utils/JWT.php';
 require_once __DIR__ . '/../utils/Response.php';
 
-class AuthMiddleware {
+class AuthMiddleware
+{
     /**
      * @var PDO Database connection
      */
     private $db;
-    
+
     /**
      * @var array|null Authenticated user data
      */
     private $user = null;
-    
+
     /**
      * @var array|null JWT payload
      */
@@ -30,7 +32,8 @@ class AuthMiddleware {
      * 
      * @param PDO $db Database connection
      */
-    public function __construct($db) {
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
@@ -39,7 +42,8 @@ class AuthMiddleware {
      * 
      * @return array Authenticated user data
      */
-    public function authenticate() {
+    public function authenticate(): array
+    {
         $token = $this->getBearerToken();
 
         if (!$token) {
@@ -96,7 +100,8 @@ class AuthMiddleware {
      * @param string|array $allowedRoles Single role or array of roles
      * @return bool True if authorized
      */
-    public function requireRole($allowedRoles) {
+    public function requireRole($allowedRoles): bool
+    {
         // Ensure user is authenticated first
         if (!$this->user) {
             $this->authenticate();
@@ -115,7 +120,7 @@ class AuthMiddleware {
         // Check if user's role is in allowed roles
         if (!in_array($this->user['Role_Name'], $allowedRoles)) {
             Response::error(
-                "Access denied. Required role: " . implode(' or ', $allowedRoles), 
+                "Access denied. Required role: " . implode(' or ', $allowedRoles),
                 403
             );
         }
@@ -129,7 +134,8 @@ class AuthMiddleware {
      * @param string|array $roles Role(s) to check
      * @return bool True if user has role
      */
-    public function hasRole($roles) {
+    public function hasRole($roles): bool
+    {
         if (!$this->user) {
             return false;
         }
@@ -146,7 +152,8 @@ class AuthMiddleware {
      * 
      * @return bool
      */
-    public function isAdmin() {
+    public function isAdmin(): bool
+    {
         return $this->hasRole('Admin');
     }
 
@@ -155,7 +162,8 @@ class AuthMiddleware {
      * 
      * @return bool
      */
-    public function isStaff() {
+    public function isStaff(): bool
+    {
         return $this->hasRole(['Admin', 'Staff']);
     }
 
@@ -164,7 +172,8 @@ class AuthMiddleware {
      * 
      * @return bool
      */
-    public function isVeterinarian() {
+    public function isVeterinarian(): bool
+    {
         return $this->hasRole(['Admin', 'Veterinarian']);
     }
 
@@ -174,7 +183,8 @@ class AuthMiddleware {
      * @param int $resourceUserId User ID of resource owner
      * @return bool
      */
-    public function isOwner($resourceUserId) {
+    public function isOwner($resourceUserId): bool
+    {
         if (!$this->user) {
             return false;
         }
@@ -188,7 +198,8 @@ class AuthMiddleware {
      * @param array $allowedRoles Roles that can access regardless of ownership
      * @return bool
      */
-    public function canAccess($resourceUserId, $allowedRoles = ['Admin']) {
+    public function canAccess($resourceUserId, $allowedRoles = ['Admin']): bool
+    {
         return $this->isOwner($resourceUserId) || $this->hasRole($allowedRoles);
     }
 
@@ -197,7 +208,8 @@ class AuthMiddleware {
      * 
      * @return array|null User data or null
      */
-    public function getUser() {
+    public function getUser(): ?array
+    {
         return $this->user;
     }
 
@@ -206,7 +218,8 @@ class AuthMiddleware {
      * 
      * @return int|null User ID or null
      */
-    public function getUserId() {
+    public function getUserId(): ?int
+    {
         return $this->user ? (int)$this->user['UserID'] : null;
     }
 
@@ -215,7 +228,8 @@ class AuthMiddleware {
      * 
      * @return string|null Role name or null
      */
-    public function getUserRole() {
+    public function getUserRole(): ?string
+    {
         return $this->user ? $this->user['Role_Name'] : null;
     }
 
@@ -224,7 +238,8 @@ class AuthMiddleware {
      * 
      * @return array|null JWT payload or null
      */
-    public function getPayload() {
+    public function getPayload(): ?array
+    {
         return $this->payload;
     }
 
@@ -234,7 +249,8 @@ class AuthMiddleware {
      * 
      * @return string|null Token or null
      */
-    private function getBearerToken() {
+    private function getBearerToken()
+    {
         $authHeader = $this->getAuthorizationHeader();
 
         if (!empty($authHeader) && preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
@@ -250,17 +266,18 @@ class AuthMiddleware {
      * 
      * @return string|null Header value or null
      */
-    private function getAuthorizationHeader() {
+    private function getAuthorizationHeader()
+    {
         $headers = null;
 
         // Method 1: Check $_SERVER
         if (isset($_SERVER['Authorization'])) {
             $headers = trim($_SERVER['Authorization']);
-        } 
+        }
         // Method 2: Check HTTP_AUTHORIZATION
         elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
             $headers = trim($_SERVER['HTTP_AUTHORIZATION']);
-        } 
+        }
         // Method 3: Check REDIRECT_HTTP_AUTHORIZATION (for some CGI/FastCGI setups)
         elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
             $headers = trim($_SERVER['REDIRECT_HTTP_AUTHORIZATION']);
@@ -268,7 +285,7 @@ class AuthMiddleware {
         // Method 4: Use getallheaders() function
         elseif (function_exists('getallheaders')) {
             $requestHeaders = getallheaders();
-            
+
             // Handle case-insensitive header names
             $requestHeaders = array_combine(
                 array_map('ucwords', array_keys($requestHeaders)),
@@ -282,7 +299,7 @@ class AuthMiddleware {
         // Method 5: Use apache_request_headers() function
         elseif (function_exists('apache_request_headers')) {
             $requestHeaders = apache_request_headers();
-            
+
             $requestHeaders = array_combine(
                 array_map('ucwords', array_keys($requestHeaders)),
                 array_values($requestHeaders)
@@ -302,16 +319,17 @@ class AuthMiddleware {
      * 
      * @return array|null User data or null
      */
-    public function optionalAuth() {
+    public function optionalAuth(): ?array
+    {
         try {
             $token = $this->getBearerToken();
-            
+
             if (!$token) {
                 return null;
             }
 
             $this->payload = JWT::verify($token);
-            
+
             if (!$this->payload || !isset($this->payload['user_id'])) {
                 return null;
             }
@@ -340,7 +358,8 @@ class AuthMiddleware {
      * @param array $allowedRoles Roles that can access
      * @return bool
      */
-    public function requireOwnerOrRole($resourceUserId, $allowedRoles = ['Admin']): bool {
+    public function requireOwnerOrRole($resourceUserId, $allowedRoles = ['Admin']): bool
+    {
         if (!$this->user) {
             $this->authenticate();
         }

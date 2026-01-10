@@ -478,9 +478,28 @@ const AnimalsPage = {
 
                 const data = Form.getData(form);
 
+                // Get the photo file if selected
+                const photoInput = form.querySelector('input[name="photo"]');
+                const photoFile = photoInput?.files?.[0];
+
+                // Remove photo from data as it's handled separately
+                delete data.photo;
+
                 try {
                     const response = await API.animals.create(data);
                     if (response.success) {
+                        const animalId = response.data.AnimalID;
+
+                        // Upload photo if provided
+                        if (photoFile) {
+                            try {
+                                await API.animals.uploadImage(animalId, photoFile);
+                            } catch (uploadError) {
+                                console.error('Photo upload failed:', uploadError);
+                                Toast.warning('Animal added but photo upload failed');
+                            }
+                        }
+
                         Toast.success('Animal added successfully');
                         this.loadAnimals();
                         return true;
@@ -519,9 +538,26 @@ const AnimalsPage = {
 
                 const data = Form.getData(form);
 
+                // Get the photo file if selected
+                const photoInput = form.querySelector('input[name="photo"]');
+                const photoFile = photoInput?.files?.[0];
+
+                // Remove photo from data as it's handled separately
+                delete data.photo;
+
                 try {
                     const response = await API.animals.update(animal.AnimalID, data);
                     if (response.success) {
+                        // Upload photo if provided
+                        if (photoFile) {
+                            try {
+                                await API.animals.uploadImage(animal.AnimalID, photoFile);
+                            } catch (uploadError) {
+                                console.error('Photo upload failed:', uploadError);
+                                Toast.warning('Animal updated but photo upload failed');
+                            }
+                        }
+
                         Toast.success('Animal updated successfully');
                         this.loadAnimals();
                         return true;
@@ -533,6 +569,7 @@ const AnimalsPage = {
             }
         });
     },
+
 
     /**
      * Delete animal
@@ -620,6 +657,13 @@ const AnimalsPage = {
                     { value: 'In Treatment', label: 'In Treatment' },
                     { value: 'Quarantine', label: 'Quarantine' }
                 ]
+            },
+            {
+                type: 'file',
+                name: 'photo',
+                label: 'Photo',
+                accept: 'image/*',
+                hint: 'Upload a photo of the animal (optional)'
             }
         ];
     }

@@ -128,6 +128,27 @@ const Utils = {
      */
 
     /**
+     * Escape HTML special characters to prevent XSS attacks
+     * Use this when inserting dynamic data into innerHTML
+     * @param {string} str - String to escape
+     * @returns {string} - Escaped string safe for HTML insertion
+     */
+    escapeHTML(str) {
+        if (str === null || str === undefined) return '';
+        if (typeof str !== 'string') str = String(str);
+
+        const htmlEscapes = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+
+        return str.replace(/[&<>"']/g, char => htmlEscapes[char]);
+    },
+
+    /**
      * Capitalize first letter
      * @param {string} str
      * @returns {string}

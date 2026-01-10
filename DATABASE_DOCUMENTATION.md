@@ -15,6 +15,22 @@ This document provides a detailed explanation of the database schema, tables, re
 
 ---
 
+## ⚙️ Configuration
+
+The database connection is configured using environment variables defined in the `.env` file.
+
+| Variable | Description | Default |
+| ---------- | ------------- | --------- |
+| `DB_HOST` | Database host address | `127.0.0.1` |
+| `DB_PORT` | Database port | `3307` |
+| `DB_NAME` | Database name | `catarman_dog_pound_db` |
+| `DB_USER` | Database username | `root` |
+| `DB_PASS` | Database password | *(empty)* |
+
+> **Note**: The system defaults to port `3307` to avoid conflicts with standard MySQL installations.
+
+---
+
 ## 📊 Entity Relationship Diagram
 
 ```text
@@ -409,6 +425,8 @@ This document provides a detailed explanation of the database schema, tables, re
 - ADOPTION_REJECT
 - INVOICE_CREATE
 - PAYMENT_RECORD
+- UPLOAD_ANIMAL_IMAGE
+- CREATE_IMPOUND
 
 **Indexes**:
 

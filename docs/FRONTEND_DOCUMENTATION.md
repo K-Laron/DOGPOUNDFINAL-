@@ -505,6 +505,7 @@ Store.subscribe('user', (newUser, oldUser) => {
 │ slugify(str)           │ URL-friendly slug    │
 │ randomString(length)   │ Random alphanumeric  │
 │ uuid()                 │ Generate UUID        │
+│ escapeHTML(str)        │ Escape XSS chars     │
 └────────────────────────┴──────────────────────┘
 ```
 
