@@ -574,10 +574,12 @@ $id = Sanitizer::integer($input['id']);
 │ POST   │ /auth/refresh           │ Refresh access token                  │
 │ POST   │ /auth/logout            │ Logout (for logging)                  │
 │ POST   │ /auth/logout-all        │ Invalidate all sessions               │
-│ POST   │ /auth/forgot-password   │ Request password reset                │
-│ POST   │ /auth/reset-password    │ Reset with token                      │
+│ POST   │ /auth/forgot-password   │ Request password reset (Placeholder)  │
+│ POST   │ /auth/reset-password    │ Reset with token (Placeholder)        │
 └────────┴─────────────────────────┴───────────────────────────────────────┘
 ```
+
+**Note**: The password reset functionality (`forgot-password`, `reset-password`) is currently implemented as a placeholder returning 200/501 responses. No actual email dispatching occurs.
 
 **Login Flow**:
 

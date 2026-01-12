@@ -593,6 +593,21 @@ const API = {
 
         report(params) {
             return API.get('/billing/report', params);
+        },
+
+        // Fee calculation
+        calculateFee(animalId, transactionType) {
+            return API.get('/billing/calculate-fee', { animal_id: animalId, transaction_type: transactionType });
+        },
+
+        // Get customer's unpaid invoices
+        customerInvoices(userId) {
+            return API.get(`/invoices/customer/${userId}`);
+        },
+
+        // Get customers with unpaid invoices
+        customersWithBills() {
+            return API.get('/invoices/customers-with-bills');
         }
     },
 

@@ -608,10 +608,10 @@ input[type="datetime-local"].enhanced-date::-webkit-calendar-picker-indicator:ho
     --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1) inset;
     --shadow-card-hover: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 1px rgba(255, 255, 255, 0.15) inset;
 
-    /* Glowing primary color */
-    --color-primary: #0A84FF;
-    --color-primary-light: #409CFF;
-    --color-success: #30D158;
+    /* Glowing primary color - Spotify Green Match */
+    --color-primary: #1DB954;
+    --color-primary-light: #1ED760;
+    --color-success: #1DB954;
     --color-warning: #FFD60A;
     --color-danger: #FF453A;
 }
@@ -646,7 +646,7 @@ input[type="datetime-local"].enhanced-date::-webkit-calendar-picker-indicator:ho
 [data-theme="dark"] .form-select:focus,
 [data-theme="dark"] .form-textarea:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.2);
 }
 
 /* ==========================================

@@ -174,7 +174,7 @@ const ProfilePage = {
         if (this.user.role === 'Adopter') {
             statsHtml = `
                 <div class="quick-stat-item">
-                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                    <div class="quick-stat-icon" style="background: rgba(var(--color-primary-rgb), 0.15); color: var(--color-primary);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
                     </div>
                     <div class="quick-stat-info">
@@ -222,7 +222,7 @@ const ProfilePage = {
                     </div>
                 </div>
                 <div class="quick-stat-item">
-                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                    <div class="quick-stat-icon" style="background: rgba(var(--color-primary-rgb), 0.15); color: var(--color-primary);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     </div>
                     <div class="quick-stat-info">
@@ -234,7 +234,7 @@ const ProfilePage = {
         } else if (this.user.role === 'Staff' || this.user.role === 'Admin') {
             statsHtml = `
                 <div class="quick-stat-item">
-                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                    <div class="quick-stat-icon" style="background: rgba(var(--color-primary-rgb), 0.15); color: var(--color-primary);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5M14.267 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5M8 14v.5M16 14v.5M11.25 16.25h1.5L12 17l-.75-.75z"></path><path d="M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5c.78 0 1.5.108 2.161.306"></path></svg>
                     </div>
                     <div class="quick-stat-info">
@@ -264,7 +264,7 @@ const ProfilePage = {
         } else {
             statsHtml = `
                 <div class="quick-stat-item">
-                    <div class="quick-stat-icon" style="background: rgba(0, 122, 255, 0.15); color: var(--color-primary);">
+                    <div class="quick-stat-icon" style="background: rgba(var(--color-primary-rgb), 0.15); color: var(--color-primary);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     </div>
                     <div class="quick-stat-info">

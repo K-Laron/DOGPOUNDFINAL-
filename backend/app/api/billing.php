@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Billing & Payment Routes
  * 
@@ -17,7 +18,13 @@ $router->get('/invoices', 'BillingController@indexInvoices', ['Admin', 'Staff', 
 // Get invoice statistics
 $router->get('/invoices/stats/summary', 'BillingController@invoiceStatistics', ['Admin', 'Staff']);
 
-// Get single invoice with payments
+// Get customers with unpaid invoices (for dropdown) - MUST be before /invoices/{id}
+$router->get('/invoices/customers-with-bills', 'BillingController@customersWithUnpaidInvoices', ['Admin', 'Staff']);
+
+// Get customer's unpaid invoices - MUST be before /invoices/{id}
+$router->get('/invoices/customer/{userId}', 'BillingController@customerUnpaidInvoices', ['Admin', 'Staff']);
+
+// Get single invoice with payments - MUST be after specific routes
 $router->get('/invoices/{id}', 'BillingController@showInvoice', ['Admin', 'Staff', 'Adopter']);
 
 // Create invoice
@@ -38,6 +45,13 @@ $router->get('/payments/{id}', 'BillingController@showPayment', ['Admin', 'Staff
 
 // Record payment for invoice
 $router->post('/payments', 'BillingController@recordPayment', ['Admin', 'Staff']);
+
+// ============================================
+// FEE CALCULATION
+// ============================================
+
+// Calculate fee for an animal (adoption or reclaim)
+$router->get('/billing/calculate-fee', 'BillingController@calculateFee', ['Admin', 'Staff']);
 
 // ============================================
 // REPORTS

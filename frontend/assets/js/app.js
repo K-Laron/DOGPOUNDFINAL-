@@ -110,8 +110,8 @@ const App = {
         document.addEventListener('keydown', (e) => {
             const activeElement = document.activeElement;
             const isInputFocused = activeElement && (
-                activeElement.tagName === 'INPUT' || 
-                activeElement.tagName === 'TEXTAREA' || 
+                activeElement.tagName === 'INPUT' ||
+                activeElement.tagName === 'TEXTAREA' ||
                 activeElement.isContentEditable
             );
 
@@ -287,7 +287,7 @@ const App = {
      */
     log(...args) {
         if (this.debug) {
-            console.log('[App]', ...args);
+            // console.log('[App]', ...args);
         }
     },
 

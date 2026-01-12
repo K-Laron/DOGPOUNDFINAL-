@@ -1096,7 +1096,7 @@ const Utils = {
      * @returns {string}
      */
     stringToColor(str) {
-        if (!str) return '#007AFF';
+        if (!str) return '#1DB954';
 
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -1105,7 +1105,7 @@ const Utils = {
 
         const colors = [
             '#FF3B30', '#FF9500', '#FFCC00', '#34C759', '#00C7BE',
-            '#30B0C7', '#32ADE6', '#007AFF', '#5856D6', '#AF52DE',
+            '#30B0C7', '#32ADE6', '#1DB954', '#5856D6', '#AF52DE',
             '#FF2D55', '#A2845E'
         ];
 
@@ -1118,7 +1118,7 @@ const Utils = {
      * @returns {string}
      */
     stringToGradient(str) {
-        if (!str) return 'linear-gradient(135deg, #007AFF, #5856D6)';
+        if (!str) return 'linear-gradient(135deg, #1DB954, #5856D6)';
 
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -1130,14 +1130,14 @@ const Utils = {
             'linear-gradient(135deg, #FF9500, #FFCC00)',
             'linear-gradient(135deg, #34C759, #00C7BE)',
             'linear-gradient(135deg, #00C7BE, #30B0C7)',
-            'linear-gradient(135deg, #32ADE6, #007AFF)',
-            'linear-gradient(135deg, #007AFF, #5856D6)',
+            'linear-gradient(135deg, #32ADE6, #1DB954)',
+            'linear-gradient(135deg, #1DB954, #5856D6)',
             'linear-gradient(135deg, #5856D6, #AF52DE)',
             'linear-gradient(135deg, #AF52DE, #FF2D55)',
             'linear-gradient(135deg, #FF2D55, #FF3B30)',
             'linear-gradient(135deg, #A2845E, #8E8E93)',
             'linear-gradient(135deg, #30B0C7, #5856D6)',
-            'linear-gradient(135deg, #34C759, #007AFF)'
+            'linear-gradient(135deg, #34C759, #1DB954)'
         ];
 
         return gradients[Math.abs(hash) % gradients.length];
@@ -1246,12 +1246,12 @@ const Utils = {
         const statusMap = {
             // Animal statuses
             'Available': 'badge-success',
-            'Reserved': 'badge-primary',
+            'Reserved': 'badge-teal',
             'Adopted': 'badge-info',
             'In Treatment': 'badge-warning',
             'Quarantine': 'badge-danger',
             'Deceased': 'badge-gray',
-            'Reclaimed': 'badge-info',
+            'Reclaimed': 'badge-secondary',
 
             // Adoption statuses
             'Pending': 'badge-warning',

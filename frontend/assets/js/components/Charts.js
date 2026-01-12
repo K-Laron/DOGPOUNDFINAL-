@@ -43,7 +43,13 @@ const Charts = {
      * Color palette (Apple-inspired)
      */
     colors: {
-        primary: '#007AFF',
+        // Dynamic Primary Color based on Theme
+        get primary() {
+            return document.documentElement.getAttribute('data-theme') === 'dark' ||
+                window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? '#1DB954' // Spotify Green
+                : '#007AFF'; // Apple Blue
+        },
         secondary: '#5856D6',
         success: '#34C759',
         warning: '#FF9500',
@@ -52,7 +58,12 @@ const Charts = {
         gray: '#8E8E93',
 
         // Gradient pairs
-        primaryGradient: ['#007AFF', '#5856D6'],
+        get primaryGradient() {
+            return document.documentElement.getAttribute('data-theme') === 'dark' ||
+                window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? ['#1DB954', '#1AA34A'] // Green Gradient
+                : ['#007AFF', '#5856D6']; // Blue Gradient
+        },
         successGradient: ['#34C759', '#30D158'],
         warningGradient: ['#FF9500', '#FFCC00'],
         dangerGradient: ['#FF3B30', '#FF6961'],
@@ -412,7 +423,8 @@ const Charts = {
             'In Treatment': this.colors.warning,
             'Quarantine': this.colors.danger,
             'Deceased': this.colors.gray,
-            'Reclaimed': this.colors.secondary
+            'Reclaimed': this.colors.secondary,
+            'Reserved': '#30B0C7' // Teal for Reserved
         };
 
         const labels = Object.keys(distribution);

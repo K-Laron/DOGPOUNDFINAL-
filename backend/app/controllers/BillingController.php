@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Billing Controller
  * Handles invoices and payments
@@ -8,18 +9,20 @@
 
 require_once APP_PATH . '/controllers/BaseController.php';
 
-class BillingController extends BaseController {
-    
+class BillingController extends BaseController
+{
+
     /**
      * List invoices
      * GET /invoices
      */
-    public function indexInvoices() {
+    public function indexInvoices()
+    {
         list($page, $perPage) = $this->getPagination();
-        
+
         $where = ["i.Is_Deleted = FALSE"];
         $params = [];
-        
+
         // Adopters can only see their own invoices
         if ($this->user['Role_Name'] === 'Adopter') {
             $where[] = "i.Payer_UserID = :payer_id";
@@ -30,24 +33,24 @@ class BillingController extends BaseController {
                 $where[] = "i.Status = :status";
                 $params['status'] = $this->query('status');
             }
-            
+
             if ($this->query('type')) {
                 $where[] = "i.Transaction_Type = :type";
                 $params['type'] = $this->query('type');
             }
-            
+
             if ($this->query('payer_id')) {
                 $where[] = "i.Payer_UserID = :payer_id";
                 $params['payer_id'] = $this->query('payer_id');
             }
         }
-        
+
         // Date range filter
         if ($this->query('date_from')) {
             $where[] = "DATE(i.Created_At) >= :date_from";
             $params['date_from'] = $this->query('date_from');
         }
-        
+
         if ($this->query('date_to')) {
             $where[] = "DATE(i.Created_At) <= :date_to";
             $params['date_to'] = $this->query('date_to');
@@ -68,9 +71,9 @@ class BillingController extends BaseController {
             )";
             $params['search'] = $searchTerm;
         }
-        
+
         $whereClause = implode(' AND ', $where);
-        
+
         // Get total count
         $countStmt = $this->db->prepare("
             SELECT COUNT(*) as total 
@@ -82,7 +85,7 @@ class BillingController extends BaseController {
         ");
         $countStmt->execute($params);
         $total = $countStmt->fetch()['total'];
-        
+
         // Get invoices
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
@@ -99,29 +102,30 @@ class BillingController extends BaseController {
             ORDER BY i.Created_At DESC
             LIMIT :limit OFFSET :offset
         ");
-        
+
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         $invoices = $stmt->fetchAll();
-        
+
         // Calculate balance for each invoice
         foreach ($invoices as &$invoice) {
             $invoice['Balance'] = $invoice['Total_Amount'] - $invoice['Amount_Paid'];
         }
-        
+
         Response::paginated($invoices, $page, $perPage, $total, "Invoices retrieved");
     }
-    
+
     /**
      * Get invoice statistics
      * GET /invoices/stats/summary
      */
-    public function invoiceStatistics() {
+    public function invoiceStatistics()
+    {
         // 1. Get base stats from Invoices (Total Billed)
         $stmt = $this->db->prepare("
             SELECT 
@@ -137,7 +141,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $stats = $stmt->fetch();
-        
+
         // 2. Get total actual collections from Payments
         $stmt = $this->db->prepare("
             SELECT COALESCE(SUM(p.Amount_Paid), 0) as total_collected
@@ -147,12 +151,12 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $collected = $stmt->fetch()['total_collected'];
-        
+
         // 3. Calculate derived stats
         // Outstanding = (Total Billed) - (Total Collected)
         $stats['total_unpaid'] = $stats['total_billed'] - $collected;
         $stats['total_paid'] = $collected; // Update Total Revenue to reflect actual collections
-        
+
         // 4. This month's stats (Invoices created this month)
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as this_month_invoices
@@ -163,7 +167,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $monthlyMeta = $stmt->fetch();
-        
+
         // 5. This month's collections (Payments received this month)
         $stmt = $this->db->prepare("
             SELECT COALESCE(SUM(Amount_Paid), 0) as this_month_collected
@@ -173,15 +177,16 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $monthlyCollection = $stmt->fetch();
-        
+
         Response::success(array_merge($stats, $monthlyMeta, $monthlyCollection), "Invoice statistics retrieved");
     }
-    
+
     /**
      * Get single invoice with payments
      * GET /invoices/{id}
      */
-    public function showInvoice($id) {
+    public function showInvoice($id)
+    {
         $stmt = $this->db->prepare("
             SELECT i.*, 
                    payer.FirstName as Payer_FirstName, payer.LastName as Payer_LastName, 
@@ -196,16 +201,16 @@ class BillingController extends BaseController {
         ");
         $stmt->execute(['id' => $id]);
         $invoice = $stmt->fetch();
-        
+
         if (!$invoice) {
             Response::notFound("Invoice not found");
         }
-        
+
         // Check access for adopters
         if ($this->user['Role_Name'] === 'Adopter' && $invoice['Payer_UserID'] != $this->user['UserID']) {
             Response::forbidden("Access denied");
         }
-        
+
         // Get payments
         $stmt = $this->db->prepare("
             SELECT p.*, u.FirstName, u.LastName
@@ -216,48 +221,49 @@ class BillingController extends BaseController {
         ");
         $stmt->execute(['id' => $id]);
         $invoice['payments'] = $stmt->fetchAll();
-        
+
         // Calculate totals
         $invoice['Amount_Paid'] = array_sum(array_column($invoice['payments'], 'Amount_Paid'));
         $invoice['Balance'] = $invoice['Total_Amount'] - $invoice['Amount_Paid'];
-        
+
         Response::success($invoice);
     }
-    
+
     /**
      * Create invoice
      * POST /invoices
      */
-    public function createInvoice() {
+    public function createInvoice()
+    {
         $this->validate([
             'payer_user_id' => 'required|integer',
             'transaction_type' => 'required|in:Adoption Fee,Reclaim Fee',
             'total_amount' => 'required|numeric|positive'
         ]);
-        
+
         // Verify payer exists
         $stmt = $this->db->prepare("SELECT UserID FROM Users WHERE UserID = :id AND Is_Deleted = FALSE");
         $stmt->execute(['id' => $this->input('payer_user_id')]);
-        
+
         if (!$stmt->fetch()) {
             Response::error("Payer not found", 400);
         }
-        
+
         // Verify animal if provided
         if ($this->input('animal_id')) {
             $stmt = $this->db->prepare("SELECT AnimalID FROM Animals WHERE AnimalID = :id AND Is_Deleted = FALSE");
             $stmt->execute(['id' => $this->input('animal_id')]);
-            
+
             if (!$stmt->fetch()) {
                 Response::error("Animal not found", 400);
             }
         }
-        
+
         $stmt = $this->db->prepare("
             INSERT INTO Invoices (Payer_UserID, Issued_By_UserID, Transaction_Type, Total_Amount, Status, Related_AnimalID, Related_RequestID, Is_Deleted)
             VALUES (:payer_id, :issued_by, :type, :amount, 'Unpaid', :animal_id, :request_id, FALSE)
         ");
-        
+
         $stmt->execute([
             'payer_id' => $this->input('payer_user_id'),
             'issued_by' => $this->user['UserID'],
@@ -266,11 +272,11 @@ class BillingController extends BaseController {
             'animal_id' => $this->input('animal_id'),
             'request_id' => $this->input('request_id')
         ]);
-        
+
         $invoiceId = $this->db->lastInsertId();
-        
+
         $this->logActivity('CREATE_INVOICE', "Created invoice ID: {$invoiceId} - {$this->input('transaction_type')} - PHP {$this->input('total_amount')}");
-        
+
         // Get created invoice
         $stmt = $this->db->prepare("
             SELECT i.*, payer.FirstName as Payer_FirstName, payer.LastName as Payer_LastName
@@ -279,68 +285,194 @@ class BillingController extends BaseController {
             WHERE i.InvoiceID = :id
         ");
         $stmt->execute(['id' => $invoiceId]);
-        
+
         Response::created($stmt->fetch(), "Invoice created");
     }
-    
+
     /**
      * Cancel invoice
      * PUT /invoices/{id}/cancel
      */
-    public function cancelInvoice($id) {
+    public function cancelInvoice($id)
+    {
         $stmt = $this->db->prepare("SELECT * FROM Invoices WHERE InvoiceID = :id AND Is_Deleted = FALSE");
         $stmt->execute(['id' => $id]);
         $invoice = $stmt->fetch();
-        
+
         if (!$invoice) {
             Response::notFound("Invoice not found");
         }
-        
+
         if ($invoice['Status'] === 'Paid') {
             Response::error("Cannot cancel a paid invoice", 400);
         }
-        
+
         // Check if there are any payments
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Payments WHERE InvoiceID = :id");
         $stmt->execute(['id' => $id]);
-        
+
         if ($stmt->fetch()['count'] > 0) {
             Response::error("Cannot cancel invoice with existing payments", 400);
         }
-        
+
         $stmt = $this->db->prepare("UPDATE Invoices SET Status = 'Cancelled', Is_Deleted = TRUE WHERE InvoiceID = :id");
         $stmt->execute(['id' => $id]);
-        
+
         $this->logActivity('CANCEL_INVOICE', "Cancelled invoice ID: {$id}");
-        
+
         Response::success(null, "Invoice cancelled");
     }
-    
+
+    /**
+     * Get customer's unpaid invoices
+     * GET /invoices/customer/{userId}
+     */
+    public function customerUnpaidInvoices($userId)
+    {
+        // Verify user exists
+        $stmt = $this->db->prepare("SELECT UserID, FirstName, LastName FROM Users WHERE UserID = :id AND Is_Deleted = FALSE");
+        $stmt->execute(['id' => $userId]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            Response::notFound("Customer not found");
+        }
+
+        // Get unpaid invoices
+        $stmt = $this->db->prepare("
+            SELECT i.*, 
+                   a.Name as Animal_Name, a.Type as Animal_Type,
+                   COALESCE((SELECT SUM(Amount_Paid) FROM Payments WHERE InvoiceID = i.InvoiceID), 0) as Amount_Paid
+            FROM Invoices i
+            LEFT JOIN Animals a ON i.Related_AnimalID = a.AnimalID
+            WHERE i.Payer_UserID = :user_id 
+            AND i.Status = 'Unpaid'
+            AND i.Is_Deleted = FALSE
+            ORDER BY i.Created_At DESC
+        ");
+        $stmt->execute(['user_id' => $userId]);
+        $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Calculate balance for each invoice
+        $totalOutstanding = 0;
+        foreach ($invoices as &$invoice) {
+            $invoice['Balance'] = $invoice['Total_Amount'] - $invoice['Amount_Paid'];
+            $totalOutstanding += $invoice['Balance'];
+        }
+
+        Response::success([
+            'customer' => [
+                'id' => $user['UserID'],
+                'name' => $user['FirstName'] . ' ' . $user['LastName']
+            ],
+            'unpaid_invoices' => $invoices,
+            'total_outstanding' => $totalOutstanding,
+            'has_unpaid' => count($invoices) > 0
+        ], "Customer invoices retrieved");
+    }
+
+    /**
+     * Get customers with pending payments (unpaid invoices)
+     * GET /invoices/customers-with-bills
+     */
+    public function customersWithUnpaidInvoices()
+    {
+        $customers = [];
+
+        // Get all non-cancelled invoices and check their balance
+        $stmt = $this->db->prepare("
+            SELECT 
+                u.UserID,
+                u.FirstName,
+                u.LastName,
+                u.Email,
+                i.InvoiceID,
+                i.Transaction_Type,
+                i.Total_Amount,
+                a.Name as AnimalName,
+                COALESCE((SELECT SUM(Amount_Paid) FROM Payments WHERE InvoiceID = i.InvoiceID), 0) as Amount_Paid
+            FROM Invoices i
+            INNER JOIN Users u ON i.Payer_UserID = u.UserID
+            LEFT JOIN Animals a ON i.Related_AnimalID = a.AnimalID
+            WHERE i.Status != 'Cancelled'
+            AND i.Is_Deleted = FALSE
+            AND u.Is_Deleted = FALSE
+            ORDER BY u.FirstName, u.LastName
+        ");
+        $stmt->execute();
+        $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($invoices as $invoice) {
+            $userId = $invoice['UserID'];
+            $balance = floatval($invoice['Total_Amount']) - floatval($invoice['Amount_Paid']);
+
+            if ($balance <= 0) continue;
+
+            if (!isset($customers[$userId])) {
+                $customers[$userId] = [
+                    'UserID' => $userId,
+                    'FirstName' => $invoice['FirstName'],
+                    'LastName' => $invoice['LastName'],
+                    'Email' => $invoice['Email'],
+                    'total_outstanding' => 0,
+                    'pending_items' => []
+                ];
+            }
+
+            $customers[$userId]['total_outstanding'] += $balance;
+            $customers[$userId]['pending_items'][] = [
+                'type' => $invoice['Transaction_Type'],
+                'animal' => $invoice['AnimalName'],
+                'amount' => $balance,
+                'invoice_id' => $invoice['InvoiceID']
+            ];
+        }
+
+        // Convert to array and sort
+        $result = array_values($customers);
+        usort($result, function ($a, $b) {
+            return strcmp($a['FirstName'] . ' ' . $a['LastName'], $b['FirstName'] . ' ' . $b['LastName']);
+        });
+
+        if (count($result) === 0) {
+            Response::success([
+                'customers' => [],
+                'message' => 'No customers with pending payments'
+            ], "No pending payments found");
+            return;
+        }
+
+        Response::success([
+            'customers' => $result
+        ], "Customers with pending payments retrieved");
+    }
+
     /**
      * List all payments
      * GET /payments
      */
-    public function indexPayments() {
+    public function indexPayments()
+    {
         list($page, $perPage) = $this->getPagination();
-        
+
         $where = ["1=1"];
         $params = [];
-        
+
         if ($this->query('invoice_id')) {
             $where[] = "p.InvoiceID = :invoice_id";
             $params['invoice_id'] = $this->query('invoice_id');
         }
-        
+
         if ($this->query('payment_method')) {
             $where[] = "p.Payment_Method = :method";
             $params['method'] = $this->query('payment_method');
         }
-        
+
         if ($this->query('date_from')) {
             $where[] = "DATE(p.Payment_Date) >= :date_from";
             $params['date_from'] = $this->query('date_from');
         }
-        
+
         if ($this->query('date_to')) {
             $where[] = "DATE(p.Payment_Date) <= :date_to";
             $params['date_to'] = $this->query('date_to');
@@ -362,9 +494,9 @@ class BillingController extends BaseController {
             )";
             $params['search'] = $searchTerm;
         }
-        
+
         $whereClause = implode(' AND ', $where);
-        
+
         // Get total count
         $countStmt = $this->db->prepare("
             SELECT COUNT(*) as total 
@@ -376,7 +508,7 @@ class BillingController extends BaseController {
         ");
         $countStmt->execute($params);
         $total = $countStmt->fetch()['total'];
-        
+
         // Get payments
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
@@ -392,22 +524,23 @@ class BillingController extends BaseController {
             ORDER BY p.Payment_Date DESC
             LIMIT :limit OFFSET :offset
         ");
-        
+
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         Response::paginated($stmt->fetchAll(), $page, $perPage, $total, "Payments retrieved");
     }
-    
+
     /**
      * Get single payment
      * GET /payments/{id}
      */
-    public function showPayment($id) {
+    public function showPayment($id)
+    {
         $stmt = $this->db->prepare("
             SELECT p.*, 
                    i.Transaction_Type, i.Total_Amount as Invoice_Total, i.Payer_UserID,
@@ -421,25 +554,26 @@ class BillingController extends BaseController {
         ");
         $stmt->execute(['id' => $id]);
         $payment = $stmt->fetch();
-        
+
         if (!$payment) {
             Response::notFound("Payment not found");
         }
-        
+
         Response::success($payment);
     }
-    
+
     /**
      * Record payment
      * POST /payments
      */
-    public function recordPayment() {
+    public function recordPayment()
+    {
         $this->validate([
             'invoice_id' => 'required|integer',
             'amount_paid' => 'required|numeric|positive',
             'payment_method' => 'required|in:Cash,GCash,Bank Transfer'
         ]);
-        
+
         // Get invoice
         $stmt = $this->db->prepare("
             SELECT i.*, 
@@ -449,37 +583,40 @@ class BillingController extends BaseController {
         ");
         $stmt->execute(['id' => $this->input('invoice_id')]);
         $invoice = $stmt->fetch();
-        
+
         if (!$invoice) {
             Response::notFound("Invoice not found");
         }
-        
-        if ($invoice['Status'] === 'Paid') {
+
+        // Calculate actual balance (ignore Status field, use real payments)
+        $balance = $invoice['Total_Amount'] - $invoice['Already_Paid'];
+
+        if ($balance <= 0) {
             Response::error("Invoice is already fully paid", 400);
         }
-        
+
         if ($invoice['Status'] === 'Cancelled') {
             Response::error("Cannot add payment to cancelled invoice", 400);
         }
-        
+
         $balance = $invoice['Total_Amount'] - $invoice['Already_Paid'];
         $amountPaid = (float)$this->input('amount_paid');
-        
+
         // Warn if overpaying (but allow it)
         if ($amountPaid > $balance) {
             // You could either reject or allow overpayment
             // For now, we'll allow it but you might want to change this
         }
-        
+
         $this->db->beginTransaction();
-        
+
         try {
             // Record payment
             $stmt = $this->db->prepare("
                 INSERT INTO Payments (InvoiceID, Received_By_UserID, Payment_Date, Amount_Paid, Payment_Method, Reference_Number)
                 VALUES (:invoice_id, :received_by, NOW(), :amount, :method, :reference)
             ");
-            
+
             $stmt->execute([
                 'invoice_id' => $this->input('invoice_id'),
                 'received_by' => $this->user['UserID'],
@@ -487,24 +624,24 @@ class BillingController extends BaseController {
                 'method' => $this->input('payment_method'),
                 'reference' => $this->input('reference_number')
             ]);
-            
+
             $paymentId = $this->db->lastInsertId();
-            
+
             // Check if invoice is now fully paid
             $totalPaid = $invoice['Already_Paid'] + $amountPaid;
-            
+
             if ($totalPaid >= $invoice['Total_Amount']) {
                 $stmt = $this->db->prepare("UPDATE Invoices SET Status = 'Paid' WHERE InvoiceID = :id");
                 $stmt->execute(['id' => $this->input('invoice_id')]);
             }
-            
+
             $this->db->commit();
-            
+
             $this->logActivity(
-                'RECORD_PAYMENT', 
+                'RECORD_PAYMENT',
                 "Recorded payment ID: {$paymentId} for invoice ID: {$this->input('invoice_id')} - PHP {$amountPaid} via {$this->input('payment_method')}"
             );
-            
+
             // Get updated invoice
             $stmt = $this->db->prepare("
                 SELECT i.*, 
@@ -515,24 +652,24 @@ class BillingController extends BaseController {
             $stmt->execute(['id' => $this->input('invoice_id')]);
             $updatedInvoice = $stmt->fetch();
             $updatedInvoice['Balance'] = $updatedInvoice['Total_Amount'] - $updatedInvoice['Amount_Paid'];
-            
+
             Response::created([
                 'payment_id' => $paymentId,
                 'invoice' => $updatedInvoice
             ], "Payment recorded successfully");
-            
         } catch (Exception $e) {
             $this->db->rollBack();
             error_log("Error recording payment: " . $e->getMessage());
             Response::serverError("Failed to record payment");
         }
     }
-    
+
     /**
      * Get financial summary
      * GET /billing/summary
      */
-    public function financialSummary() {
+    public function financialSummary()
+    {
         // Overall totals
         $stmt = $this->db->prepare("
             SELECT 
@@ -542,7 +679,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $overall = $stmt->fetch();
-        
+
         // By transaction type
         $stmt = $this->db->prepare("
             SELECT 
@@ -557,7 +694,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $byType = $stmt->fetchAll();
-        
+
         // By payment method
         $stmt = $this->db->prepare("
             SELECT 
@@ -569,7 +706,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $byMethod = $stmt->fetchAll();
-        
+
         // Monthly trend (last 6 months)
         $stmt = $this->db->prepare("
             SELECT 
@@ -583,7 +720,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute();
         $monthlyTrend = $stmt->fetchAll();
-        
+
         Response::success([
             'overall' => $overall,
             'by_transaction_type' => $byType,
@@ -591,17 +728,18 @@ class BillingController extends BaseController {
             'monthly_trend' => $monthlyTrend
         ], "Financial summary retrieved");
     }
-    
+
     /**
      * Get financial report by date range
      * GET /billing/report
      */
-    public function financialReport() {
+    public function financialReport()
+    {
         $this->validate([
             'date_from' => 'required|date',
             'date_to' => 'required|date'
         ]);
-        
+
         $dateFrom = $this->query('date_from');
         $dateTo = $this->query('date_to');
         $reportType = $this->query('report_type') ?? 'summary';
@@ -650,7 +788,7 @@ class BillingController extends BaseController {
             ], "Unpaid invoices report generated");
             return;
         }
-        
+
         // Invoices in range
         $stmt = $this->db->prepare("
             SELECT 
@@ -664,7 +802,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute(['date_from' => $dateFrom, 'date_to' => $dateTo]);
         $invoiceSummary = $stmt->fetch();
-        
+
         // Payments in range
         $stmt = $this->db->prepare("
             SELECT 
@@ -675,7 +813,7 @@ class BillingController extends BaseController {
         ");
         $stmt->execute(['date_from' => $dateFrom, 'date_to' => $dateTo]);
         $paymentSummary = $stmt->fetch();
-        
+
         // Daily breakdown
         $stmt = $this->db->prepare("
             SELECT 
@@ -706,7 +844,7 @@ class BillingController extends BaseController {
             $stmt->execute(['date_from' => $dateFrom, 'date_to' => $dateTo]);
             $invoiceList = $stmt->fetchAll();
         }
-        
+
         Response::success([
             'report_type' => $reportType,
             'date_range' => [
@@ -718,5 +856,32 @@ class BillingController extends BaseController {
             'daily_breakdown' => $dailyBreakdown,
             'invoice_list' => $invoiceList
         ], "Financial report generated");
+    }
+
+    /**
+     * Calculate fee for an animal
+     * GET /billing/calculate-fee
+     */
+    public function calculateFee()
+    {
+        $this->validate([
+            'animal_id' => 'required|integer',
+            'transaction_type' => 'required|in:Adoption Fee,Reclaim Fee'
+        ]);
+
+        $animalId = $this->query('animal_id');
+        $transactionType = $this->query('transaction_type');
+
+        // Load the FeeCalculator utility
+        require_once APP_PATH . '/utils/FeeCalculator.php';
+
+        $calculator = new FeeCalculator($this->db);
+        $result = $calculator->calculateFee($animalId, $transactionType);
+
+        if (isset($result['error'])) {
+            Response::error($result['error'], 400);
+        }
+
+        Response::success($result, "Fee calculated successfully");
     }
 }

@@ -22,7 +22,7 @@ const AdoptionsPage = {
     /**
      * Status options
      */
-    statuses: ['Pending', 'Interview Scheduled', 'Approved', 'Rejected', 'Completed', 'Cancelled'],
+    statuses: ['Pending', 'Interview Scheduled', 'Seminar Scheduled', 'Approved', 'Rejected', 'Completed', 'Cancelled'],
 
     /**
      * Render the page
@@ -183,7 +183,7 @@ const AdoptionsPage = {
             ${Card.stat({
             title: 'Total Requests',
             value: stats.total || 0,
-            iconColor: 'info',
+            iconColor: 'primary',
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>'
         })}
         `;
@@ -425,6 +425,18 @@ const AdoptionsPage = {
                                         <span class="text-secondary">- ${adoption.Staff_Comments}</span>
                                     ` : ''}
                                 </div>
+                                ${adoption.Status === 'Seminar Scheduled' && adoption.Seminar_Date ? `
+                                    <div class="mt-4 p-3 bg-primary-subtle rounded-lg">
+                                        <p class="font-semibold text-primary">📅 Seminar Scheduled</p>
+                                        <p class="text-lg font-medium">${Utils.formatDateTime(adoption.Seminar_Date)}</p>
+                                    </div>
+                                ` : ''}
+                                ${adoption.Status === 'Interview Scheduled' && adoption.Interview_Date ? `
+                                    <div class="mt-4 p-3 bg-warning-subtle rounded-lg">
+                                        <p class="font-semibold text-warning">📅 Interview Scheduled</p>
+                                        <p class="text-lg font-medium">${Utils.formatDateTime(adoption.Interview_Date)}</p>
+                                    </div>
+                                ` : ''}
                                 ${adoption.Staff_FirstName ? `
                                     <p class="text-tertiary text-sm mt-2">
                                         Processed by ${adoption.Staff_FirstName} ${adoption.Staff_LastName}
@@ -433,7 +445,7 @@ const AdoptionsPage = {
                             </div>
                         </div>
                     `,
-                    footer: Auth.isStaff() && ['Pending', 'Interview Scheduled', 'Approved'].includes(adoption.Status) ? `
+                    footer: Auth.isStaff() && ['Pending', 'Interview Scheduled', 'Seminar Scheduled', 'Approved'].includes(adoption.Status) ? `
                         <button class="btn btn-secondary" data-action="cancel">Close</button>
                         <button class="btn btn-primary" onclick="Modal.closeAll(); AdoptionsPage.showProcessModal(${JSON.stringify(adoption).replace(/"/g, '&quot;')})">
                             Process Request
@@ -483,6 +495,16 @@ const AdoptionsPage = {
                         <span class="form-hint">Select when the interview will be held</span>
                     </div>
                     
+                    <div id="seminar-date-container" class="form-group" style="display: none;">
+                        <label class="form-label" for="seminar_date">Seminar Date & Time <span class="text-danger">*</span></label>
+                        <input type="datetime-local" 
+                               id="seminar_date" 
+                               name="seminar_date" 
+                               class="form-input"
+                               min="${new Date().toISOString().slice(0, 16)}">
+                        <span class="form-hint">Select when the animal welfare seminar will be held</span>
+                    </div>
+                    
                     ${Form.generate([
                 {
                     type: 'textarea',
@@ -499,11 +521,19 @@ const AdoptionsPage = {
                 const form = document.getElementById('process-form');
                 const statusSelect = form.querySelector('[name="status"]');
                 const interviewDateInput = form.querySelector('[name="interview_date"]');
+                const seminarDateInput = form.querySelector('[name="seminar_date"]');
 
                 // Validate interview date if Interview Scheduled is selected
                 if (statusSelect.value === 'Interview Scheduled' && !interviewDateInput.value) {
                     Toast.error('Please select an interview date and time');
                     interviewDateInput.focus();
+                    return false;
+                }
+
+                // Validate seminar date if Seminar Scheduled is selected
+                if (statusSelect.value === 'Seminar Scheduled' && !seminarDateInput.value) {
+                    Toast.error('Please select a seminar date and time');
+                    seminarDateInput.focus();
                     return false;
                 }
 
@@ -520,6 +550,11 @@ const AdoptionsPage = {
                     // Include interview date if applicable
                     if (data.status === 'Interview Scheduled' && data.interview_date) {
                         requestData.interview_date = data.interview_date;
+                    }
+
+                    // Include seminar date if applicable
+                    if (data.status === 'Seminar Scheduled' && data.seminar_date) {
+                        requestData.seminar_date = data.seminar_date;
                     }
 
                     const response = await API.adoptions.process(adoption.RequestID || adoption.id, requestData);
@@ -541,19 +576,25 @@ const AdoptionsPage = {
         setTimeout(() => {
             const statusSelect = document.querySelector('#process-form [name="status"]');
             const interviewContainer = document.getElementById('interview-date-container');
+            const seminarContainer = document.getElementById('seminar-date-container');
 
-            if (statusSelect && interviewContainer) {
+            if (statusSelect && interviewContainer && seminarContainer) {
                 // Check initial value
                 if (statusSelect.value === 'Interview Scheduled') {
                     interviewContainer.style.display = 'block';
+                } else if (statusSelect.value === 'Seminar Scheduled') {
+                    seminarContainer.style.display = 'block';
                 }
 
                 // Listen for changes
                 statusSelect.addEventListener('change', (e) => {
+                    interviewContainer.style.display = 'none';
+                    seminarContainer.style.display = 'none';
+
                     if (e.target.value === 'Interview Scheduled') {
                         interviewContainer.style.display = 'block';
-                    } else {
-                        interviewContainer.style.display = 'none';
+                    } else if (e.target.value === 'Seminar Scheduled') {
+                        seminarContainer.style.display = 'block';
                     }
                 });
             }
@@ -568,7 +609,8 @@ const AdoptionsPage = {
     getAvailableStatuses(currentStatus) {
         const transitions = {
             'Pending': ['Interview Scheduled', 'Approved', 'Rejected'],
-            'Interview Scheduled': ['Approved', 'Rejected'],
+            'Interview Scheduled': ['Seminar Scheduled', 'Approved', 'Rejected'],
+            'Seminar Scheduled': ['Approved', 'Rejected'],
             'Approved': ['Completed', 'Cancelled'],
             'Rejected': [],
             'Completed': [],

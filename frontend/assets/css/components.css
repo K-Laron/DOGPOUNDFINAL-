@@ -40,15 +40,37 @@
 
 /* Primary Button */
 .btn-primary {
-    background: linear-gradient(180deg, #3B9FFF 0%, var(--color-primary) 100%);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%);
     color: var(--color-white);
-    box-shadow: 0 1px 3px rgba(0, 122, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: skewX(-20deg);
+    transition: 0.5s;
+    z-index: -1;
 }
 
 .btn-primary:not(:disabled):hover {
-    background: linear-gradient(180deg, #4DA2FF 0%, #0A84FF 100%);
-    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    box-shadow: 0 6px 16px rgba(var(--color-primary-rgb), 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
+}
+
+.btn-primary:not(:disabled):hover::after {
+    left: 150%;
+    transition: 0.7s ease-in-out;
 }
 
 /* Secondary Button */
@@ -458,6 +480,11 @@
     color: var(--color-danger-dark);
 }
 
+.badge-secondary {
+    background-color: rgba(88, 86, 214, 0.1);
+    color: #5856D6;
+}
+
 .badge-info {
     background-color: var(--color-info-bg);
     color: var(--color-info-dark);
@@ -466,6 +493,11 @@
 .badge-gray {
     background-color: var(--color-gray-100);
     color: var(--color-gray-600);
+}
+
+.badge-teal {
+    background-color: rgba(48, 176, 199, 0.1);
+    color: #30B0C7;
 }
 
 /* Dot Badge */
@@ -1210,7 +1242,7 @@
 }
 
 .confirm-icon-info {
-    background: rgba(0, 122, 255, 0.15);
+    background: rgba(var(--color-primary-rgb), 0.15);
     color: var(--color-primary);
 }
 
@@ -1352,7 +1384,7 @@
 .onboarding-highlight {
     position: relative;
     z-index: 10000;
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.3), 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.3), 0 0 0 9999px rgba(0, 0, 0, 0.5) !important;
     border-radius: var(--radius-lg);
 }
 
@@ -1466,4 +1498,31 @@
     to {
         transform: rotate(360deg);
     }
+}
+
+/* Dark Mode Theme Harmony for Secondary Buttons */
+@media (prefers-color-scheme: dark) {
+    .btn-secondary {
+        background-color: transparent !important;
+        border: 1px solid var(--color-primary) !important;
+        color: var(--color-primary) !important;
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--color-primary) !important;
+        color: #000000 !important;
+        border-color: var(--color-primary) !important;
+    }
+}
+
+[data-theme="dark"] .btn-secondary {
+    background-color: transparent !important;
+    border: 1px solid var(--color-primary) !important;
+    color: var(--color-primary) !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background-color: var(--color-primary) !important;
+    color: #000000 !important;
+    border-color: var(--color-primary) !important;
 }

@@ -9,7 +9,7 @@ dogpound/
 ├── 📄 PROJECT_STRUCTURE.md      # This file
 ├── 📄 IMPLEMENTATION_PLAN.md    # Implementation details
 ├── 📄 DATABASE_DOCUMENTATION.md # Database schema reference
-├── 📄 SYSTEM_DIAGRAMS.md        # Architecture, data models, use cases
+├── 📄 SYSTEM_DIAGRAMS.md        # Architecture, data models, use cases (ASCII)
 ├── 📄 .env.example              # Environment configuration template
 ├── 📄 .env                      # Environment configuration (gitignored)
 ├── 📄 DEFENSE_GUIDE.md          # Security defenses & Q&A

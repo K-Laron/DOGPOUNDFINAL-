@@ -375,7 +375,7 @@ const DashboardPage = {
             title: 'Available for Adoption',
             value: stats.available_animals || 0,
             icon: this.icons.adoptions,
-            iconColor: 'success',
+            iconColor: 'danger',
             subtitle: `${stats.adopted_this_month || 0} adopted this month`
         })}
             ${Card.stat({
@@ -611,7 +611,7 @@ const DashboardPage = {
                 {
                     label: 'Dogs',
                     data: data.map(d => d.dogs || 0),
-                    color: Charts.colors.primary
+                    color: Charts.colors.secondary
                 },
                 {
                     label: 'Cats',

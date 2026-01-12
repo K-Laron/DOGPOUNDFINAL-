@@ -286,6 +286,7 @@ The database connection is configured using environment variables defined in the
 │ Request_Date        │ DATETIME │ When submitted        │
 │ Status              │ ENUM     │ Current status        │
 │ Interview_Date      │ DATETIME │ Scheduled interview   │
+│ Seminar_Date        │ DATETIME │ Scheduled seminar     │
 │ Staff_Comments      │ TEXT     │ Internal notes        │
 │ Processed_By_UserID │ INT FK   │ Staff who processed   │
 └─────────────────────┴──────────┴───────────────────────┘
@@ -295,6 +296,7 @@ The database connection is configured using environment variables defined in the
 
 - `Pending` - Awaiting review
 - `Interview Scheduled` - Interview set
+- `Seminar Scheduled` - Animal welfare seminar set
 - `Approved` - Approved for adoption
 - `Rejected` - Application denied
 - `Completed` - Adoption finalized

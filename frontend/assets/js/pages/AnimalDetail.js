@@ -47,7 +47,7 @@ const AnimalDetailPage = {
             const cachedResponse = HoverPreview.cache.get(prefetchKey);
             // Only use if it's actual data (not 'loading' placeholder)
             if (cachedResponse && cachedResponse !== 'loading' && cachedResponse.data) {
-                console.log('[Optimistic UI] Using prefetched data for instant render');
+                // console.log('[Optimistic UI] Using prefetched data for instant render');
                 this.animal = cachedResponse.data;
                 this.renderAnimalDetail();
 

@@ -251,6 +251,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.9] - 2026-01-11
+
+### Changed (Documentation)
+
+- **System Context Diagram**: Migrated to `SYSTEM_DIAGRAMS.md` with a corrected ASCII representation. accurately reflecting the 4 system actors (Admin, Staff, Veterinarian, Adopter) and their manual/internal flows.
+- **Documentation Consolidation**: Merged and verified system documentation. Confirmed `SYSTEM_DESIGN_DOCUMENT.md` is the single source of truth for design flows.
+- **Backend Documentation**: Updated `BACKEND_DOCUMENTATION.md` to explicitly state that email/password reset endpoints are placeholders and that payment/billing processes are manual.
+- **Frontend Documentation**: Verified `FRONTEND_DOCUMENTATION.md` against the current codebase structure.
+
+### Fixed (1.0.9)
+
+- **Markdown Linting**: Resolved MD060 table formatting errors in documentation files.
+- **File Management**: Clarified the existence and location of diagram files, removing phantom references to `CONTEXT_DIAGRAM.md`.
+
+---
+
 ## [Unreleased]
 
 ### Planned

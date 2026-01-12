@@ -48,9 +48,13 @@ const BillingPage = {
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         Generate Report
                     </button>
-                    <button class="btn btn-primary" onclick="BillingPage.showCreateInvoiceModal()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    <button class="btn btn-secondary" onclick="BillingPage.showManualInvoiceModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
                         Create Invoice
+                    </button>
+                    <button class="btn btn-secondary" onclick="BillingPage.showCreateInvoiceModal()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        Record Payment
                     </button>
                 </div>
             </div>
@@ -213,7 +217,7 @@ const BillingPage = {
             ${Card.stat({
             title: 'Total Revenue',
             value: Utils.formatCurrency(stats.total_paid || 0),
-            iconColor: 'success',
+            iconColor: 'primary',
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>'
         })}
             ${Card.stat({
@@ -225,13 +229,13 @@ const BillingPage = {
             ${Card.stat({
             title: 'Outstanding',
             value: Utils.formatCurrency(stats.total_unpaid || 0),
-            iconColor: 'warning',
+            iconColor: 'primary',
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>'
         })}
             ${Card.stat({
             title: 'Unpaid Invoices',
             value: stats.unpaid_count || 0,
-            iconColor: 'danger',
+            iconColor: 'primary',
             icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>'
         })}
         `;
@@ -381,7 +385,7 @@ const BillingPage = {
                     <h3 class="empty-state-title">No invoices found</h3>
                     <p class="empty-state-description">Create your first invoice to get started.</p>
                     <button class="btn btn-primary mt-4" onclick="BillingPage.showCreateInvoiceModal()">
-                        Create Invoice
+                        Record Payment
                     </button>
                 </div>
             `;
@@ -434,7 +438,16 @@ const BillingPage = {
                 {
                     key: 'Status',
                     label: 'Status',
-                    type: 'badge'
+                    render: (val, row) => {
+                        // Calculate actual status based on balance, not database field
+                        const balance = parseFloat(row.Total_Amount) - parseFloat(row.Amount_Paid || 0);
+                        if (val === 'Cancelled') {
+                            return `<span class="badge badge-gray">Cancelled</span>`;
+                        }
+                        return balance > 0
+                            ? `<span class="badge badge-danger">Unpaid</span>`
+                            : `<span class="badge badge-success">Paid</span>`;
+                    }
                 },
                 {
                     key: 'Created_At',
@@ -593,7 +606,9 @@ const BillingPage = {
                 this.showInvoiceDetail(id);
                 break;
             case 'payment':
-                if (row.Status === 'Paid') {
+                // Check actual balance instead of Status field
+                const balance = parseFloat(row.Balance) || (parseFloat(row.Total_Amount) - parseFloat(row.Amount_Paid || 0));
+                if (balance <= 0) {
                     Toast.info('This invoice is already paid');
                     return;
                 }
@@ -776,71 +791,96 @@ const BillingPage = {
     },
 
     /**
-     * Show create invoice modal
+     * Show manual invoice creation modal (for reclaims and manual entries)
      */
-    async showCreateInvoiceModal() {
-        // Load users for dropdown
+    async showManualInvoiceModal() {
+        // Load all users and animals for manual invoice creation
         let users = [];
+        let animals = [];
         try {
-            const response = await API.users.list({ per_page: 1000 });
-            if (response.success) {
-                users = response.data.data || response.data;
+            const [usersResponse, animalsResponse] = await Promise.all([
+                API.users.list({ per_page: 1000, role: 'Adopter' }),
+                API.animals.list({ per_page: 1000 })
+            ]);
+            if (usersResponse.success) {
+                users = usersResponse.data.data || usersResponse.data || [];
+            }
+            if (animalsResponse.success) {
+                animals = animalsResponse.data.data || animalsResponse.data || [];
             }
         } catch (error) {
-            console.error('Failed to load users:', error);
+            console.error('Failed to load data:', error);
         }
 
         Modal.open({
-            title: 'Create Invoice',
+            title: 'Create Invoice (Manual)',
+            size: 'md',
             content: `
-                <form id="create-invoice-form">
-                    ${Form.generate([
-                {
-                    type: 'select',
-                    name: 'payer_user_id',
-                    label: 'Customer',
-                    required: true,
-                    options: [
-                        { value: '', label: 'Select Customer' },
-                        ...users.map(u => ({
-                            value: u.id,
-                            label: `${u.first_name} ${u.last_name}`
-                        }))
-                    ]
-                },
-                {
-                    type: 'select',
-                    name: 'transaction_type',
-                    label: 'Transaction Type',
-                    required: true,
-                    options: [
-                        { value: '', label: 'Select Type' },
-                        ...this.transactionTypes.map(t => ({ value: t, label: t }))
-                    ]
-                },
-                {
-                    type: 'number',
-                    name: 'total_amount',
-                    label: 'Amount',
-                    required: true,
-                    min: 0,
-                    step: '0.01',
-                    placeholder: '0.00'
-                }
-            ])}
+                <form id="manual-invoice-form">
+                    <div class="form-group mb-4">
+                        <label class="form-label">Customer <span class="text-danger">*</span></label>
+                        <select id="manual-customer-select" name="payer_user_id" class="form-input" required>
+                            <option value="">Select Customer</option>
+                            ${users.map(u => `
+                                <option value="${u.id || u.UserID}">${u.first_name || u.FirstName} ${u.last_name || u.LastName} (${u.email || u.Email})</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label">Animal <span class="text-danger">*</span></label>
+                        <select id="manual-animal-select" name="animal_id" class="form-input" required>
+                            <option value="">Select Animal</option>
+                            ${animals.map(a => `
+                                <option value="${a.id || a.AnimalID}" data-status="${a.status || a.current_status || a.Current_Status}">${a.name || a.Name} (${a.type || a.Type})</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label">Transaction Type <span class="text-danger">*</span></label>
+                        <select id="manual-type-select" name="transaction_type" class="form-input" required>
+                            <option value="">Select Type</option>
+                            <option value="Adoption Fee">Adoption Fee</option>
+                            <option value="Reclaim Fee">Reclaim Fee</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Fee Breakdown Section -->
+                    <div id="manual-fee-breakdown-section" style="display: none;" class="mb-4">
+                        <label class="form-label">Fee Breakdown</label>
+                        <div id="manual-fee-breakdown" class="p-3 bg-secondary rounded-lg text-sm">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label">Total Amount (₱) <span class="text-danger">*</span></label>
+                        <input type="number" id="manual-amount-input" name="total_amount" class="form-input" 
+                               min="0" step="0.01" placeholder="0.00" required />
+                        <p class="form-hint">Auto-calculated based on selection. You can override if needed.</p>
+                    </div>
                 </form>
             `,
             confirmText: 'Create Invoice',
             onConfirm: async () => {
-                const form = document.getElementById('create-invoice-form');
-                if (!Form.validate(form)) return false;
+                const customerId = document.getElementById('manual-customer-select')?.value;
+                const animalId = document.getElementById('manual-animal-select')?.value;
+                const transactionType = document.getElementById('manual-type-select')?.value;
+                const totalAmount = document.getElementById('manual-amount-input')?.value;
 
-                const data = Form.getData(form);
-                data.payer_user_id = parseInt(data.payer_user_id);
-                data.issued_by_user_id = Auth.currentUser()?.id;
+                if (!customerId || !animalId || !transactionType || !totalAmount) {
+                    Toast.error('Please fill in all required fields');
+                    return false;
+                }
 
                 try {
-                    const response = await API.billing.createInvoice(data);
+                    const response = await API.billing.createInvoice({
+                        payer_user_id: parseInt(customerId),
+                        animal_id: parseInt(animalId),
+                        transaction_type: transactionType,
+                        total_amount: parseFloat(totalAmount),
+                        issued_by_user_id: Auth.currentUser()?.id
+                    });
                     if (response.success) {
                         Toast.success('Invoice created successfully');
                         this.loadInvoices();
@@ -853,7 +893,299 @@ const BillingPage = {
                 }
             }
         });
+
+        // Add event listeners for auto-calculation
+        setTimeout(() => {
+            const animalSelect = document.getElementById('manual-animal-select');
+            const typeSelect = document.getElementById('manual-type-select');
+
+            const calculateFee = async () => {
+                const animalId = animalSelect?.value;
+                const transactionType = typeSelect?.value;
+                const breakdownSection = document.getElementById('manual-fee-breakdown-section');
+                const breakdownContainer = document.getElementById('manual-fee-breakdown');
+                const amountInput = document.getElementById('manual-amount-input');
+
+                if (!animalId || !transactionType) {
+                    if (breakdownSection) breakdownSection.style.display = 'none';
+                    return;
+                }
+
+                try {
+                    const response = await API.billing.calculateFee(animalId, transactionType);
+                    if (response.success && response.data) {
+                        const { breakdown, total, animal_name } = response.data;
+
+                        if (breakdownSection) breakdownSection.style.display = 'block';
+                        if (breakdownContainer) {
+                            let html = `<div class="font-medium mb-2">${animal_name} - ${transactionType}</div>`;
+                            html += '<div class="space-y-1">';
+                            breakdown.forEach(item => {
+                                const amountClass = item.amount < 0 ? 'text-success' : '';
+                                html += `
+                                    <div class="flex justify-between">
+                                        <span>${item.description}</span>
+                                        <span class="${amountClass}">₱${Math.abs(item.amount).toFixed(2)}${item.amount < 0 ? ' (discount)' : ''}</span>
+                                    </div>
+                                `;
+                            });
+                            html += `
+                                </div>
+                                <div class="border-t mt-2 pt-2 flex justify-between font-semibold">
+                                    <span>Total</span>
+                                    <span>₱${total.toFixed(2)}</span>
+                                </div>
+                            `;
+                            breakdownContainer.innerHTML = html;
+                        }
+
+                        if (amountInput) {
+                            amountInput.value = total.toFixed(2);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to calculate fee:', error);
+                    if (breakdownSection) breakdownSection.style.display = 'none';
+                }
+            };
+
+            if (animalSelect) animalSelect.addEventListener('change', calculateFee);
+            if (typeSelect) typeSelect.addEventListener('change', calculateFee);
+        }, 100);
     },
+
+    /**
+     * Show record payment modal (simplified - invoices are auto-created)
+     */
+    async showCreateInvoiceModal() {
+        // Load customers with pending bills
+        let users = [];
+        try {
+            const customersResponse = await API.billing.customersWithBills();
+            if (customersResponse.success) {
+                users = customersResponse.data.customers || [];
+            }
+        } catch (error) {
+            console.error('Failed to load data:', error);
+        }
+
+        // Check if there are customers with pending bills
+        if (users.length === 0) {
+            Toast.info('No customers have pending bills');
+            return;
+        }
+
+        // Store customer data for reference
+        const usersMap = {};
+        users.forEach(u => {
+            usersMap[u.UserID] = u;
+        });
+
+        Modal.open({
+            title: 'Record Payment',
+            size: 'md',
+            content: `
+                <form id="record-payment-form">
+                    <div class="form-group mb-4">
+                        <label class="form-label">Customer (with pending bills) <span class="text-danger">*</span></label>
+                        <select id="payment-customer-select" name="customer_id" class="form-input" required>
+                            <option value="">Select Customer</option>
+                            ${users.map(u => `
+                                <option value="${u.UserID}">${u.FirstName} ${u.LastName} (₱${parseFloat(u.total_outstanding).toFixed(2)} outstanding)</option>
+                            `).join('')}
+                        </select>
+                    </div>
+                    
+                    <!-- Pending Invoices Section (populated dynamically) -->
+                    <div id="invoices-section" style="display: none;" class="mb-4">
+                        <label class="form-label">Select Invoice <span class="text-danger">*</span></label>
+                        <select id="payment-invoice-select" name="invoice_id" class="form-input" required>
+                            <option value="">Select Invoice</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Invoice Details (auto-populated) -->
+                    <div id="invoice-details-section" style="display: none;" class="mb-4 p-3 bg-secondary rounded-lg">
+                        <div id="invoice-details"></div>
+                    </div>
+                    
+                    <!-- Payment Amount -->
+                    <div id="amount-section" style="display: none;" class="form-group mb-4">
+                        <label class="form-label">Payment Amount (₱) <span class="text-danger">*</span></label>
+                        <input type="number" id="payment-amount-input" name="amount_paid" class="form-input" 
+                               min="0" step="0.01" placeholder="0.00" required />
+                        <p class="form-hint">Auto-filled with invoice balance. You can pay partial or full amount.</p>
+                    </div>
+                    
+                    <!-- Payment Method -->
+                    <div id="method-section" style="display: none;" class="form-group mb-4">
+                        <label class="form-label">Payment Method <span class="text-danger">*</span></label>
+                        <select id="payment-method-select" name="payment_method" class="form-input" required>
+                            <option value="">Select Payment Method</option>
+                            <option value="Cash">Cash</option>
+                            <option value="GCash">GCash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                </form>
+            `,
+            confirmText: 'Record Payment',
+            onConfirm: async () => {
+                const form = document.getElementById('record-payment-form');
+                const invoiceId = document.getElementById('payment-invoice-select')?.value;
+                const amountPaid = document.getElementById('payment-amount-input')?.value;
+                const paymentMethod = document.getElementById('payment-method-select')?.value;
+
+                if (!invoiceId || !amountPaid || !paymentMethod) {
+                    Toast.error('Please fill in all required fields');
+                    return false;
+                }
+
+                try {
+                    const response = await API.billing.recordPayment({
+                        invoice_id: parseInt(invoiceId),
+                        amount_paid: parseFloat(amountPaid),
+                        payment_method: paymentMethod
+                    });
+                    if (response.success) {
+                        Toast.success('Payment recorded successfully');
+                        this.loadInvoices();
+                        this.loadStats();
+                        return true;
+                    }
+                } catch (error) {
+                    Toast.error(error.message || 'Failed to record payment');
+                    return false;
+                }
+            }
+        });
+
+        // Add event listeners after modal is open
+        setTimeout(() => {
+            const customerSelect = document.getElementById('payment-customer-select');
+            const invoiceSelect = document.getElementById('payment-invoice-select');
+
+            // When customer is selected, fetch their invoices
+            customerSelect?.addEventListener('change', async () => {
+                const customerId = customerSelect.value;
+                const invoicesSection = document.getElementById('invoices-section');
+                const detailsSection = document.getElementById('invoice-details-section');
+                const amountSection = document.getElementById('amount-section');
+                const methodSection = document.getElementById('method-section');
+
+                // Reset sections
+                if (detailsSection) detailsSection.style.display = 'none';
+                if (amountSection) amountSection.style.display = 'none';
+                if (methodSection) methodSection.style.display = 'none';
+
+                if (!customerId) {
+                    if (invoicesSection) invoicesSection.style.display = 'none';
+                    return;
+                }
+
+                try {
+                    const response = await API.billing.customerInvoices(customerId);
+                    if (response.success && response.data && response.data.unpaid_invoices) {
+                        const invoices = response.data.unpaid_invoices;
+
+                        if (invoices.length === 0) {
+                            Toast.info('This customer has no pending invoices');
+                            if (invoicesSection) invoicesSection.style.display = 'none';
+                            return;
+                        }
+
+                        // Populate invoice dropdown
+                        if (invoiceSelect) {
+                            invoiceSelect.innerHTML = '<option value="">Select Invoice</option>';
+                            invoices.forEach(inv => {
+                                const option = document.createElement('option');
+                                option.value = inv.InvoiceID;
+                                option.textContent = `#${String(inv.InvoiceID).padStart(5, '0')} - ${inv.Transaction_Type} - ${inv.Animal_Name || 'N/A'} (₱${parseFloat(inv.Balance).toFixed(2)})`;
+                                option.dataset.balance = inv.Balance;
+                                option.dataset.type = inv.Transaction_Type;
+                                option.dataset.animal = inv.Animal_Name || 'N/A';
+                                option.dataset.total = inv.Total_Amount;
+                                invoiceSelect.appendChild(option);
+                            });
+                        }
+
+                        if (invoicesSection) invoicesSection.style.display = 'block';
+
+                        // Auto-select if only one invoice
+                        if (invoices.length === 1 && invoiceSelect) {
+                            invoiceSelect.value = invoices[0].InvoiceID;
+                            invoiceSelect.dispatchEvent(new Event('change'));
+                        }
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch invoices:', error);
+                    Toast.error('Failed to fetch customer invoices');
+                }
+            });
+
+            // When invoice is selected, auto-fill amount
+            invoiceSelect?.addEventListener('change', () => {
+                const selectedOption = invoiceSelect.options[invoiceSelect.selectedIndex];
+                const detailsSection = document.getElementById('invoice-details-section');
+                const detailsContainer = document.getElementById('invoice-details');
+                const amountSection = document.getElementById('amount-section');
+                const methodSection = document.getElementById('method-section');
+                const amountInput = document.getElementById('payment-amount-input');
+
+                if (!selectedOption || !selectedOption.value) {
+                    if (detailsSection) detailsSection.style.display = 'none';
+                    if (amountSection) amountSection.style.display = 'none';
+                    if (methodSection) methodSection.style.display = 'none';
+                    return;
+                }
+
+                const balance = parseFloat(selectedOption.dataset.balance) || 0;
+                const type = selectedOption.dataset.type || '';
+                const animal = selectedOption.dataset.animal || '';
+                const total = parseFloat(selectedOption.dataset.total) || 0;
+                const paid = total - balance;
+
+                // Show invoice details
+                if (detailsContainer) {
+                    detailsContainer.innerHTML = `
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-tertiary">Type:</span>
+                                <span class="font-medium">${type}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-tertiary">Animal:</span>
+                                <span class="font-medium">${animal}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-tertiary">Total Amount:</span>
+                                <span>₱${total.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-tertiary">Already Paid:</span>
+                                <span class="text-success">₱${paid.toFixed(2)}</span>
+                            </div>
+                            <div class="flex justify-between border-t pt-2">
+                                <span class="font-semibold">Balance Due:</span>
+                                <span class="font-semibold text-danger">₱${balance.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (detailsSection) detailsSection.style.display = 'block';
+                if (amountSection) amountSection.style.display = 'block';
+                if (methodSection) methodSection.style.display = 'block';
+
+                // Auto-fill the balance as the payment amount
+                if (amountInput) {
+                    amountInput.value = balance.toFixed(2);
+                    amountInput.max = balance;
+                }
+            });
+        }, 100);
+    },
+
 
     /**
      * Show record payment modal

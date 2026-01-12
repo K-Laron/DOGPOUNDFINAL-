@@ -89,7 +89,7 @@ const HoverPreview = {
         API.get(endpoint, null, { cache: true })
             .then(data => {
                 this.cache.set(cacheKey, data);
-                console.log(`[Prefetch] Warmed cache for ${type} #${id}`);
+                // console.log(`[Prefetch] Warmed cache for ${type} #${id}`);
             })
             .catch(() => {
                 // Silently ignore prefetch errors
