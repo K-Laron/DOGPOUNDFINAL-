@@ -1,8 +1,16 @@
 @echo off
 echo 🛑 Stopping Catarman Dog Pound Servers...
-taskkill /F /IM php.exe
 echo.
-echo ✅ Servers stopped.
+echo 🔪 Killing PHP Servers...
+taskkill /F /IM php.exe /T 2>nul
+echo.
+echo 🔪 Killing Apache (Web Server)...
+taskkill /F /IM httpd.exe /T 2>nul
+echo.
+echo 🔪 Killing MySQL (Database)...
+taskkill /F /IM mysqld.exe /T 2>nul
+echo.
+echo ✅ All servers and services stopped.
 echo.
 echo This window will close in 10 seconds...
 timeout /t 10 >nul
