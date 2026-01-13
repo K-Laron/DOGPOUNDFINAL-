@@ -42,7 +42,7 @@ echo.
 echo Opening System and Database Admin...
 timeout /t 3 >nul
 start http://localhost:3000
-start http://localhost:88/phpmyadmin/
+
 
 echo.
 echo ⚠️  Servers are running in the background.

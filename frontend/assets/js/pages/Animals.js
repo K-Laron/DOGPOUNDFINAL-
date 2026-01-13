@@ -62,6 +62,7 @@ const AnimalsPage = {
                             <option value="Other" ${this.state.filters.type === 'Other' ? 'selected' : ''}>Other</option>
                         </select>
                         
+                        ${Auth.isStaff() ? `
                         <select class="form-select" id="filter-status" style="width: auto;">
                             <option value="">All Statuses</option>
                             <option value="Available" ${this.state.filters.status === 'Available' ? 'selected' : ''}>Available</option>
@@ -70,6 +71,7 @@ const AnimalsPage = {
                             <option value="In Treatment" ${this.state.filters.status === 'In Treatment' ? 'selected' : ''}>In Treatment</option>
                             <option value="Quarantine" ${this.state.filters.status === 'Quarantine' ? 'selected' : ''}>Quarantine</option>
                         </select>
+                        ` : ''}
                         
                         <select class="form-select" id="filter-gender" style="width: auto;">
                             <option value="">All Genders</option>

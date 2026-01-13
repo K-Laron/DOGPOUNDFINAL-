@@ -668,7 +668,6 @@ $id = Sanitizer::integer($input['id']);
 │ PUT    │ /adoptions/{id}         │ Staff+       │ Update request          │
 │ DELETE │ /adoptions/{id}         │ Admin        │ Delete request          │
 │ PATCH  │ /adoptions/{id}/status  │ Staff+       │ Approve/reject          │
-│ GET    │ /adoptions/my/requests  │ Adopter      │ Own requests            │
 └────────┴─────────────────────────┴──────────────┴─────────────────────────┘
 ```
 

@@ -50,6 +50,7 @@ frontend/
             ├── Animals.js
             ├── AnimalDetail.js
             ├── Adoptions.js
+            ├── AdopterRequests.js
             ├── Medical.js
             ├── Inventory.js
             ├── Billing.js
@@ -785,6 +786,7 @@ Charts.area(canvasId, { labels, datasets })
         section: 'Main',
         items: [
             { id: 'dashboard', label: 'Dashboard', path: '/dashboard', roles: ['Admin', 'Staff', 'Veterinarian'] },
+            { id: 'my-requests', label: 'My Requests', path: '/my-requests', roles: ['Adopter'] },
             { id: 'animals', label: 'Animals', path: '/animals', roles: ['*'] }
         ]
     },
@@ -1441,6 +1443,28 @@ Clear visible focus indicators for all interactive elements:
 .visually-hidden   /* Hidden visually but accessible */
 .sr-only           /* Screen reader only content */
 ```
+
+---
+
+---
+
+### `assets/js/pages/AdopterRequests.js`
+
+**Purpose**: Dedicated page for Adopters to view and manage their requests
+
+**Features**:
+
+- **My Requests List**: Shows all adoption applications for the logged-in user
+- **Status Tracking**: Visual badges for adoption status
+- **Cancellation**: Ability to cancel 'Pending', 'Interview Scheduled', or 'Seminar Scheduled' requests
+- **Request Details**: view full details including scheduled dates and staff comments
+
+**Key Methods**:
+
+- `loadRequests()`: Fetch user's requests using `API.adoptions.list()`
+- `renderRequests()`: Render card-based layout
+- `showRequestDetails()`: Open detailed view modal
+- `cancelRequest()`: Handle cancellation with confirmation
 
 ---
 

@@ -193,7 +193,7 @@ const DashboardPage = {
                     <div class="card h-full">
                         <div class="card-header">
                             <h3 class="card-title">Your Adoption Requests</h3>
-                            <a href="/adoptions" class="btn btn-ghost btn-sm">View All</a>
+                            <a href="/my-requests" class="btn btn-ghost btn-sm">View All</a>
                         </div>
                         <div class="card-body p-0" id="adopter-adoptions-list">
                             ${Loading.skeleton('list', { items: 3 })}
@@ -339,7 +339,7 @@ const DashboardPage = {
         }
 
         container.innerHTML = this.data.pendingAdoptions.map(adoption => `
-            <div class="flex items-center gap-4 p-4 hover:bg-hover cursor-pointer border-b border-color" onclick="Router.navigate('/adoptions/${adoption.RequestID}')">
+            <div class="flex items-center gap-4 p-4 hover:bg-hover cursor-pointer border-b border-color" onclick="Router.navigate('/my-requests')">
                 <div class="avatar bg-primary-light text-primary">
                    ${this.icons.adoptions}
                 </div>

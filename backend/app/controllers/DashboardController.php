@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Dashboard Controller
  * Handles dashboard statistics and system operations
@@ -8,15 +9,17 @@
 
 require_once APP_PATH . '/controllers/BaseController.php';
 
-class DashboardController extends BaseController {
-    
+class DashboardController extends BaseController
+{
+
     /**
      * Get comprehensive dashboard statistics
      * GET /dashboard/stats
      */
-    public function statistics() {
+    public function statistics()
+    {
         $stats = [];
-        
+
         // ==========================================
         // ANIMAL STATISTICS
         // ==========================================
@@ -35,7 +38,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $stats['animals'] = $stmt->fetch();
-        
+
         // ==========================================
         // ADOPTION STATISTICS
         // ==========================================
@@ -49,7 +52,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $stats['adoptions'] = $stmt->fetch();
-        
+
         // ==========================================
         // INVENTORY ALERTS
         // ==========================================
@@ -59,7 +62,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $lowStockCount = $stmt->fetch()['count'];
-        
+
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as count FROM Inventory 
             WHERE Expiration_Date IS NOT NULL 
@@ -67,7 +70,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $expiringCount = $stmt->fetch()['count'];
-        
+
         // Get critical items (top 5 lowest stock)
         $stmt = $this->db->prepare("
             SELECT ItemID, Item_Name, Category, Quantity_On_Hand, Reorder_Level
@@ -77,13 +80,13 @@ class DashboardController extends BaseController {
             LIMIT 5
         ");
         $stmt->execute();
-        
+
         $stats['inventory'] = [
             'low_stock_count' => (int)$lowStockCount,
             'expiring_count' => (int)$expiringCount,
             'critical_items' => $stmt->fetchAll()
         ];
-        
+
         // ==========================================
         // MEDICAL - UPCOMING TREATMENTS
         // ==========================================
@@ -98,7 +101,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $upcomingCount = $stmt->fetch()['count'];
-        
+
         $stmt = $this->db->prepare("
             SELECT mr.RecordID, mr.Diagnosis_Type, mr.Next_Due_Date,
                    a.Name as Animal_Name, a.Type as Animal_Type
@@ -112,12 +115,12 @@ class DashboardController extends BaseController {
             LIMIT 5
         ");
         $stmt->execute();
-        
+
         $stats['medical'] = [
             'upcoming_count' => (int)$upcomingCount,
             'upcoming_treatments' => $stmt->fetchAll()
         ];
-        
+
         // ==========================================
         // FINANCIAL SUMMARY
         // ==========================================
@@ -131,7 +134,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $stats['finance'] = $stmt->fetch();
-        
+
         // ==========================================
         // USER STATISTICS (Admin only)
         // ==========================================
@@ -151,11 +154,11 @@ class DashboardController extends BaseController {
             $stmt->execute();
             $stats['users'] = $stmt->fetch();
         }
-        
+
         // ==========================================
         // CHARTS DATA
         // ==========================================
-        
+
         // Monthly Intake (Last 6 months)
         $stmt = $this->db->prepare("
             SELECT 
@@ -171,7 +174,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $stats['monthly_intake'] = $stmt->fetchAll();
-        
+
         // Status Distribution
         $stmt = $this->db->prepare("
             SELECT Current_Status, COUNT(*) as count
@@ -185,17 +188,17 @@ class DashboardController extends BaseController {
             $distribution[$row['Current_Status']] = (int)$row['count'];
         }
         $stats['status_distribution'] = $distribution;
-        
+
         // Flatten stats for frontend compatibility
         $stats['total_animals'] = (int)$stats['animals']['total'];
         $stats['available_animals'] = (int)$stats['animals']['available'];
         $stats['adopted_this_month'] = (int)$stats['adoptions']['completed_this_month'];
         $stats['treatments_this_month'] = (int)$stats['medical']['upcoming_count']; // Using upcoming as proxy for now, or need specific query
         $stats['upcoming_treatments'] = (int)$stats['medical']['upcoming_count'];
-        
+
         // Calculate revenue trend (current month vs last month)
         $stats['revenue_this_month'] = (float)$stats['finance']['collected_this_month'];
-        
+
         // Get last month's revenue
         $stmt = $this->db->prepare("
             SELECT COALESCE(SUM(Total_Amount), 0) as last_month_revenue
@@ -207,14 +210,14 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $lastMonthRevenue = (float)$stmt->fetch()['last_month_revenue'];
-        
+
         // Calculate revenue trend percentage
         if ($lastMonthRevenue > 0) {
             $stats['revenue_trend'] = round((($stats['revenue_this_month'] - $lastMonthRevenue) / $lastMonthRevenue) * 100);
         } else {
             $stats['revenue_trend'] = $stats['revenue_this_month'] > 0 ? 100 : 0;
         }
-        
+
         // Get current month animal intakes
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as count FROM Animals 
@@ -224,7 +227,7 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $currentMonthAnimals = (int)$stmt->fetch()['count'];
-        
+
         // Get last month animal intakes
         $stmt = $this->db->prepare("
             SELECT COUNT(*) as count FROM Animals 
@@ -234,14 +237,14 @@ class DashboardController extends BaseController {
         ");
         $stmt->execute();
         $lastMonthAnimals = (int)$stmt->fetch()['count'];
-        
+
         // Calculate animals trend percentage
         if ($lastMonthAnimals > 0) {
             $stats['animals_trend'] = round((($currentMonthAnimals - $lastMonthAnimals) / $lastMonthAnimals) * 100);
         } else {
             $stats['animals_trend'] = $currentMonthAnimals > 0 ? 100 : 0;
         }
-        
+
         Response::success($stats, "Dashboard statistics retrieved");
     }
 
@@ -253,18 +256,19 @@ class DashboardController extends BaseController {
      * Get intake statistics for chart
      * GET /dashboard/intake
      */
-    public function intakeStats() {
+    public function intakeStats()
+    {
         $period = $this->query('period', 'week'); // Default to week
         $results = [];
-        
+
         if ($period === 'week') {
             // Week: Last 7 days including today (Daily)
             $endDate = new DateTime();
             $startDate = (clone $endDate)->modify('-6 days');
-            
+
             $stmt = $this->db->prepare("
                 SELECT 
-                    DATE_FORMAT(Intake_Date, '%a') as label, -- Mon, Tue
+                    DATE_FORMAT(Intake_Date, '%b %d') as label, -- Jan 07
                     DATE(Intake_Date) as date_val,
                     SUM(CASE WHEN Type = 'Dog' THEN 1 ELSE 0 END) as dogs,
                     SUM(CASE WHEN Type = 'Cat' THEN 1 ELSE 0 END) as cats,
@@ -281,13 +285,12 @@ class DashboardController extends BaseController {
             ]);
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $results = $this->fillMissingDates($data, $startDate, $endDate, 'P1D', 'D');
-            
         } elseif ($period === 'month') {
             // Month: Last 12 Months (Monthly)
             // User requested "Month" tab to show "Months", effectively "Last Year" view
             $endDate = new DateTime();
             $startDate = (clone $endDate)->modify('-11 months')->modify('first day of this month');
-            
+
             $stmt = $this->db->prepare("
                 SELECT 
                     DATE_FORMAT(Intake_Date, '%b %Y') as label, -- Jan 2025
@@ -306,12 +309,11 @@ class DashboardController extends BaseController {
             ]);
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $results = $this->fillMissingDates($data, $startDate, $endDate, 'P1M', 'M Y');
-            
         } elseif ($period === 'year') {
             // Year: Last 5 Years (Yearly)
             $endDate = new DateTime();
             $startDate = (clone $endDate)->modify('-4 years')->modify('first day of january');
-            
+
             $stmt = $this->db->prepare("
                 SELECT 
                     DATE_FORMAT(Intake_Date, '%Y') as label, -- 2025
@@ -331,28 +333,29 @@ class DashboardController extends BaseController {
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $results = $this->fillMissingDates($data, $startDate, $endDate, 'P1Y', 'Y');
         }
-        
+
         Response::success($results, "Intake stats retrieved");
     }
 
     /**
      * Helper to fill missing dates in chart data with 0
      */
-    private function fillMissingDates($data, $startDate, $endDate, $intervalSpec, $dateFormat) {
+    private function fillMissingDates($data, $startDate, $endDate, $intervalSpec, $dateFormat)
+    {
         $filledData = [];
         $dataMap = [];
-        
+
         // Index existing data by date_val
         foreach ($data as $row) {
             $dataMap[$row['date_val']] = $row;
         }
-        
+
         $period = new DatePeriod(
             $startDate,
             new DateInterval($intervalSpec),
             $endDate->modify('+1 day') // Include end date
         );
-        
+
         foreach ($period as $dt) {
             // Format key matches the GROUP BY format from SQL
             if ($intervalSpec === 'P1D') {
@@ -365,7 +368,7 @@ class DashboardController extends BaseController {
                 $key = $dt->format('Y');
                 $label = $dt->format('Y'); // 2025
             }
-            
+
             if (isset($dataMap[$key])) {
                 $filledData[] = $dataMap[$key];
             } else {
@@ -378,17 +381,18 @@ class DashboardController extends BaseController {
                 ];
             }
         }
-        
+
         return $filledData;
     }
-    
+
     /**
      * Get recent activity
      * GET /dashboard/activity
      */
-    public function recentActivity() {
+    public function recentActivity()
+    {
         $limit = min((int)$this->query('limit', 10), 50);
-        
+
         $stmt = $this->db->prepare("
             SELECT al.*, 
                    u.FirstName, u.LastName, u.Email,
@@ -401,98 +405,100 @@ class DashboardController extends BaseController {
         ");
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         Response::success($stmt->fetchAll(), "Recent activity retrieved");
     }
-    
+
     /**
      * Get quick stats for dashboard widgets
      * GET /dashboard/quick-stats
      */
-    public function quickStats() {
+    public function quickStats()
+    {
         $stats = [];
-        
+
         // Total animals
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Animals WHERE Is_Deleted = FALSE");
         $stmt->execute();
         $stats['total_animals'] = (int)$stmt->fetch()['count'];
-        
+
         // Available for adoption
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Animals WHERE Is_Deleted = FALSE AND Current_Status = 'Available'");
         $stmt->execute();
         $stats['available_animals'] = (int)$stmt->fetch()['count'];
-        
+
         // Pending adoptions
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Adoption_Requests WHERE Status = 'Pending'");
         $stmt->execute();
         $stats['pending_adoptions'] = (int)$stmt->fetch()['count'];
-        
+
         // Low stock items
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Inventory WHERE Quantity_On_Hand <= Reorder_Level");
         $stmt->execute();
         $stats['low_stock_items'] = (int)$stmt->fetch()['count'];
-        
+
         // Unpaid invoices
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Invoices WHERE Status = 'Unpaid' AND Is_Deleted = FALSE");
         $stmt->execute();
         $stats['unpaid_invoices'] = (int)$stmt->fetch()['count'];
-        
+
         // Today's intakes
         $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Animals WHERE DATE(Intake_Date) = CURDATE() AND Is_Deleted = FALSE");
         $stmt->execute();
         $stats['today_intakes'] = (int)$stmt->fetch()['count'];
-        
+
         Response::success($stats, "Quick stats retrieved");
     }
-    
+
     /**
      * Get activity logs with filters
      * GET /logs
      */
-    public function activityLogs() {
+    public function activityLogs()
+    {
         list($page, $perPage) = $this->getPagination();
-        
+
         $where = ["1=1"];
         $params = [];
-        
+
         if ($this->query('user_id')) {
             $where[] = "al.UserID = :user_id";
             $params['user_id'] = $this->query('user_id');
         }
-        
+
         if ($this->query('action_type')) {
             $where[] = "al.Action_Type = :action_type";
             $params['action_type'] = $this->query('action_type');
         }
-        
+
         // Support action_pattern for LIKE matching
         if ($this->query('action_pattern')) {
             $where[] = "al.Action_Type LIKE :action_pattern";
             $params['action_pattern'] = '%' . strtoupper($this->query('action_pattern')) . '%';
         }
-        
+
         if ($this->query('date_from')) {
             $where[] = "DATE(al.Log_Date) >= :date_from";
             $params['date_from'] = $this->query('date_from');
         }
-        
+
         if ($this->query('date_to')) {
             $where[] = "DATE(al.Log_Date) <= :date_to";
             $params['date_to'] = $this->query('date_to');
         }
-        
+
         if ($this->query('search')) {
             $where[] = "(al.Description LIKE :search OR al.Action_Type LIKE :search)";
             $params['search'] = '%' . $this->query('search') . '%';
         }
-        
+
         $whereClause = implode(' AND ', $where);
-        
+
         // Get total count
         $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM Activity_Logs al WHERE {$whereClause}");
         $countStmt->execute($params);
         $total = $countStmt->fetch()['total'];
-        
+
         // Get logs
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
@@ -506,37 +512,38 @@ class DashboardController extends BaseController {
             ORDER BY al.Log_Date DESC
             LIMIT :limit OFFSET :offset
         ");
-        
+
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         Response::paginated($stmt->fetchAll(), $page, $perPage, $total, "Activity logs retrieved");
     }
-    
+
     /**
      * Get logs for specific user
      * GET /logs/user/{userId}
      */
-    public function userLogs($userId) {
+    public function userLogs($userId)
+    {
         try {
             list($page, $perPage) = $this->getPagination();
-            
+
             // Verify user exists
             $stmt = $this->db->prepare("SELECT UserID, FirstName, LastName FROM Users WHERE UserID = :id");
             $stmt->execute(['id' => $userId]);
             $user = $stmt->fetch();
-            
+
             if (!$user) {
                 Response::notFound("User not found");
             }
 
             // Security check: Non-admins can only view their own logs
             $currentUserId = $this->user['UserID'] ?? 0;
-            
+
             // Allow if Admin OR if the user is viewing their own logs
             // This covers Staff/Veterinarian viewing their own profile
             // Staff might still need to view others' logs? Original code implied Staff could view any.
@@ -546,7 +553,7 @@ class DashboardController extends BaseController {
             // Then here: if not Admin AND trying to view someone else -> Forbidden.
             // So Staff could ONLY view their own logs too? 
             // If so, my new logic should simply allow the user if it's their own ID, regardless of role (as long as route allows it).
-            
+
             if (!$this->hasRole('Admin') && !$this->hasRole('Staff') && $currentUserId != $userId) {
                 // If not Admin AND not Staff (meaning Veterinarian or others), must be own ID
                 // Wait, if Staff can view ALL logs, I should check that.
@@ -555,78 +562,78 @@ class DashboardController extends BaseController {
                 // Existing code: `if (!$this->hasRole('Admin') && $currentUserId != $userId)`
                 // This implies Staff WAS blocked from viewing others.
                 // So for Vet, same rule applies: Can view if Admin OR (UserID == TargetID).
-                
+
                 // Let's stick to the existing logic pattern but ensure Vets pass if ID matches.
-                 if (!$this->hasRole('Admin') && $currentUserId != $userId) {
+                if (!$this->hasRole('Admin') && $currentUserId != $userId) {
                     Response::forbidden("You are not authorized to view these logs");
                 }
             } else {
-                 // Re-evaluating existing logic:
-                 // `if (!$this->hasRole('Admin') && $currentUserId != $userId)`
-                 // This means: If you are NOT Admin, you MUST be viewing your own ID.
-                 // So Staff could NOT view others.
-                 // If I keep this logic, it works for Vets too (since they are not Admin).
-                 // They will pass the route check (now that I added Vet), and then hit this check.
-                 // If they try to view their own ID, condition `$currentUserId != $userId` is False -> Access Granted.
-                 // If they try to view others, condition is True -> Forbidden.
-                 
-                 // So actually, NO CHANGE needed in the logic itself if the goal is "View OWN logs".
-                 // BUT, I should verify if Staff *should* satisfy this. 
-                 // If Staff are supposed to view others, the original code was buggy for Staff.
-                 // Assuming original code was correct for Staff (only own logs), then I don't need to change this line!
-                 // Wait, if I don't change this line, verify it works.
-                 // Vet calls /logs/user/VET_ID. 
-                 // Route: Matches 'Veterinarian'.
-                 // Controller: hasRole('Admin') is false. $currentUserId == $userId is true (if matching).
-                 // Logic: `!false && false` -> `true && false` -> `false`. Block is skipped. Access OK.
-                 
-                 // So... I might not need to change the controller logic at all?
-                 // Let's look closer.
-                 // The prompt earlier said: "Update DashboardController to ensure Veterinarians can only see their own logs".
-                 // The *existing* logic already enforces "Only Admin can view others". 
-                 // Every non-admin (Staff, Vet) is restricted to their own.
-                 // So simply adding the route permission might be enough.
-                 
-                 // However, to be absolutely safe and explicit, or if I want to allow Staff to view others (maybe they help manage?), I might need to change it.
-                 // But sticking to the "Vet sees own logs" requirement:
-                 // The existing code is:
-                 /*
+                // Re-evaluating existing logic:
+                // `if (!$this->hasRole('Admin') && $currentUserId != $userId)`
+                // This means: If you are NOT Admin, you MUST be viewing your own ID.
+                // So Staff could NOT view others.
+                // If I keep this logic, it works for Vets too (since they are not Admin).
+                // They will pass the route check (now that I added Vet), and then hit this check.
+                // If they try to view their own ID, condition `$currentUserId != $userId` is False -> Access Granted.
+                // If they try to view others, condition is True -> Forbidden.
+
+                // So actually, NO CHANGE needed in the logic itself if the goal is "View OWN logs".
+                // BUT, I should verify if Staff *should* satisfy this. 
+                // If Staff are supposed to view others, the original code was buggy for Staff.
+                // Assuming original code was correct for Staff (only own logs), then I don't need to change this line!
+                // Wait, if I don't change this line, verify it works.
+                // Vet calls /logs/user/VET_ID. 
+                // Route: Matches 'Veterinarian'.
+                // Controller: hasRole('Admin') is false. $currentUserId == $userId is true (if matching).
+                // Logic: `!false && false` -> `true && false` -> `false`. Block is skipped. Access OK.
+
+                // So... I might not need to change the controller logic at all?
+                // Let's look closer.
+                // The prompt earlier said: "Update DashboardController to ensure Veterinarians can only see their own logs".
+                // The *existing* logic already enforces "Only Admin can view others". 
+                // Every non-admin (Staff, Vet) is restricted to their own.
+                // So simply adding the route permission might be enough.
+
+                // However, to be absolutely safe and explicit, or if I want to allow Staff to view others (maybe they help manage?), I might need to change it.
+                // But sticking to the "Vet sees own logs" requirement:
+                // The existing code is:
+                /*
                  if (!$this->hasRole('Admin') && $currentUserId != $userId) {
                     Response::forbidden("You are not authorized to view these logs");
                 }
                  */
-                 // This works perfectly for restricting Vets to own logs.
-                 
-                 // Wait, did the user *say* Staff should view others? 
-                 // Previous summary: "The user's primary goal is to... fix... dashboard... auto-refresh... enlarge icon".
-                 // This new request is just "vet should ... see activities".
-                 
-                 // Let's check if there's any other "Staff" specific requirements.
-                 // Route was `['Admin', 'Staff']`.
-                 // If Staff tried to view another user:
-                 // Route: OK.
-                 // Controller: !Admin (True) && NotOwn (True) -> Forbidden.
-                 // So Staff could NOT view others either.
-                 
-                 // Okay, I will NOT change the controller logic if it already safely handles "Non-admins can only see themselves".
-                 // Use `view_file` to double check the exact lines again to be 100% sure.
+                // This works perfectly for restricting Vets to own logs.
+
+                // Wait, did the user *say* Staff should view others? 
+                // Previous summary: "The user's primary goal is to... fix... dashboard... auto-refresh... enlarge icon".
+                // This new request is just "vet should ... see activities".
+
+                // Let's check if there's any other "Staff" specific requirements.
+                // Route was `['Admin', 'Staff']`.
+                // If Staff tried to view another user:
+                // Route: OK.
+                // Controller: !Admin (True) && NotOwn (True) -> Forbidden.
+                // So Staff could NOT view others either.
+
+                // Okay, I will NOT change the controller logic if it already safely handles "Non-admins can only see themselves".
+                // Use `view_file` to double check the exact lines again to be 100% sure.
             }
-            
+
             // Get total count
             $whereClause = "UserID = :user_id";
             $countParams = ['user_id' => $userId];
-            
+
             // Filter by action pattern if provided
             $actionPattern = $_GET['action_pattern'] ?? '';
             if (!empty($actionPattern)) {
                 $whereClause .= " AND Action_Type LIKE :action_pattern";
                 $countParams['action_pattern'] = '%' . strtoupper($actionPattern) . '%';
             }
-            
+
             $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM Activity_Logs WHERE {$whereClause}");
             $countStmt->execute($countParams);
             $total = $countStmt->fetch()['total'];
-            
+
             // Get logs
             $offset = ($page - 1) * $perPage;
             $sql = "
@@ -634,15 +641,15 @@ class DashboardController extends BaseController {
                 FROM Activity_Logs al
                 WHERE al.UserID = :user_id
             ";
-            
+
             if (!empty($actionPattern)) {
                 $sql .= " AND al.Action_Type LIKE :action_pattern";
             }
-            
+
             $sql .= " ORDER BY al.Log_Date DESC LIMIT :limit OFFSET :offset";
-            
+
             $stmt = $this->db->prepare($sql);
-            
+
             $stmt->bindValue(':user_id', $userId);
             if (!empty($actionPattern)) {
                 $stmt->bindValue(':action_pattern', '%' . strtoupper($actionPattern) . '%');
@@ -650,7 +657,7 @@ class DashboardController extends BaseController {
             $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
             $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
-            
+
             Response::paginated([
                 'user' => $user,
                 'logs' => $stmt->fetchAll()
@@ -659,19 +666,20 @@ class DashboardController extends BaseController {
             Response::serverError("Crash: " . $e->getMessage());
         }
     }
-    
+
     /**
      * Get logs by action type
      * GET /logs/action/{actionType}
      */
-    public function actionLogs($actionType) {
+    public function actionLogs($actionType)
+    {
         list($page, $perPage) = $this->getPagination();
-        
+
         // Get total count
         $countStmt = $this->db->prepare("SELECT COUNT(*) as total FROM Activity_Logs WHERE Action_Type = :action_type");
         $countStmt->execute(['action_type' => $actionType]);
         $total = $countStmt->fetch()['total'];
-        
+
         // Get logs
         $offset = ($page - 1) * $perPage;
         $stmt = $this->db->prepare("
@@ -683,26 +691,27 @@ class DashboardController extends BaseController {
             ORDER BY al.Log_Date DESC
             LIMIT :limit OFFSET :offset
         ");
-        
+
         $stmt->bindValue(':action_type', $actionType);
         $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
-        
+
         Response::paginated($stmt->fetchAll(), $page, $perPage, $total, "Action logs retrieved");
     }
-    
+
     /**
      * Health check endpoint
      * GET /system/health
      */
-    public function healthCheck() {
+    public function healthCheck()
+    {
         $health = [
             'status' => 'healthy',
             'timestamp' => date('c'),
             'checks' => []
         ];
-        
+
         // Database check
         try {
             $stmt = $this->db->query("SELECT 1");
@@ -717,7 +726,7 @@ class DashboardController extends BaseController {
                 'message' => 'Database connection failed'
             ];
         }
-        
+
         // Upload directory check
         if (is_writable(UPLOAD_PATH)) {
             $health['checks']['uploads'] = [
@@ -730,7 +739,7 @@ class DashboardController extends BaseController {
                 'message' => 'Upload directory is not writable'
             ];
         }
-        
+
         // Log directory check
         $logDir = BASE_PATH . '/logs';
         if (is_writable($logDir)) {
@@ -744,15 +753,16 @@ class DashboardController extends BaseController {
                 'message' => 'Log directory is not writable'
             ];
         }
-        
+
         Response::success($health, "Health check completed");
     }
-    
+
     /**
      * Get system info
      * GET /system/info
      */
-    public function systemInfo() {
+    public function systemInfo()
+    {
         Response::success([
             'name' => APP_NAME,
             'version' => APP_VERSION,

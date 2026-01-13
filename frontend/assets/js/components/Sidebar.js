@@ -33,6 +33,13 @@ const Sidebar = {
                     icon: 'heart',
                     path: '/animals',
                     roles: ['Admin', 'Staff', 'Veterinarian', 'Adopter']
+                },
+                {
+                    id: 'my-requests',
+                    label: 'My Requests',
+                    icon: 'file-text',
+                    path: '/my-requests',
+                    roles: ['Adopter']
                 }
             ]
         },

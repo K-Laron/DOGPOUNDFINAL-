@@ -333,8 +333,25 @@ const AdoptionsPage = {
                 }
 
                 return `<div class="flex items-center gap-1">${buttons}</div>`;
-            } : {
-                view: true
+            } : (row) => {
+                const cancellableStatuses = ['Pending', 'Interview Scheduled', 'Seminar Scheduled'];
+                const canCancel = cancellableStatuses.includes(row.Status);
+
+                let buttons = `
+                    <button class="btn-icon btn-ghost btn-sm" onclick="DataTable.action('adoptions-table', 'view', '${row.id}')" title="View">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                `;
+
+                if (canCancel) {
+                    buttons += `
+                        <button class="btn-icon btn-ghost btn-sm text-danger" onclick="DataTable.action('adoptions-table', 'cancel', '${row.id}')" title="Cancel Request">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                        </button>
+                    `;
+                }
+
+                return `<div class="flex items-center gap-1">${buttons}</div>`;
             },
             onAction: (action, id, row) => this.handleAction(action, id, row),
             onPageChange: (page) => {
@@ -358,6 +375,9 @@ const AdoptionsPage = {
                 break;
             case 'process':
                 this.showProcessModal(row);
+                break;
+            case 'cancel':
+                await this.cancelRequest(id, row.Animal_Name);
                 break;
         }
     },
@@ -618,6 +638,30 @@ const AdoptionsPage = {
         };
 
         return transitions[currentStatus] || [];
+    },
+
+    /**
+     * Cancel adoption request (for adopters)
+     * @param {number} id
+     * @param {string} animalName
+     */
+    async cancelRequest(id, animalName) {
+        const confirmed = await Modal.confirm(
+            `Are you sure you want to cancel your adoption request for ${animalName}?`,
+            'Cancel Request'
+        );
+
+        if (confirmed) {
+            try {
+                const response = await API.adoptions.cancel(id);
+                if (response.success) {
+                    Toast.success('Adoption request cancelled');
+                    this.loadAdoptions();
+                }
+            } catch (error) {
+                Toast.error(error.message || 'Failed to cancel request');
+            }
+        }
     }
 };
 

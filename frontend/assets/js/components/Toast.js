@@ -10,22 +10,22 @@ const Toast = {
      * Default options
      */
     defaults: {
-        duration: 4000,
+        duration: 5000,
         position: 'top-right',
         closable: true,
         pauseOnHover: true
     },
-    
+
     /**
      * Active toasts
      */
     toasts: [],
-    
+
     /**
      * Toast counter for unique IDs
      */
     counter: 0,
-    
+
     /**
      * Icons for each type
      */
@@ -35,7 +35,7 @@ const Toast = {
         warning: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toast-icon-animated"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" class="toast-icon-triangle"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
         info: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toast-icon-animated"><circle cx="12" cy="12" r="10" class="toast-icon-circle"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
     },
-    
+
     /**
      * Show toast notification
      * @param {Object} options - Toast options
@@ -44,14 +44,14 @@ const Toast = {
     show(options) {
         const config = { ...this.defaults, ...options };
         const id = `toast-${++this.counter}`;
-        
+
         // Create toast element
         const toast = this.createToastElement(id, config);
-        
+
         // Get container
         const container = this.getContainer();
         container.appendChild(toast);
-        
+
         // Track toast
         const toastObj = {
             id,
@@ -60,14 +60,14 @@ const Toast = {
             timer: null,
             remaining: config.duration
         };
-        
+
         this.toasts.push(toastObj);
-        
+
         // Start auto-dismiss timer
         if (config.duration > 0) {
             this.startTimer(toastObj);
         }
-        
+
         // Pause on hover
         if (config.pauseOnHover) {
             toast.addEventListener('mouseenter', () => this.pauseTimer(toastObj));
@@ -80,10 +80,10 @@ const Toast = {
         if (window.Utils && window.Utils.announce) {
             Utils.announce(announcement, priority);
         }
-        
+
         return id;
     },
-    
+
     /**
      * Create toast element
      * @param {string} id - Toast ID
@@ -94,7 +94,7 @@ const Toast = {
         const toast = document.createElement('div');
         toast.id = id;
         toast.className = `toast ${config.type || 'info'}`;
-        
+
         toast.innerHTML = `
             <div class="toast-icon">
                 ${this.icons[config.type] || this.icons.info}
@@ -109,61 +109,61 @@ const Toast = {
                 </button>
             ` : ''}
         `;
-        
+
         return toast;
     },
-    
+
     /**
      * Get or create toast container
      * @returns {HTMLElement}
      */
     getContainer() {
         let container = document.getElementById('toast-container');
-        
+
         if (!container) {
             container = document.createElement('div');
             container.id = 'toast-container';
             container.className = 'toast-container';
             document.body.appendChild(container);
         }
-        
+
         return container;
     },
-    
+
     /**
      * Dismiss toast
      * @param {string} id - Toast ID
      */
     dismiss(id) {
         const index = this.toasts.findIndex(t => t.id === id);
-        
+
         if (index === -1) return;
-        
+
         const toastObj = this.toasts[index];
         const { element, timer } = toastObj;
-        
+
         // Clear timer
         if (timer) {
             clearTimeout(timer);
         }
-        
+
         // Animate out
         element.classList.add('removing');
-        
+
         // Remove after animation
         setTimeout(() => {
             element.remove();
             this.toasts.splice(index, 1);
         }, 300);
     },
-    
+
     /**
      * Dismiss all toasts
      */
     dismissAll() {
         [...this.toasts].forEach(toast => this.dismiss(toast.id));
     },
-    
+
     /**
      * Start auto-dismiss timer
      * @param {Object} toastObj
@@ -174,7 +174,7 @@ const Toast = {
             this.dismiss(toastObj.id);
         }, toastObj.remaining);
     },
-    
+
     /**
      * Pause timer
      * @param {Object} toastObj
@@ -185,7 +185,7 @@ const Toast = {
             toastObj.remaining -= Date.now() - toastObj.startTime;
         }
     },
-    
+
     /**
      * Resume timer
      * @param {Object} toastObj
@@ -195,13 +195,13 @@ const Toast = {
             this.startTimer(toastObj);
         }
     },
-    
+
     /**
      * ==========================================
      * CONVENIENCE METHODS
      * ==========================================
      */
-    
+
     /**
      * Show success toast
      * @param {string} message
@@ -216,7 +216,7 @@ const Toast = {
             ...options
         });
     },
-    
+
     /**
      * Show error toast
      * @param {string} message
@@ -232,7 +232,7 @@ const Toast = {
             ...options
         });
     },
-    
+
     /**
      * Show warning toast
      * @param {string} message
@@ -247,7 +247,7 @@ const Toast = {
             ...options
         });
     },
-    
+
     /**
      * Show info toast
      * @param {string} message
@@ -262,7 +262,7 @@ const Toast = {
             ...options
         });
     },
-    
+
     /**
      * Show promise toast (loading -> success/error)
      * @param {Promise} promise
@@ -275,7 +275,7 @@ const Toast = {
             success = 'Completed successfully',
             error = 'Something went wrong'
         } = messages;
-        
+
         // Show loading toast
         const id = this.show({
             type: 'info',
@@ -284,7 +284,7 @@ const Toast = {
             closable: false,
             ...options
         });
-        
+
         try {
             const result = await promise;
             this.dismiss(id);

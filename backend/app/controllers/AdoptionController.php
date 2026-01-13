@@ -114,7 +114,8 @@ class AdoptionController extends BaseController
             SELECT ar.*, 
                    a.Name as Animal_Name, a.Type as Animal_Type, a.Breed, a.Gender, 
                    a.Age_Group, a.Image_URL, a.Current_Status as Animal_Status,
-                   u.FirstName, u.LastName, u.Email, u.Contact_Number,
+                   u.FirstName as Adopter_FirstName, u.LastName as Adopter_LastName, 
+                   u.Email as Adopter_Email, u.Contact_Number as Adopter_Contact,
                    staff.FirstName as Staff_FirstName, staff.LastName as Staff_LastName
             FROM Adoption_Requests ar
             JOIN Animals a ON ar.AnimalID = a.AnimalID

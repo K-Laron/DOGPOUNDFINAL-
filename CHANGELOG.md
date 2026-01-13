@@ -251,6 +251,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-01-13
+
+### Added (Features)
+
+- **My Requests Page**: Dedicated page for Adopters to view and manage their adoption applications (`/my-requests`)
+- **Adopter Navigation**: Added "My Requests" sidebar item visible only to Adopters
+- **Adoption Cancellation**: Adopters can now cancel their own 'Pending', 'Interview Scheduled', or 'Seminar Scheduled' requests
+- **Dashboard Quick Link**: "View All" link on Adopter Dashboard now directs to the new My Requests page
+
+### Changed (1.1.0)
+
+- **Dashboard**: Fixed "View All" link in "Your Adoption Requests" card to point to the correct `/my-requests` route instead of `/adoptions`
+- **Adoptions Page**: Enhanced table actions to include "Cancel" button for adopters
+
+---
+
 ## [1.0.9] - 2026-01-11
 
 ### Changed (Documentation)

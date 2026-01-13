@@ -117,6 +117,14 @@ const Router = {
             guard: () => Auth.requireAuth()
         });
 
+        // My Requests (Adopters)
+        this.register('/my-requests', {
+            page: 'my-requests',
+            title: 'My Requests',
+            component: AdopterRequestsPage,
+            guard: () => Auth.requireAuth()
+        });
+
         // Medical
         this.register('/medical', {
             page: 'medical',
