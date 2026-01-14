@@ -210,6 +210,11 @@ const DashboardPage = {
     async afterRender() {
         await this.loadDashboardData();
         this.setupEventListeners();
+
+        // Subscribe to real-time updates via SSE
+        SSE.on('animals_updated', () => this.loadDashboardData());
+        SSE.on('adoptions_updated', () => this.loadDashboardData());
+        SSE.on('billing_updated', () => this.loadDashboardData());
     },
 
     /**

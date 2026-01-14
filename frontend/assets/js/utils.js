@@ -1256,10 +1256,11 @@ const Utils = {
             // Adoption statuses
             'Pending': 'badge-warning',
             'Interview Scheduled': 'badge-info',
+            'Seminar Scheduled': 'badge-purple',
             'Approved': 'badge-success',
             'Rejected': 'badge-danger',
-            'Completed': 'badge-success',
-            'Cancelled': 'badge-gray',
+            'Completed': 'badge-teal',
+            'Cancelled': 'badge-orange',
 
             // Invoice statuses
             'Paid': 'badge-success',
@@ -1396,5 +1397,348 @@ const Utils = {
     }
 };
 
+/**
+ * SSE (Server-Sent Events) Client
+ * Handles real-time updates from the server
+ * 
+ * @package AnimalShelter
+ */
+const SSE = {
+    /**
+     * EventSource instance
+     */
+    connection: null,
+
+    /**
+     * Event handlers
+     */
+    handlers: {},
+
+    /**
+     * Connection state
+     */
+    state: {
+        connected: false,
+        reconnecting: false,
+        retryCount: 0,
+        lastCheck: null
+    },
+
+    /**
+     * Configuration
+     */
+    config: {
+        url: '/api/sse',
+        maxRetries: 5,
+        retryDelay: 3000, // 3 seconds
+        maxRetryDelay: 30000 // 30 seconds max
+    },
+
+    /**
+     * Connect to SSE endpoint
+     */
+    connect() {
+        // Don't connect if not authenticated
+        if (!Auth.isAuthenticated()) {
+            return;
+        }
+
+        // Don't reconnect if already connected
+        if (this.connection && this.state.connected) {
+            return;
+        }
+
+        try {
+            const url = new URL(API_BASE_URL + this.config.url);
+            if (this.state.lastCheck) {
+                url.searchParams.set('last_check', this.state.lastCheck);
+            }
+
+            this.connection = new EventSource(url.toString());
+
+            // Connection opened
+            this.connection.addEventListener('open', () => {
+                this.state.connected = true;
+                this.state.reconnecting = false;
+                this.state.retryCount = 0;
+                this.trigger('connected', { time: new Date() });
+            });
+
+            // Handle connected event from server
+            this.connection.addEventListener('connected', (e) => {
+                const data = JSON.parse(e.data);
+                this.state.lastCheck = new Date().toISOString();
+            });
+
+            // Handle heartbeat
+            this.connection.addEventListener('heartbeat', (e) => {
+                // Keep-alive, no action needed
+            });
+
+            // Handle reconnect instruction
+            this.connection.addEventListener('reconnect', (e) => {
+                const data = JSON.parse(e.data);
+                this.state.lastCheck = data.last_check;
+                this.reconnect();
+            });
+
+            // Handle data update events
+            const dataEvents = [
+                'animals_updated',
+                'adoptions_updated',
+                'inventory_updated',
+                'medical_updated',
+                'billing_updated'
+            ];
+
+            dataEvents.forEach(eventType => {
+                this.connection.addEventListener(eventType, (e) => {
+                    const data = JSON.parse(e.data);
+                    this.handleDataUpdate(eventType, data);
+                });
+            });
+
+            // Handle errors
+            this.connection.addEventListener('error', (e) => {
+                this.state.connected = false;
+
+                if (this.connection.readyState === EventSource.CLOSED) {
+                    this.reconnect();
+                }
+            });
+
+        } catch (error) {
+            console.error('SSE connection error:', error);
+            this.reconnect();
+        }
+    },
+
+    /**
+     * Disconnect from SSE
+     */
+    disconnect() {
+        if (this.connection) {
+            this.connection.close();
+            this.connection = null;
+        }
+        this.state.connected = false;
+        this.state.reconnecting = false;
+    },
+
+    /**
+     * Reconnect with exponential backoff
+     */
+    reconnect() {
+        if (this.state.reconnecting) return;
+        if (this.state.retryCount >= this.config.maxRetries) {
+            console.warn('SSE max retries reached, stopping reconnection');
+            return;
+        }
+
+        this.state.reconnecting = true;
+        this.disconnect();
+
+        // Exponential backoff
+        const delay = Math.min(
+            this.config.retryDelay * Math.pow(2, this.state.retryCount),
+            this.config.maxRetryDelay
+        );
+
+        this.state.retryCount++;
+
+        setTimeout(() => {
+            this.state.reconnecting = false;
+            this.connect();
+        }, delay);
+    },
+
+    /**
+     * Handle data update from server
+     * 
+     * @param {string} eventType
+     * @param {object} data
+     */
+    handleDataUpdate(eventType, data) {
+        // Check if user is busy (modal open, typing, etc.)
+        if (this.isUserBusy()) {
+            // Queue the update for later
+            this.queueUpdate(eventType, data);
+            return;
+        }
+
+        // Trigger event handlers
+        this.trigger(eventType, data);
+    },
+
+    /**
+     * Check if user is currently busy and shouldn't be interrupted
+     * 
+     * @returns {boolean}
+     */
+    isUserBusy() {
+        // Check if any modal is open
+        const modalOpen = document.querySelector('.modal-overlay:not(.hidden)') !== null;
+        if (modalOpen) return true;
+
+        // Check if user is typing in an input
+        const activeElement = document.activeElement;
+        if (activeElement) {
+            const isTyping =
+                activeElement.tagName === 'INPUT' ||
+                activeElement.tagName === 'TEXTAREA' ||
+                activeElement.isContentEditable;
+            if (isTyping) return true;
+        }
+
+        // Check if dropdown is open
+        const dropdownOpen = document.querySelector('.dropdown.open') !== null;
+        if (dropdownOpen) return true;
+
+        return false;
+    },
+
+    /**
+     * Queued updates when user is busy
+     */
+    pendingUpdates: {},
+
+    /**
+     * Queue an update for later
+     * 
+     * @param {string} eventType
+     * @param {object} data
+     */
+    queueUpdate(eventType, data) {
+        this.pendingUpdates[eventType] = data;
+
+        // Show subtle indicator that updates are available
+        this.showUpdateIndicator();
+    },
+
+    /**
+     * Process queued updates
+     */
+    processQueue() {
+        const updates = { ...this.pendingUpdates };
+        this.pendingUpdates = {};
+
+        Object.entries(updates).forEach(([eventType, data]) => {
+            this.trigger(eventType, data);
+        });
+
+        this.hideUpdateIndicator();
+    },
+
+    /**
+     * Show subtle indicator that updates are pending
+     */
+    showUpdateIndicator() {
+        let indicator = document.getElementById('sse-update-indicator');
+        if (!indicator) {
+            indicator = document.createElement('div');
+            indicator.id = 'sse-update-indicator';
+            indicator.className = 'sse-update-indicator';
+            indicator.innerHTML = `
+                <span class="sse-indicator-dot"></span>
+                <span class="sse-indicator-text">New updates available</span>
+            `;
+            indicator.addEventListener('click', () => {
+                this.processQueue();
+            });
+            document.body.appendChild(indicator);
+        }
+        indicator.classList.add('visible');
+    },
+
+    /**
+     * Hide update indicator
+     */
+    hideUpdateIndicator() {
+        const indicator = document.getElementById('sse-update-indicator');
+        if (indicator) {
+            indicator.classList.remove('visible');
+        }
+    },
+
+    /**
+     * Register event handler
+     * 
+     * @param {string} eventType
+     * @param {function} callback
+     */
+    on(eventType, callback) {
+        if (!this.handlers[eventType]) {
+            this.handlers[eventType] = [];
+        }
+        this.handlers[eventType].push(callback);
+    },
+
+    /**
+     * Remove event handler
+     * 
+     * @param {string} eventType
+     * @param {function} callback
+     */
+    off(eventType, callback) {
+        if (!this.handlers[eventType]) return;
+
+        if (callback) {
+            this.handlers[eventType] = this.handlers[eventType].filter(h => h !== callback);
+        } else {
+            delete this.handlers[eventType];
+        }
+    },
+
+    /**
+     * Trigger event handlers
+     * 
+     * @param {string} eventType
+     * @param {object} data
+     */
+    trigger(eventType, data) {
+        if (!this.handlers[eventType]) return;
+
+        this.handlers[eventType].forEach(callback => {
+            try {
+                callback(data);
+            } catch (error) {
+                console.error('SSE handler error:', error);
+            }
+        });
+    }
+};
+
 // Make Utils globally available
 window.Utils = Utils;
+
+// Make SSE globally available
+window.SSE = SSE;
+
+// Auto-connect SSE when page loads (if authenticated)
+document.addEventListener('DOMContentLoaded', () => {
+    // Small delay to ensure Auth is initialized
+    setTimeout(() => {
+        if (Auth.isAuthenticated()) {
+            SSE.connect();
+        }
+    }, 1000);
+});
+
+// Process pending updates when user finishes being busy
+document.addEventListener('click', (e) => {
+    // Check if modal was closed or dropdown closed
+    setTimeout(() => {
+        if (!SSE.isUserBusy() && Object.keys(SSE.pendingUpdates).length > 0) {
+            SSE.processQueue();
+        }
+    }, 100);
+});
+
+// Reconnect SSE when tab becomes visible again
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && Auth.isAuthenticated()) {
+        if (!SSE.state.connected) {
+            SSE.connect();
+        }
+    }
+});

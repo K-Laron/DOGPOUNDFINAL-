@@ -500,6 +500,16 @@
     color: #30B0C7;
 }
 
+.badge-purple {
+    background-color: rgba(175, 82, 222, 0.1);
+    color: #AF52DE;
+}
+
+.badge-orange {
+    background-color: rgba(142, 142, 147, 0.15);
+    color: #636366;
+}
+
 /* Dot Badge */
 .badge-dot {
     display: inline-flex;
@@ -1525,4 +1535,61 @@
     background-color: var(--color-primary) !important;
     color: #000000 !important;
     border-color: var(--color-primary) !important;
+}
+
+/* ==========================================
+   SSE UPDATE INDICATOR
+   ========================================== */
+
+.sse-update-indicator {
+    position: fixed;
+    bottom: 80px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-primary);
+    color: var(--color-black);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-lg);
+    cursor: pointer;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all var(--transition-normal) var(--ease-out-expo);
+    z-index: var(--z-tooltip);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+}
+
+.sse-update-indicator.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.sse-update-indicator:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xl);
+}
+
+.sse-indicator-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-white);
+    border-radius: var(--radius-full);
+    animation: sse-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes sse-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.2);
+    }
 }

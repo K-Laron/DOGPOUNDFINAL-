@@ -102,6 +102,12 @@ const AdoptionsPage = {
         }
 
         await this.loadAdoptions();
+
+        // Subscribe to real-time updates via SSE
+        SSE.on('adoptions_updated', () => {
+            this.loadAdoptions();
+            if (Auth.isStaff()) this.loadStats();
+        });
     },
 
     /**

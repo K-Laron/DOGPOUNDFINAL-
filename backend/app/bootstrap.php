@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application Bootstrap
  * Initializes all core components and handles the application lifecycle
@@ -36,7 +37,7 @@ spl_autoload_register(function ($className) {
         APP_PATH . '/middleware/',
         APP_PATH . '/utils/',
     ];
-    
+
     foreach ($directories as $directory) {
         $file = $directory . $className . '.php';
         if (file_exists($file)) {
@@ -64,34 +65,36 @@ require_once APP_PATH . '/config/database.php';
  * Main Application Class
  * Handles initialization and request processing
  */
-class App {
+class App
+{
     /**
      * @var Router
      */
     private $router;
-    
+
     /**
      * @var PDO
      */
     private $db;
-    
+
     /**
      * Constructor - Initialize the application
      */
-    public function __construct() {
+    public function __construct()
+    {
         // Set up CORS headers first
         $this->handleCors();
-        
+
         // Initialize database connection
         $this->initDatabase();
-        
+
         // Initialize router
         $this->router = new Router($this->db);
-        
+
         // Register all routes
         $this->registerRoutes();
     }
-    
+
     /**
      * Handle CORS (Cross-Origin Resource Sharing) headers
      * 
@@ -101,7 +104,8 @@ class App {
      * 
      * This method also applies global rate limiting to prevent abuse.
      */
-    private function handleCors() {
+    private function handleCors()
+    {
         // ====================================================
         // RATE LIMITING
         // Limit API requests per IP to prevent abuse/DDoS
@@ -112,15 +116,15 @@ class App {
             // If exceeded, RateLimiter will send a 429 response and exit
             RateLimiter::checkGlobal();
         }
-        
+
         // ====================================================
         // CORS ORIGIN VALIDATION
         // Only allow requests from trusted frontend origins
         // ====================================================
-        
+
         // Get the origin of the incoming request
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-        
+
         // Check if this origin is in our whitelist (defined in config.php)
         // This prevents malicious sites from making API requests
         if (in_array($origin, ALLOWED_ORIGINS) || in_array('*', ALLOWED_ORIGINS)) {
@@ -130,48 +134,48 @@ class App {
             // Unknown origin - default to frontend URL for security
             header("Access-Control-Allow-Origin: " . FRONTEND_URL);
         }
-        
+
         // ====================================================
         // CORS RESPONSE HEADERS
         // Tell the browser what's allowed in cross-origin requests
         // ====================================================
-        
+
         // Which HTTP methods can the frontend use?
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
-        
+
         // Which headers can the frontend send?
         header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin");
-        
+
         // Allow cookies/credentials in cross-origin requests
         header("Access-Control-Allow-Credentials: true");
-        
+
         // Cache preflight response for 24 hours (reduces OPTIONS requests)
         header("Access-Control-Max-Age: 86400");
-        
+
         // All API responses are JSON
         header("Content-Type: application/json; charset=UTF-8");
-        
+
         // ====================================================
         // SECURITY HEADERS
         // Protect against common web vulnerabilities
         // ====================================================
-        
+
         // Prevent MIME type sniffing (stops browsers from guessing content type)
         header("X-Content-Type-Options: nosniff");
-        
+
         // Prevent clickjacking by disallowing iframe embedding
         header("X-Frame-Options: DENY");
-        
+
         // Enable browser XSS filter (legacy but still useful)
         header("X-XSS-Protection: 1; mode=block");
-        
+
         // Control referrer information sent with requests
         header("Referrer-Policy: strict-origin-when-cross-origin");
-        
+
         // Prevent caching of sensitive data
         header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
         header("Pragma: no-cache");
-        
+
         // ====================================================
         // PREFLIGHT REQUEST HANDLING
         // Browsers send OPTIONS request before actual request
@@ -183,11 +187,12 @@ class App {
             exit;
         }
     }
-    
+
     /**
      * Initialize database connection
      */
-    private function initDatabase() {
+    private function initDatabase()
+    {
         try {
             $database = new Database();
             $this->db = $database->getConnection();
@@ -196,12 +201,13 @@ class App {
             Response::serverError("Service temporarily unavailable. Please try again later.");
         }
     }
-    
+
     /**
      * Register all application routes
      * Routes are organized by loading separate route files
      */
-    private function registerRoutes() {
+    private function registerRoutes()
+    {
         // Route files to load
         $routeFiles = [
             'auth.php',
@@ -212,13 +218,14 @@ class App {
             'inventory.php',
             'billing.php',
             'dashboard.php',
-            'notifications.php'
+            'notifications.php',
+            'sse.php'
         ];
-        
+
         // Load each route file
         $apiPath = APP_PATH . '/api/';
         $router = $this->router; // Make router available to route files
-        
+
         foreach ($routeFiles as $file) {
             $filePath = $apiPath . $file;
             if (file_exists($filePath)) {
@@ -228,30 +235,33 @@ class App {
             }
         }
     }
-    
+
     /**
      * Run the application
      * Dispatches the request to the appropriate handler
      */
-    public function run() {
+    public function run()
+    {
         $this->router->dispatch();
     }
-    
+
     /**
      * Get router instance (for debugging)
      * 
      * @return Router
      */
-    public function getRouter() {
+    public function getRouter()
+    {
         return $this->router;
     }
-    
+
     /**
      * Get database connection (for debugging)
      * 
      * @return PDO
      */
-    public function getDatabase() {
+    public function getDatabase()
+    {
         return $this->db;
     }
 }

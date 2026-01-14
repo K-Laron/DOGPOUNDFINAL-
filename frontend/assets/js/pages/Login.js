@@ -71,8 +71,8 @@ const LoginPage = {
                     
                     ${this.mode === 'login' ? `
                         <div class="form-group">
-                            <label class="form-label required" for="username">Username</label>
-                            <input type="text" id="username" name="username" class="form-input" placeholder="Enter username" required>
+                            <label class="form-label required" for="username">Username or Email</label>
+                            <input type="text" id="username" name="username" class="form-input" placeholder="Enter username or email" required>
                         </div>
                     ` : `
                         <div class="form-group">

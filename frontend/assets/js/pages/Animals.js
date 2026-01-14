@@ -119,6 +119,9 @@ const AnimalsPage = {
         this.setupEventListeners();
         this.syncFilterUI();
         await this.loadAnimals();
+
+        // Subscribe to real-time updates via SSE
+        SSE.on('animals_updated', () => this.loadAnimals());
     },
 
     /**

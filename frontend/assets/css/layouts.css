@@ -363,7 +363,7 @@
 
 .auth-form .form-input::placeholder,
 .auth-card .form-input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .auth-form .form-input:hover,
@@ -444,15 +444,15 @@
 }
 
 .auth-footer a {
-    color: rgba(var(--color-primary-rgb), 1);
+    color: #60a5fa;
     font-weight: var(--font-medium);
     transition: all var(--transition-fast);
 }
 
 .auth-footer a:hover {
-    color: rgba(0, 150, 255, 1);
+    color: #93c5fd;
     text-decoration: underline;
-    text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.5);
+    text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
 }
 
 /* Checkbox styling for auth */
@@ -464,12 +464,12 @@
 /* Text link styling */
 .auth-form .text-link,
 .auth-card .text-link {
-    color: rgba(var(--color-primary-rgb), 0.9);
+    color: #60a5fa;
 }
 
 .auth-form .text-link:hover,
 .auth-card .text-link:hover {
-    color: rgba(var(--color-primary-rgb), 1);
+    color: #93c5fd;
 }
 
 /* ==========================================
