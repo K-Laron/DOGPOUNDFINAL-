@@ -11,16 +11,23 @@ This document provides a detailed explanation of every backend file, its purpose
 ```text
 backend/
 ├── .htaccess              # Apache URL rewriting rules
+├── phpunit.xml            # PHPUnit configuration
+├── composer.json          # Composer dependencies
 ├── app/
 │   ├── bootstrap.php      # Application initialization
-│   ├── api/               # Route definitions
+│   ├── api/               # Route definitions (11 files)
 │   ├── config/            # Configuration files
-│   ├── controllers/       # Business logic handlers
-│   ├── middleware/        # Request interceptors
+│   ├── controllers/       # Business logic handlers (12 controllers)
+│   ├── middleware/        # Request interceptors (Auth, RequestLogger)
 │   ├── models/            # Database entity classes
-│   └── utils/             # Helper utilities (JWT, RateLimiter, Sanitizer, etc.)
-├── logs/                  # Error logs & rate limit data
-│   └── rate_limits/       # Rate limiting tracking files
+│   └── utils/             # Helpers (JWT, Router, Validator, RateLimiter, Sanitizer)
+├── logs/                  # Application logs
+│   ├── rate_limits/       # Rate limiting tracking files
+│   └── requests/          # Structured JSON request logs
+├── tests/                 # PHPUnit tests
+│   ├── bootstrap.php      # Test environment setup
+│   ├── Unit/              # Unit tests (Validator, Sanitizer, JWT)
+│   └── Feature/           # Feature tests (Auth, Animals API)
 └── public/
     ├── .htaccess          # Public URL rewriting
     ├── index.php          # Single entry point
@@ -132,7 +139,7 @@ HTTP Request
 ├─────────────────────────┼──────────────────────────────┼──────────────────────────────────────────┤
 │ APP_ENV                 │ Environment mode             │ getenv('APP_ENV') ?: 'production'        │
 │ APP_NAME                │ Application name             │ 'Catarman Dog Pound Management System'   │
-│ APP_VERSION             │ Version number               │ '1.0.5'                                  │
+│ APP_VERSION             │ Version number               │ '1.2.0'                                  │
 │ BASE_URL                │ API base URL                 │ 'http://localhost:8000'                  │
 │ FRONTEND_URL            │ Frontend URL for CORS        │ 'http://localhost:3000'                  │
 │ JWT_SECRET              │ Token signing key            │ getenv('JWT_SECRET') ?: fallback         │
@@ -520,6 +527,44 @@ $id = Sanitizer::integer($input['id']);
 3. Query database to ensure user exists and is active
 4. Check account status (Active, Suspended, Pending)
 5. Store user data for controller access
+
+---
+
+### `app/middleware/RequestLogger.php`
+
+**Purpose**: Structured JSON request/response logging for audit and debugging
+
+**Features**:
+
+- Captures all API requests with timing information
+- Logs request method, path, response status, duration
+- Includes user context (ID, role) when authenticated
+- Daily rotating log files in `logs/requests/`
+- Excludes sensitive data (passwords, tokens)
+
+**Log Entry Format**:
+
+```json
+{
+  "timestamp": "2026-01-16T06:00:00+08:00",
+  "method": "POST",
+  "path": "/api/v1/auth/login",
+  "status": 200,
+  "duration_ms": 45.2,
+  "user_id": null,
+  "ip": "127.0.0.1",
+  "user_agent": "Mozilla/5.0..."
+}
+```
+
+**Usage**:
+
+Automatically integrated in `bootstrap.php`:
+
+```php
+RequestLogger::start();  // Called on request init
+// ... request processing ...
+RequestLogger::end($statusCode);  // Called before response
 
 ---
 

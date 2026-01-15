@@ -8,8 +8,9 @@
 const API = {
     /**
      * Base URL for API requests
+     * Includes versioned API prefix
      */
-    baseURL: `http://${window.location.hostname}:8000`,
+    baseURL: `http://${window.location.hostname}:8000/api/v1`,
 
     /**
      * Default headers

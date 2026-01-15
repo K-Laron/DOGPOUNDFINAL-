@@ -101,12 +101,13 @@ This document contains the System Diagrams for **Chapter 3: System Design** of t
 │  │  └──────────────────────────────────────────────────────────────────────┘   │    │
 │  │                                    │                                        │    │
 │  │                                    ▼                                        │    │
-│  │  ┌──────────────────────────────────────────────────────────────────────┐   │    │
+│  │  ┌──────────────────────────────────────────────────────────────────┐   │    │
 │  │  │                        CONTROLLERS                                    │  │    │
 │  │  │  • UserController         • AnimalController      • AdoptionController│  │    │
 │  │  │  • MedicalController      • InventoryController   • BillingController │  │    │
-│  │  │  • DashboardController    • NotificationController• BaseController    │  │    │
-│  │  └──────────────────────────────────────────────────────────────────────┘   │    │
+│  │  │  • DashboardController    • NotificationController• SystemController  │  │    │
+│  │  │  • SSEController          • BaseController                            │  │    │
+│  │  └──────────────────────────────────────────────────────────────────┘   │    │
 │  │                                    │                                        │    │
 │  │                                    ▼                                        │    │
 │  │  ┌──────────────────────────────────────────────────────────────────────┐   │    │
@@ -116,13 +117,14 @@ This document contains the System Diagrams for **Chapter 3: System Design** of t
 │  │  │  • FeedingRecord                                                     │   │    │
 │  │  └──────────────────────────────────────────────────────────────────────┘   │    │
 │  │                                                                             │    │
-│  │  ┌────────────────────────┐  ┌────────────────────────────────────────┐     │    │
+│  │  ┌────────────────────────┐  ┌────────────────────────────────────────┐     │   │
 │  │  │       UTILITIES         │  │           MIDDLEWARE                   │   │   │
 │  │  │  • JWT.php (Auth)       │  │  • Authentication                      │   │   │
 │  │  │  • Response.php         │  │  • Rate Limiter                        │   │   │
-│  │  │  • Sanitizer.php        │  │  • Input Validation                    │   │   │
-│  │  │  • RateLimiter.php      │  │  • Error Handler                       │   │   │
-│  │  │  • Env.php              │  │                                        │   │   │
+│  │  │  • Sanitizer.php        │  │  • Request Logger                      │   │   │
+│  │  │  • RateLimiter.php      │  │  • Input Validation                    │   │   │
+│  │  │  • Env.php              │  │  • Error Handler                       │   │   │
+│  │  │  • Router.php (API v1)  │  │                                        │   │   │
 │  │  └────────────────────────┘  └────────────────────────────────────────┘   │   │
 │  │                                                                             │   │
 │  └─────────────────────────────────────────────────────────────────────────────┘   │
@@ -174,10 +176,11 @@ This document contains the System Diagrams for **Chapter 3: System Design** of t
 │ Layer             │ Technologies                                                  │
 ├───────────────────┼───────────────────────────────────────────────────────────────┤
 │ Frontend          │ HTML5, CSS3, Vanilla JavaScript (ES6+), SPA Architecture      │
-│ Backend           │ PHP 8.x, MVC Pattern, REST API                                │
+│ Backend           │ PHP 8.x, MVC Pattern, REST API (/api/v1/)                     │
 │ Database          │ MySQL 8.x, InnoDB Engine, PDO with Prepared Statements        │
 │ Authentication    │ JWT (HS256), 24-hour token expiry, HttpOnly cookies           │
 │ Security          │ Rate limiting, Input sanitization, CORS, Password hashing     │
+│ Testing           │ PHPUnit 10.x, 92 tests (Unit + Feature)                       │
 │ Development       │ XAMPP, PHP Built-in Server, Live development environment      │
 └───────────────────┴───────────────────────────────────────────────────────────────┘
 ```

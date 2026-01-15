@@ -5,6 +5,42 @@ All notable changes to the Catarman Dog Pound Management System will be document
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-01-16
+
+### Added
+
+- **Testing Infrastructure**: PHPUnit 10.x with 92 tests (68 unit + 24 feature)
+  - Unit tests for Validator (17 tests), Sanitizer (27 tests), JWT (18 tests)
+  - Feature tests for Auth API (12 tests) and Animals API (12 tests)
+  - Test bootstrap with environment setup and autoloading
+- **API Versioning**: All endpoints now use `/api/v1/` prefix for future compatibility
+- **Request Logging**: Structured JSON logging via `RequestLogger` middleware
+  - Captures method, path, status, duration, user context, IP address
+  - Daily rotating log files in `logs/requests/`
+  - Excludes sensitive data (passwords, tokens)
+- **Health Check Endpoint**: `/api/v1/health` for system monitoring
+  - Database connectivity check
+  - Disk space and memory usage
+  - PHP version verification
+- **System Info Endpoint**: `/api/v1/system/info` (Admin only)
+  - Application version, environment, uptime
+  - Database statistics, user/animal counts
+- **API Documentation**: `docs/API_DOCUMENTATION.md` with complete endpoint reference
+- **Input Validation Documentation**: `docs/INPUT_VALIDATION.md` with validation rules by endpoint
+- **Database Backup Script**: `scripts/backup_database.bat` with auto-cleanup
+
+### Changed
+
+- `Router.php`: Added `API_VERSION` constant for automatic route prefixing
+- `bootstrap.php`: Integrated `RequestLogger` middleware and system routes
+- `api.js`: Updated frontend baseURL to include `/api/v1` prefix
+
+### Technical
+
+- Composer dependency management with `composer.json`
+- PHPUnit configuration via `phpunit.xml`
+- Test environment isolation via `tests/bootstrap.php`
+
 ## [1.0.0] - 2025-12-30
 
 ### Added
@@ -248,6 +284,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Backend: Updated `User.php` model methods to guarantee return types
 - Backend: Updated `AuthMiddleware.php` to enforce type safety in authentication flows
 - Documentation: Updated `BACKEND_DOCUMENTATION.md` to reflect strict typing standards
+
+---
+
+## [1.2.0] - 2026-01-16
+
+### Added (Testing Infrastructure)
+
+- **PHPUnit Configuration**: Added `phpunit.xml` with Unit and Feature test suites
+- **Test Bootstrap**: Created `tests/bootstrap.php` for test environment setup
+- **ValidatorTest**: 17 unit tests covering required, email, minLength, maxLength, numeric validation
+- **SanitizerTest**: 25 unit tests covering XSS prevention, string/email/integer sanitization
+- **JWTTest**: 18 unit tests covering token generation, verification, and tampering detection
+
+### Added (API Versioning)
+
+- **Versioned API Routes**: All API endpoints now use `/api/v1/` prefix for better versioning
+- **Router Enhancement**: Added `API_VERSION` constant to Router class for centralized version management
+- **Frontend Update**: Updated API client baseURL to include version prefix
+
+### Added (Request Logging)
+
+- **RequestLogger Middleware**: New structured JSON logging for all API requests
+- **Request Tracking**: Captures method, path, user, duration, status code, memory usage
+- **Request ID**: Unique identifier for each request for debugging and correlation
+- **Log Statistics**: Methods to analyze request patterns and performance
+- **Log Rotation**: Daily log files with cleanup support
+
+### Technical (1.2.0)
+
+- Added `backend/app/middleware/RequestLogger.php` (300+ lines)
+- Modified `backend/app/utils/Router.php` for API versioning
+- Modified `backend/app/bootstrap.php` to integrate request logging
+- Modified `frontend/assets/js/api.js` for versioned endpoints
+- Updated `.gitignore` for test cache and request logs
 
 ---
 

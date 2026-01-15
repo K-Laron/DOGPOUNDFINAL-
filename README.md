@@ -1,9 +1,10 @@
 # 🐕 Catarman Dog Pound Management System
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)
 ![PHP](https://img.shields.io/badge/PHP-8.x-777BB4.svg?logo=php&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479A1.svg?logo=mysql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E.svg?logo=javascript&logoColor=black)
+![PHPUnit](https://img.shields.io/badge/PHPUnit-10.x-3C9CD7.svg?logo=php&logoColor=white)
 ![License](https://img.shields.io/badge/license-Educational-green.svg)
 
 A comprehensive web-based application designed to streamline the operations of the Catarman Dog Pound. This system handles user management, animal records, adoptions, veterinary data, billing, and inventory with a reactive, user-friendly interface.
@@ -21,6 +22,10 @@ A comprehensive web-based application designed to streamline the operations of t
 * **PDF Preview**: Preview all PDF exports before printing or downloading (Medical, Inventory, Billing).
 * **Modern Interface**: Clean, responsive design with dark/light mode support and smooth animations.
 * **Keyboard Shortcuts**: Navigate quickly with shortcuts (`/` for search, `?` for help, `g+h` for home).
+* **Testing Infrastructure**: PHPUnit 10.x with 92 tests (unit + feature/integration tests).
+* **API Versioning**: All endpoints use `/api/v1/` prefix for future compatibility.
+* **Request Logging**: Structured JSON logging for all API requests with timing and user context.
+* **Health Endpoint**: `/api/v1/health` for system monitoring and diagnostics.
 
 ## ♿ Accessibility
 
@@ -106,11 +111,14 @@ A comprehensive web-based application designed to streamline the operations of t
 │   ├── app/
 │   │   ├── api/          # API endpoints
 │   │   ├── config/       # Configuration files
-│   │   ├── controllers/  # Business logic
-│   │   ├── middleware/   # Auth middleware
+│   │   ├── controllers/  # Business logic (incl. SystemController)
+│   │   ├── middleware/   # Auth middleware, RequestLogger
 │   │   ├── models/       # Database models
 │   │   └── utils/        # JWT, Router, Validator, RateLimiter, Sanitizer
-│   ├── logs/             # Error logs & rate limit data
+│   ├── logs/             # Error logs, rate limits, request logs
+│   ├── tests/            # PHPUnit tests (Unit + Feature)
+│   │   ├── Unit/         # Validator, Sanitizer, JWT tests
+│   │   └── Feature/      # Auth, Animals API tests
 │   └── public/           # Entry point & uploads
 ├── frontend/
 │   ├── assets/
@@ -121,6 +129,8 @@ A comprehensive web-based application designed to streamline the operations of t
 ├── database/
 │   ├── schema.sql        # Database structure
 │   └── seeders.sql       # Sample data
+├── docs/                 # Documentation files
+├── scripts/              # Utility scripts (backup_database.bat)
 ├── start.bat             # Start servers
 └── stop.bat              # Stop servers
 ```
@@ -128,19 +138,20 @@ A comprehensive web-based application designed to streamline the operations of t
 ## 📝 API Endpoints
 
 ```text
-┌────────────────────┬───────────────────────────────────────────┐
-│ Endpoint           │ Description                               │
-├────────────────────┼───────────────────────────────────────────┤
-│ /api/auth          │ Authentication (login, register, refresh) │
-│ /api/users         │ User management                           │
-│ /api/animals       │ Animal CRUD operations                    │
-│ /api/adoptions     │ Adoption requests & processing            │
-│ /api/medical       │ Medical records                           │
-│ /api/inventory     │ Inventory management                      │
-│ /api/billing       │ Invoices & payments                       │
-│ /api/dashboard     │ Statistics & activity logs                │
-│ /api/notifications │ User notifications                        │
-└────────────────────┴───────────────────────────────────────────┘
+┌─────────────────────────┬───────────────────────────────────────────┐
+│ Endpoint                │ Description                               │
+├─────────────────────────┼───────────────────────────────────────────┤
+│ /api/v1/auth            │ Authentication (login, register, refresh) │
+│ /api/v1/users           │ User management                           │
+│ /api/v1/animals         │ Animal CRUD operations                    │
+│ /api/v1/adoptions       │ Adoption requests & processing            │
+│ /api/v1/medical         │ Medical records                           │
+│ /api/v1/inventory       │ Inventory management                      │
+│ /api/v1/billing         │ Invoices & payments                       │
+│ /api/v1/dashboard       │ Statistics & activity logs                │
+│ /api/v1/notifications   │ User notifications                        │
+│ /api/v1/health          │ System health check                       │
+└─────────────────────────┴───────────────────────────────────────────┘
 ```
 
 ## 📚 Documentation
@@ -148,15 +159,15 @@ A comprehensive web-based application designed to streamline the operations of t
 | Document | Location | Description |
 | -------- | -------- | ----------- |
 | CHANGELOG.md | Root | Version history and release notes |
-| IMPLEMENTATION_PLAN.md | Root | Complete project implementation plan |
 | PROJECT_STRUCTURE.md | Root | Detailed directory structure |
 | DATABASE_DOCUMENTATION.md | Root | Database schema & queries |
 | SYSTEM_DIAGRAMS.md | Root | System Context, Architecture, Use Cases, Event Flows (ASCII) |
-| DEFENSE_GUIDE.md | Root | Security defenses, Q&A, and threat analysis |
-| PIECES_QUESTIONNAIRE.md | Root | Comprehensive system analysis (PIECES framework) |
+| LLM_CONTEXT.md | Root | System summary for AI/LLM understanding |
 | BACKEND_DOCUMENTATION.md | `/docs` | Backend code documentation |
 | FRONTEND_DOCUMENTATION.md | `/docs` | Frontend code documentation |
 | SYSTEM_DESIGN_DOCUMENT.md | `/docs` | System architecture and flowcharts |
+| API_DOCUMENTATION.md | `/docs` | Complete API reference with examples |
+| INPUT_VALIDATION.md | `/docs` | Input validation rules by endpoint |
 
 ## 📄 License
 

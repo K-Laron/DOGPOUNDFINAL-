@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application Configuration
  * 
@@ -15,7 +16,7 @@ define('APP_ENV', getenv('APP_ENV') ?: 'production');
 
 // Application Info
 define('APP_NAME', 'Catarman Dog Pound Management System');
-define('APP_VERSION', '1.0.5');
+define('APP_VERSION', '1.2.0');
 
 // ============================================
 // URL CONFIGURATION
@@ -81,7 +82,7 @@ define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
 // Allowed MIME types
 define('ALLOWED_MIME_TYPES', [
     'image/jpeg',
-    'image/png', 
+    'image/png',
     'image/gif',
     'image/webp'
 ]);

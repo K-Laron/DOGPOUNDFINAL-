@@ -3,7 +3,13 @@
 # =============
 backend/logs/*.log
 backend/logs/rate_limits/
+backend/logs/requests/*.json
 *.log
+
+# =============
+# Testing
+# =============
+backend/.phpunit.cache/
 
 # =============
 # Uploads (user-generated content)

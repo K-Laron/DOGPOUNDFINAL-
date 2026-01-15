@@ -20,7 +20,12 @@ dogpound/
 ├── 📂 docs/                     # Extended documentation
 │   ├── BACKEND_DOCUMENTATION.md
 │   ├── FRONTEND_DOCUMENTATION.md
-│   └── SYSTEM_DESIGN_DOCUMENT.md
+│   ├── SYSTEM_DESIGN_DOCUMENT.md
+│   ├── API_DOCUMENTATION.md     # Complete API reference
+│   └── INPUT_VALIDATION.md      # Validation rules by endpoint
+│
+├── 📂 scripts/                  # Utility scripts
+│   └── backup_database.bat      # Database backup script
 │
 ├── 🗄️ database/
 │   ├── schema.sql            # Database structure & tables
@@ -32,7 +37,7 @@ dogpound/
 │   ├── app/
 │   │   ├── bootstrap.php     # Application bootstrap
 │   │   │
-│   │   ├── api/              # API Endpoints
+│   │   ├── api/              # API Endpoints (all prefixed /api/v1/)
 │   │   │   ├── adoptions.php
 │   │   │   ├── animals.php
 │   │   │   ├── auth.php
@@ -41,6 +46,8 @@ dogpound/
 │   │   │   ├── inventory.php
 │   │   │   ├── medical.php
 │   │   │   ├── notifications.php
+│   │   │   ├── sse.php           # Server-Sent Events
+│   │   │   ├── system.php        # Health check endpoint
 │   │   │   └── users.php
 │   │   │
 │   │   ├── config/           # Configuration
@@ -57,10 +64,12 @@ dogpound/
 │   │   │   ├── InventoryController.php
 │   │   │   ├── MedicalController.php  # Medical records & overdue tracking
 │   │   │   ├── NotificationController.php
+│   │   │   ├── SystemController.php  # Health check & system info
 │   │   │   └── UserController.php    # User management & profile stats logic
 │   │   │
 │   │   ├── middleware/       # Request Middleware
-│   │   │   └── AuthMiddleware.php
+│   │   │   ├── AuthMiddleware.php
+│   │   │   └── RequestLogger.php     # Structured JSON request logging
 │   │   │
 │   │   ├── models/           # Database Models
 │   │   │   ├── ActivityLog.php
@@ -85,8 +94,19 @@ dogpound/
 │   │       ├── Sanitizer.php # Input sanitization (XSS prevention)
 │   │       └── Validator.php # Input validation
 │   │
-│   ├── logs/                 # Error logs (gitignored)
-│   │   └── rate_limits/      # Rate limit tracking data
+│   ├── logs/                 # Logs (gitignored)
+│   │   ├── rate_limits/      # Rate limit tracking data
+│   │   └── requests/         # Structured JSON request logs
+│   │
+│   ├── tests/                # PHPUnit Test Suite
+│   │   ├── bootstrap.php     # Test environment setup
+│   │   ├── Unit/             # Unit tests
+│   │   │   ├── ValidatorTest.php
+│   │   │   ├── SanitizerTest.php
+│   │   │   └── JWTTest.php
+│   │   └── Feature/          # Feature/Integration tests
+│   │       ├── AuthTest.php
+│   │       └── AnimalsTest.php
 │   │
 │   └── public/               # Web entry point
 │       ├── .htaccess         # Public URL rewriting

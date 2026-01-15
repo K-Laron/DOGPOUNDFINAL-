@@ -55,6 +55,7 @@ require_once APP_PATH . '/utils/Response.php';
 require_once APP_PATH . '/utils/JWT.php';
 require_once APP_PATH . '/utils/Validator.php';
 require_once APP_PATH . '/utils/Router.php';
+require_once APP_PATH . '/middleware/RequestLogger.php';
 require_once APP_PATH . '/config/database.php';
 
 // ============================================
@@ -82,6 +83,9 @@ class App
      */
     public function __construct()
     {
+        // Start request logging
+        RequestLogger::start();
+
         // Set up CORS headers first
         $this->handleCors();
 
@@ -219,7 +223,8 @@ class App
             'billing.php',
             'dashboard.php',
             'notifications.php',
-            'sse.php'
+            'sse.php',
+            'system.php'
         ];
 
         // Load each route file
@@ -242,7 +247,16 @@ class App
      */
     public function run()
     {
-        $this->router->dispatch();
+        try {
+            $this->router->dispatch();
+
+            // Log successful request completion
+            RequestLogger::end(http_response_code());
+        } catch (Exception $e) {
+            // Log error and rethrow
+            RequestLogger::error($e->getMessage(), 500);
+            throw $e;
+        }
     }
 
     /**
