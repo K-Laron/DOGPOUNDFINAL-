@@ -173,6 +173,17 @@ class Response {
     }
 
     /**
+     * Send raw JSON response
+     * 
+     * @param mixed $data Response data
+     * @param int $code HTTP status code
+     */
+    public static function json($data, $code = 200) {
+        http_response_code($code);
+        self::send($data);
+    }
+
+    /**
      * Send internal server error response (500)
      * 
      * @param string $message Error message
@@ -188,6 +199,12 @@ class Response {
      */
     private static function send($response) {
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
-        exit;
+        
+        if (!defined('PHPUNIT_RUNNING')) {
+            exit;
+        }
+        
+        // Simulate exit behavior for tests by throwing exception
+        throw new \RuntimeException("RESPONSE_EXIT");
     }
 }

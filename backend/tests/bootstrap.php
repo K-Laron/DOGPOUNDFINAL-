@@ -11,6 +11,7 @@
 define('BASE_PATH', dirname(__DIR__));
 define('APP_PATH', BASE_PATH . '/app');
 define('PUBLIC_PATH', BASE_PATH . '/public');
+define('PHPUNIT_RUNNING', true);
 
 // Load environment variables
 require_once APP_PATH . '/utils/Env.php';

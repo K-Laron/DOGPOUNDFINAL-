@@ -18,6 +18,14 @@ class AnimalsTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
+        // Check server connectivity
+        $fp = @fsockopen("localhost", 8000, $errno, $errstr, 1);
+        if (!$fp) {
+            self::markTestSkipped('Local server not running on localhost:8000');
+            return;
+        }
+        fclose($fp);
+
         // Login to get access token
         $response = self::login('admin1', 'password');
         

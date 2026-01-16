@@ -658,6 +658,9 @@ class BillingController extends BaseController
                 'invoice' => $updatedInvoice
             ], "Payment recorded successfully");
         } catch (Exception $e) {
+            if ($e->getMessage() === 'RESPONSE_EXIT') {
+                throw $e;
+            }
             $this->db->rollBack();
             error_log("Error recording payment: " . $e->getMessage());
             Response::serverError("Failed to record payment");

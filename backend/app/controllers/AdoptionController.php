@@ -418,6 +418,9 @@ class AdoptionController extends BaseController
 
             Response::success($stmt->fetch(), "Adoption request updated");
         } catch (Exception $e) {
+            if ($e->getMessage() === 'RESPONSE_EXIT') {
+                throw $e;
+            }
             $this->db->rollBack();
             error_log("Error processing adoption: " . $e->getMessage());
             Response::serverError("Failed to process request");

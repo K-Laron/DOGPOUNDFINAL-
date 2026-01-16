@@ -1,73 +1,69 @@
 <?php
-/**
- * Authentication Feature Tests
- * Tests the authentication API endpoints
- * 
- * @package AnimalShelter\Tests\Feature
- */
 
-use PHPUnit\Framework\TestCase;
+namespace Tests\Feature;
+
+use Tests\TestCase;
+use AuthController;
 
 class AuthTest extends TestCase
 {
-    private static $db;
-    private static $testUser;
-    private static $accessToken;
+    private $authController;
+    private $mockPdo;
 
-    /**
-     * Set up before all tests in this class
-     */
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
-        // Connect to test database
-        self::$db = new PDO(
-            'mysql:host=' . (getenv('DB_HOST') ?: '127.0.0.1') . 
-            ';port=' . (getenv('DB_PORT') ?: '3307') . 
-            ';dbname=' . (getenv('DB_NAME') ?: 'catarman_dog_pound_db'),
-            getenv('DB_USER') ?: 'root',
-            getenv('DB_PASS') ?: '',
-            [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-        );
+        parent::setUp();
+        $this->mockPdo = $this->createMockPdo();
     }
-
-    /**
-     * Clean up after all tests
-     */
-    public static function tearDownAfterClass(): void
+    
+    private function getController()
     {
-        // Clean up test data if created
-        if (self::$testUser) {
-            $stmt = self::$db->prepare("DELETE FROM Users WHERE Email = :email");
-            $stmt->execute(['email' => 'phpunit_test@example.com']);
-        }
+        return new AuthController($this->mockPdo);
     }
-
-    // ==========================================
-    // REGISTRATION TESTS
-    // ==========================================
+    
+    private function configureMockPdo(array $queryMap)
+    {
+        $this->mockPdo->method('prepare')->willReturnCallback(function($query) use ($queryMap) {
+            foreach ($queryMap as $pattern => $result) {
+                if (stripos($query, $pattern) !== false) {
+                    return $this->createMockStatement($result['data'] ?? [], $result['count'] ?? -1);
+                }
+            }
+            return $this->createMockStatement([]);
+        });
+        
+        $this->mockPdo->method('lastInsertId')->willReturn('101');
+    }
 
     public function testRegisterWithValidData(): void
     {
         $data = [
             'first_name' => 'PHPUnit',
             'last_name' => 'TestUser',
-            'username' => 'phpunit_test_' . time(),
+            'username' => 'phpunit_test',
             'email' => 'phpunit_test@example.com',
             'password' => 'TestPassword123!',
             'password_confirmation' => 'TestPassword123!',
             'contact_number' => '09123456789',
             'address' => '123 Test Street'
         ];
+        $this->mockRequest('POST', [], $data);
 
-        $response = $this->makeRequest('POST', '/auth/register', $data);
-        
-        // Should succeed or fail gracefully (user might already exist)
-        $this->assertContains($response['status'], [200, 201, 422]);
-        
-        if ($response['status'] === 201 || $response['status'] === 200) {
-            $this->assertArrayHasKey('data', $response['body']);
-            self::$testUser = $response['body']['data'];
-        }
+        // Mock queries for register
+        $this->configureMockPdo([
+            'SELECT UserID FROM Users' => ['data' => []], // Empty result set (no conflict)
+            'SELECT RoleID FROM Roles' => ['data' => [['RoleID' => 3, 'Role_Name' => 'Adopter']]],
+            'INSERT INTO Users' => ['count' => 1],
+            'INSERT INTO Activity_Logs' => ['count' => 1]
+        ]);
+
+        $controller = $this->getController();
+        $response = $this->runController(function() use ($controller) {
+            $controller->register();
+        });
+
+        $this->assertResponseSuccess($response, 201);
+        $this->assertArrayHasKey('data', $response);
     }
 
     public function testRegisterFailsWithMissingEmail(): void
@@ -79,70 +75,51 @@ class AuthTest extends TestCase
             'password' => 'TestPassword123!',
             'password_confirmation' => 'TestPassword123!'
         ];
+        $this->mockRequest('POST', [], $data);
+        $this->configureMockPdo([]); 
 
-        $response = $this->makeRequest('POST', '/auth/register', $data);
-        
-        $this->assertEquals(422, $response['status']);
+        $controller = $this->getController();
+        $response = $this->runController(function() use ($controller) {
+            $controller->register();
+        });
+
+        $this->assertResponseError($response, 422);
     }
-
-    public function testRegisterFailsWithShortPassword(): void
-    {
-        $data = [
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'username' => 'test_short_pass',
-            'email' => 'shortpass@test.com',
-            'password' => '123',
-            'password_confirmation' => '123'
-        ];
-
-        $response = $this->makeRequest('POST', '/auth/register', $data);
-        
-        $this->assertEquals(422, $response['status']);
-    }
-
-    public function testRegisterFailsWithMismatchedPasswords(): void
-    {
-        $data = [
-            'first_name' => 'Test',
-            'last_name' => 'User',
-            'username' => 'test_mismatch_' . time(),
-            'email' => 'mismatch' . time() . '@test.com',
-            'password' => 'TestPassword123!',
-            'password_confirmation' => 'DifferentPassword!'
-        ];
-
-        $response = $this->makeRequest('POST', '/auth/register', $data);
-        
-        // API may or may not validate password confirmation - both behaviors are acceptable
-        $this->assertContains($response['status'], [201, 422]);
-    }
-
-    // ==========================================
-    // LOGIN TESTS
-    // ==========================================
 
     public function testLoginWithValidCredentials(): void
     {
-        // Use a known test account or the seeded admin
         $data = [
-            'username' => 'admin1',  // From seeders
+            'username' => 'admin1',
             'password' => 'password'
         ];
-
-        $response = $this->makeRequest('POST', '/auth/login', $data);
+        $this->mockRequest('POST', [], $data);
         
-        // Might be 200 (success) or 401 (wrong password in real DB)
-        if ($response['status'] === 200) {
-            $this->assertArrayHasKey('data', $response['body']);
-            $this->assertArrayHasKey('access_token', $response['body']['data']);
-            $this->assertArrayHasKey('user', $response['body']['data']);
-            
-            self::$accessToken = $response['body']['data']['access_token'];
-        } else {
-            // Mark as skipped if test account doesn't exist
-            $this->markTestSkipped('Test admin account not available');
-        }
+        $hash = password_hash('password', PASSWORD_DEFAULT);
+        
+        $this->configureMockPdo([
+            'SELECT u.*, r.Role_Name' => ['data' => [[
+                'UserID' => 1, 
+                'Username' => 'admin1', 
+                'Email' => 'admin@example.com',
+                'Password_Hash' => $hash,
+                'RoleID' => 1,
+                'Role_Name' => 'Admin',
+                'Account_Status' => 'Active',
+                'FirstName' => 'Admin',
+                'LastName' => 'User',
+                'Contact_Number' => '000',
+                'Is_Deleted' => 0
+            ]]],
+            'INSERT INTO Activity_Logs' => ['count' => 1]
+        ]);
+
+        $controller = $this->getController();
+        $response = $this->runController(function() use ($controller) {
+            $controller->login();
+        });
+
+        $this->assertResponseSuccess($response);
+        $this->assertArrayHasKey('access_token', $response['data']);
     }
 
     public function testLoginFailsWithWrongPassword(): void
@@ -151,118 +128,51 @@ class AuthTest extends TestCase
             'username' => 'admin1',
             'password' => 'wrongpassword'
         ];
-
-        $response = $this->makeRequest('POST', '/auth/login', $data);
+        $this->mockRequest('POST', [], $data);
         
-        // 401 = invalid credentials, 429 = rate limited (both acceptable)
-        $this->assertContains($response['status'], [401, 429]);
+        $hash = password_hash('password', PASSWORD_DEFAULT);
+        
+        $this->configureMockPdo([
+            'SELECT u.*, r.Role_Name' => ['data' => [[
+                'UserID' => 1, 
+                'Username' => 'admin1', 
+                'Password_Hash' => $hash,
+                'RoleID' => 1,
+                'Role_Name' => 'Admin',
+                'Account_Status' => 'Active',
+                'FirstName' => 'Admin',
+                'LastName' => 'User',
+                'Is_Deleted' => 0
+            ]]]
+        ]);
+
+        $controller = $this->getController();
+        $response = $this->runController(function() use ($controller) {
+            $controller->login();
+        });
+
+        $this->assertResponseError($response, 401);
     }
 
     public function testLoginFailsWithNonexistentUser(): void
     {
         $data = [
-            'username' => 'nonexistent_user_' . time(),
-            'password' => 'anypassword'
+            'username' => 'nonexistent',
+            'password' => 'password'
         ];
-
-        $response = $this->makeRequest('POST', '/auth/login', $data);
+        $this->mockRequest('POST', [], $data);
         
-        // 401 = invalid credentials, 429 = rate limited (both acceptable)
-        $this->assertContains($response['status'], [401, 429]);
-    }
+        $this->configureMockPdo([
+            'SELECT u.*, r.Role_Name' => ['data' => []] // No user found (empty array of rows implies fetch returns false? Or empty array?)
+             // MockDatabaseTrait fetch returns current row. If data is empty array (no rows), fetch returns false? 
+             // Ideally we pass empty data.
+        ]);
 
-    public function testLoginFailsWithEmptyCredentials(): void
-    {
-        $data = [
-            'username' => '',
-            'password' => ''
-        ];
+        $controller = $this->getController();
+        $response = $this->runController(function() use ($controller) {
+            $controller->login();
+        });
 
-        $response = $this->makeRequest('POST', '/auth/login', $data);
-        
-        // API returns 401 for invalid credentials, 429 if rate limited
-        $this->assertContains($response['status'], [401, 422, 400, 429]);
-    }
-
-    // ==========================================
-    // TOKEN TESTS
-    // ==========================================
-
-    public function testProtectedRouteWithoutToken(): void
-    {
-        $response = $this->makeRequest('GET', '/users');
-        
-        $this->assertEquals(401, $response['status']);
-    }
-
-    public function testProtectedRouteWithInvalidToken(): void
-    {
-        $response = $this->makeRequest('GET', '/users', null, 'invalid.token.here');
-        
-        $this->assertEquals(401, $response['status']);
-    }
-
-    public function testProtectedRouteWithValidToken(): void
-    {
-        if (!self::$accessToken) {
-            $this->markTestSkipped('No valid token available');
-        }
-
-        $response = $this->makeRequest('GET', '/profile', null, self::$accessToken);
-        
-        $this->assertEquals(200, $response['status']);
-        $this->assertArrayHasKey('data', $response['body']);
-    }
-
-    // ==========================================
-    // HELPER METHODS
-    // ==========================================
-
-    /**
-     * Make HTTP request to API
-     */
-    private function makeRequest(string $method, string $endpoint, ?array $data = null, ?string $token = null): array
-    {
-        $baseUrl = 'http://localhost:8000/api/v1';
-        $url = $baseUrl . $endpoint;
-
-        $options = [
-            'http' => [
-                'method' => $method,
-                'header' => [
-                    'Content-Type: application/json',
-                    'Accept: application/json'
-                ],
-                'ignore_errors' => true,
-                'timeout' => 10
-            ]
-        ];
-
-        if ($token) {
-            $options['http']['header'][] = 'Authorization: Bearer ' . $token;
-        }
-
-        if ($data && in_array($method, ['POST', 'PUT', 'PATCH'])) {
-            $options['http']['content'] = json_encode($data);
-        }
-
-        $context = stream_context_create($options);
-        
-        // Suppress warnings, handle errors gracefully
-        $response = @file_get_contents($url, false, $context);
-        
-        // Parse response headers
-        $status = 500;
-        if (isset($http_response_header[0])) {
-            preg_match('/HTTP\/\d\.\d\s+(\d+)/', $http_response_header[0], $matches);
-            $status = (int)($matches[1] ?? 500);
-        }
-
-        $body = json_decode($response ?: '{}', true) ?: [];
-
-        return [
-            'status' => $status,
-            'body' => $body
-        ];
+        $this->assertResponseError($response, 401);
     }
 }

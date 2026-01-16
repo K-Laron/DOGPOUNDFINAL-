@@ -48,6 +48,7 @@ class AuthMiddleware
 
         if (!$token) {
             Response::error("Authorization token required", 401);
+            return [];
         }
 
         // Verify JWT token
@@ -55,11 +56,13 @@ class AuthMiddleware
 
         if (!$this->payload) {
             Response::error("Invalid or expired token", 401);
+            return [];
         }
 
         // Check if user_id exists in payload
         if (!isset($this->payload['user_id'])) {
             Response::error("Invalid token payload", 401);
+            return [];
         }
 
         // Verify user exists and is active
@@ -83,12 +86,14 @@ class AuthMiddleware
 
         if (!$this->user) {
             Response::error("User not found", 401);
+            return [];
         }
 
         // Check account status
         if ($this->user['Account_Status'] !== 'Active') {
             $status = strtolower($this->user['Account_Status']);
             Response::error("Your account is {$status}. Please contact support.", 403);
+            return [];
         }
 
         return $this->user;
@@ -123,6 +128,7 @@ class AuthMiddleware
                 "Access denied. Required role: " . implode(' or ', $allowedRoles),
                 403
             );
+            return false;
         }
 
         return true;

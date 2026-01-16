@@ -663,6 +663,9 @@ class DashboardController extends BaseController
                 'logs' => $stmt->fetchAll()
             ], $page, $perPage, $total, "User activity logs retrieved");
         } catch (Throwable $e) {
+            if ($e->getMessage() === 'RESPONSE_EXIT') {
+                throw $e;
+            }
             Response::serverError("Crash: " . $e->getMessage());
         }
     }

@@ -383,6 +383,7 @@ class Router
             return [
                 'method' => $route['method'],
                 'path' => $route['path'],
+                'pattern' => $route['pattern'],
                 'handler' => $route['handler'],
                 'auth_required' => $route['roles'] !== null,
                 'roles' => $route['roles']
