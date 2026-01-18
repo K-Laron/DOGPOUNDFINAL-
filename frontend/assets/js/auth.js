@@ -31,32 +31,47 @@ const Auth = {
 
     /**
      * Initialize auth
-     * Check for existing session
+     * Check for existing session and restore CSRF token
      */
     async init() {
         const token = this.getToken();
         const user = this.getUser();
 
         if (token && user) {
-            // Validate token
+            // On page refresh, we need a fresh CSRF token
+            // Try refreshToken which returns a new CSRF token
+            try {
+                const refreshed = await this.refreshToken();
+                if (refreshed) {
+                    // Also validate/update user profile
+                    try {
+                        const response = await API.users.profile();
+                        if (response.success) {
+                            Store.setUser(response.data);
+                            this.setUser(response.data);
+                        }
+                    } catch (profileError) {
+                        // Profile fetch failed but token is valid, continue
+                        Store.setUser(user);
+                    }
+                    return true;
+                }
+            } catch (error) {
+                console.warn('Token refresh failed on init');
+            }
+
+            // Fallback: Validate existing token
             try {
                 const response = await API.users.profile();
                 if (response.success) {
                     Store.setUser(response.data);
-                    this.setUser(response.data); // Update local storage
+                    this.setUser(response.data);
                     this.startRefreshTimer();
+                    // Try to refresh for CSRF token in background
+                    this.refreshToken().catch(() => { });
                     return true;
                 }
             } catch (error) {
-                // Token invalid, try refresh
-                if (error.status === 401) {
-                    const refreshed = await this.refreshToken();
-                    if (refreshed) {
-                        return true;
-                    }
-                }
-
-                // Clear invalid session
                 this.clearSession();
             }
         }
@@ -160,12 +175,12 @@ const Auth = {
 
             if (response.success) {
                 this.setToken(response.data.access_token);
-                
+
                 // Update CSRF token if provided
                 if (response.data.csrf_token) {
                     API.setCsrfToken(response.data.csrf_token);
                 }
-                
+
                 this.startRefreshTimer();
                 return true;
             }
@@ -238,7 +253,7 @@ const Auth = {
 
             // Handle base64url encoding (replace - with + and _ with /)
             const base64Standard = base64.replace(/-/g, '+').replace(/_/g, '/');
-            
+
             // Decode and parse
             const decoded = atob(base64Standard);
             const payload = JSON.parse(decoded);
@@ -428,10 +443,10 @@ const Auth = {
         Utils.removeStorage(this.TOKEN_KEY);
         Utils.removeStorage(this.REFRESH_TOKEN_KEY);
         Utils.removeStorage(this.USER_KEY);
-        
+
         // Clear CSRF token from memory
         API.clearCsrfToken();
-        
+
         // Cleanup SSE connection and handlers
         if (typeof SSE !== 'undefined') {
             SSE.cleanup();
