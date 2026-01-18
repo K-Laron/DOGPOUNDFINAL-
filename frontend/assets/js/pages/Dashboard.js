@@ -255,6 +255,11 @@ const DashboardPage = {
 
             const [statsResult, animalsResult, activityResult, intakeResult] = results;
 
+            // Admin: Silently check and deactivate inactive Adopter accounts (30+ days no login)
+            if (Auth.isAdmin()) {
+                API.system.checkInactiveUsers().catch(() => { });
+            }
+
             // Handle Stats
             if (statsResult.status === 'fulfilled' && statsResult.value.success) {
                 this.data.stats = statsResult.value.data;
@@ -655,12 +660,12 @@ const DashboardPage = {
         if (typeof Charts !== 'undefined') {
             Charts.destroyAll();
         }
-        
+
         // Clear SSE handlers for dashboard events
         if (typeof SSE !== 'undefined') {
             SSE.offAll(['animals_updated', 'adoptions_updated', 'inventory_updated', 'medical_updated', 'billing_updated']);
         }
-        
+
         // Reset data to prevent stale state
         this.data = {
             stats: null,

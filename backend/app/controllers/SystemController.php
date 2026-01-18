@@ -649,4 +649,64 @@ class SystemController extends BaseController
             ErrorHandler::handle($e);
         }
     }
+
+    /**
+     * Check and deactivate inactive users
+     * Marks Adopter accounts as Inactive if no login in 30+ days
+     * 
+     * GET /system/check-inactive-users
+     */
+    public function checkInactiveUsers(): void
+    {
+        try {
+            // Find Adopter users whose last LOGIN activity was more than 30 days ago
+            // or who have never logged in and were created more than 30 days ago
+            $stmt = $this->db->prepare("
+                UPDATE Users u
+                JOIN Roles r ON u.RoleID = r.RoleID
+                SET u.Account_Status = 'Inactive',
+                    u.Updated_At = NOW()
+                WHERE r.Role_Name = 'Adopter'
+                AND u.Account_Status = 'Active'
+                AND u.Is_Deleted = FALSE
+                AND (
+                    -- Users with login history: check last login date
+                    (
+                        u.UserID IN (SELECT DISTINCT UserID FROM Activity_Logs WHERE Action_Type = 'LOGIN')
+                        AND u.UserID NOT IN (
+                            SELECT DISTINCT UserID 
+                            FROM Activity_Logs 
+                            WHERE Action_Type = 'LOGIN' 
+                            AND Log_Date >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+                        )
+                    )
+                    OR
+                    -- Users without any login history: check account creation date
+                    (
+                        u.UserID NOT IN (SELECT DISTINCT UserID FROM Activity_Logs WHERE Action_Type = 'LOGIN')
+                        AND u.Created_At < DATE_SUB(NOW(), INTERVAL 30 DAY)
+                    )
+                )
+            ");
+            $stmt->execute();
+            $deactivatedCount = $stmt->rowCount();
+            
+            if ($deactivatedCount > 0) {
+                $this->logActivity('AUTO_DEACTIVATE_USERS', "Auto-deactivated {$deactivatedCount} inactive Adopter account(s) (30+ days no login)");
+            }
+            
+            Response::success([
+                'deactivated_count' => $deactivatedCount,
+                'checked_at' => date('Y-m-d H:i:s')
+            ], $deactivatedCount > 0 
+                ? "Deactivated {$deactivatedCount} inactive user(s)" 
+                : "All users are active"
+            );
+            
+        } catch (Exception $e) {
+            error_log("SystemController::checkInactiveUsers failed: " . $e->getMessage());
+            // Still return success to not block dashboard loading
+            Response::success(['deactivated_count' => 0, 'error' => 'Check failed'], "Inactive user check completed");
+        }
+    }
 }

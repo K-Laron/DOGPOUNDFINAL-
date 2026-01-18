@@ -86,9 +86,9 @@ const API = {
             if (success) {
                 try {
                     const result = await this.request(
-                        request.method, 
-                        request.endpoint, 
-                        request.data, 
+                        request.method,
+                        request.endpoint,
+                        request.data,
                         { ...request.options, _isRetry: true }
                     );
                     request.resolve(result);
@@ -218,7 +218,7 @@ const API = {
                         if (refreshSuccess) {
                             // Process queued requests
                             this._processQueue(true);
-                            
+
                             // Retry the original request with new token
                             return this.request(method, endpoint, data, { ...options, _isRetry: true });
                         } else {
@@ -434,7 +434,7 @@ const API = {
      */
     async download(endpoint, params = {}) {
         const url = `${this.baseURL}${endpoint}`;
-        
+
         // Build query string
         const queryParams = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
@@ -442,25 +442,25 @@ const API = {
                 queryParams.append(key, value);
             }
         });
-        
+
         const queryString = queryParams.toString();
         const requestUrl = queryString ? `${url}?${queryString}` : url;
-        
+
         // Build headers
         const headers = {};
         const token = Auth.getToken();
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         }
-        
+
         try {
             const response = await fetch(requestUrl, { headers });
-            
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new APIError(errorData.message || 'Export failed', response.status);
             }
-            
+
             // Get filename from Content-Disposition header or generate one
             const contentDisposition = response.headers.get('Content-Disposition');
             let filename = 'export';
@@ -475,7 +475,7 @@ const API = {
                 const ext = format === 'excel' ? 'xlsx' : format;
                 filename = `export_${new Date().toISOString().split('T')[0]}.${ext}`;
             }
-            
+
             // Download the file
             const blob = await response.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
@@ -486,7 +486,7 @@ const API = {
             a.click();
             a.remove();
             window.URL.revokeObjectURL(downloadUrl);
-            
+
             Toast.success('Export downloaded successfully');
         } catch (error) {
             if (error instanceof APIError) {
@@ -934,6 +934,10 @@ const API = {
 
         userLogs(userId, params = {}) {
             return API.get(`/logs/user/${userId}`, params);
+        },
+
+        checkInactiveUsers() {
+            return API.get('/system/check-inactive-users');
         }
     }
 };

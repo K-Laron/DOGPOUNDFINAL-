@@ -24,3 +24,6 @@ $router->delete('/settings/clear-logs', 'SystemController@clearLogs', ['Admin'])
 // Reset & Cache endpoints (admin only)
 $router->post('/settings/reset', 'SystemController@resetSettings', ['Admin']);
 $router->post('/system/clear-cache', 'SystemController@clearCache', ['Admin']);
+
+// Auto-maintenance endpoints (admin only)
+$router->get('/system/check-inactive-users', 'SystemController@checkInactiveUsers', ['Admin']);
