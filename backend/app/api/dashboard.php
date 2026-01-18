@@ -21,6 +21,9 @@ $router->get('/dashboard/quick-stats', 'DashboardController@quickStats', ['Admin
 // Get intake statistics for charts
 $router->get('/dashboard/intake', 'DashboardController@intakeStats', ['Admin', 'Staff', 'Veterinarian']);
 
+// Get advanced trends and analytics
+$router->get('/dashboard/trends', 'DashboardController@trends', ['Admin', 'Staff']);
+
 // ============================================
 // ACTIVITY LOG ROUTES (Admin only)
 // ============================================

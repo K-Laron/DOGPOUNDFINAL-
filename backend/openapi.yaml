@@ -1,0 +1,1292 @@
+openapi: 3.0.3
+info:
+  title: Catarman Dog Pound Management System API
+  description: |
+    RESTful API for managing the Catarman Municipal Dog Pound operations including:
+    - Animal management (registration, status tracking, adoption)
+    - User management (staff, veterinarians, adopters)
+    - Billing and payments
+    - Medical records
+    - Adoption requests
+    - Inventory management
+  version: 1.0.0
+  contact:
+    name: Catarman Dog Pound
+    email: support@catarmandogpound.gov.ph
+
+servers:
+  - url: http://localhost/dogpound/backend/public/api
+    description: Development server
+  - url: https://api.catarmandogpound.gov.ph/api
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Animals
+    description: Animal management operations
+  - name: Users
+    description: User management (Admin only)
+  - name: Profile
+    description: Current user profile operations
+  - name: Adoptions
+    description: Adoption request management
+  - name: Billing
+    description: Invoices and payments
+  - name: Medical
+    description: Medical records and veterinary services
+  - name: Inventory
+    description: Inventory management
+  - name: Dashboard
+    description: Statistics and reports
+  - name: Export
+    description: Data export endpoints
+
+security:
+  - bearerAuth: []
+
+paths:
+  # ==========================================
+  # AUTHENTICATION
+  # ==========================================
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register new adopter account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Registration successful
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Logout current user
+      responses:
+        '200':
+          description: Logout successful
+
+  /auth/refresh:
+    post:
+      tags: [Authentication]
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /auth/forgot-password:
+    post:
+      tags: [Authentication]
+      summary: Request password reset
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Password reset email sent (if email exists)
+
+  /auth/reset-password:
+    post:
+      tags: [Authentication]
+      summary: Reset password with token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password, password_confirmation]
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  minLength: 8
+                password_confirmation:
+                  type: string
+      responses:
+        '200':
+          description: Password reset successful
+        '400':
+          description: Invalid or expired token
+
+  # ==========================================
+  # ANIMALS
+  # ==========================================
+  /animals:
+    get:
+      tags: [Animals]
+      summary: List all animals with pagination and filters
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [Dog, Cat]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Available, Adopted, Reclaimed, Deceased, Under Treatment]
+        - name: gender
+          in: query
+          schema:
+            type: string
+            enum: [Male, Female]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of animals
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAnimals'
+    post:
+      tags: [Animals]
+      summary: Create new animal record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnimalCreate'
+      responses:
+        '201':
+          description: Animal created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Animal'
+
+  /animals/available:
+    get:
+      tags: [Animals]
+      summary: Get animals available for adoption (public)
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [Dog, Cat]
+      responses:
+        '200':
+          description: Available animals
+
+  /animals/export:
+    get:
+      tags: [Animals, Export]
+      summary: Export animals data
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, json, excel]
+            default: csv
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Export file download
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+            application/json:
+              schema:
+                type: object
+            application/vnd.ms-excel:
+              schema:
+                type: string
+                format: binary
+
+  /animals/stats/summary:
+    get:
+      tags: [Animals, Dashboard]
+      summary: Get animal statistics
+      responses:
+        '200':
+          description: Animal statistics
+
+  /animals/{id}:
+    get:
+      tags: [Animals]
+      summary: Get animal details
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/AnimalId'
+      responses:
+        '200':
+          description: Animal details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Animal'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Animals]
+      summary: Update animal record
+      parameters:
+        - $ref: '#/components/parameters/AnimalId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnimalUpdate'
+      responses:
+        '200':
+          description: Animal updated
+    delete:
+      tags: [Animals]
+      summary: Delete animal (soft delete)
+      parameters:
+        - $ref: '#/components/parameters/AnimalId'
+      responses:
+        '200':
+          description: Animal deleted
+
+  /animals/{id}/status:
+    patch:
+      tags: [Animals]
+      summary: Update animal status
+      parameters:
+        - $ref: '#/components/parameters/AnimalId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [Available, Adopted, Reclaimed, Deceased, Under Treatment]
+      responses:
+        '200':
+          description: Status updated
+
+  /animals/{id}/image:
+    post:
+      tags: [Animals]
+      summary: Upload animal image
+      parameters:
+        - $ref: '#/components/parameters/AnimalId'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Image uploaded
+
+  # ==========================================
+  # USERS
+  # ==========================================
+  /users:
+    get:
+      tags: [Users]
+      summary: List all users
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Active, Inactive, Suspended]
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of users
+    post:
+      tags: [Users]
+      summary: Create new user (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: User created
+
+  /users/export:
+    get:
+      tags: [Users, Export]
+      summary: Export users data (Admin only)
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, json, excel]
+            default: csv
+        - name: role
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Export file download
+
+  /users/stats/summary:
+    get:
+      tags: [Users, Dashboard]
+      summary: Get user statistics
+      responses:
+        '200':
+          description: User statistics
+
+  /users/{id}:
+    get:
+      tags: [Users]
+      summary: Get user details
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User details
+    put:
+      tags: [Users]
+      summary: Update user
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated
+    delete:
+      tags: [Users]
+      summary: Delete user (Admin only)
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User deleted
+
+  # ==========================================
+  # PROFILE
+  # ==========================================
+  /profile:
+    get:
+      tags: [Profile]
+      summary: Get current user profile
+      responses:
+        '200':
+          description: User profile
+    put:
+      tags: [Profile]
+      summary: Update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdate'
+      responses:
+        '200':
+          description: Profile updated
+
+  /profile/password:
+    put:
+      tags: [Profile]
+      summary: Change password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [current_password, new_password, new_password_confirmation]
+              properties:
+                current_password:
+                  type: string
+                new_password:
+                  type: string
+                  minLength: 8
+                new_password_confirmation:
+                  type: string
+      responses:
+        '200':
+          description: Password changed
+
+  # ==========================================
+  # INVOICES
+  # ==========================================
+  /invoices:
+    get:
+      tags: [Billing]
+      summary: List invoices
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Paid, Unpaid, Cancelled]
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [Adoption Fee, Reclaim Fee]
+      responses:
+        '200':
+          description: List of invoices
+    post:
+      tags: [Billing]
+      summary: Create invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoiceCreate'
+      responses:
+        '201':
+          description: Invoice created
+
+  /invoices/export:
+    get:
+      tags: [Billing, Export]
+      summary: Export invoices data
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, json, excel]
+            default: csv
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Export file download
+
+  /invoices/stats/summary:
+    get:
+      tags: [Billing, Dashboard]
+      summary: Get invoice statistics
+      responses:
+        '200':
+          description: Invoice statistics
+
+  /invoices/{id}:
+    get:
+      tags: [Billing]
+      summary: Get invoice details with payments
+      parameters:
+        - $ref: '#/components/parameters/InvoiceId'
+      responses:
+        '200':
+          description: Invoice details
+
+  /invoices/{id}/cancel:
+    put:
+      tags: [Billing]
+      summary: Cancel invoice (Admin only)
+      parameters:
+        - $ref: '#/components/parameters/InvoiceId'
+      responses:
+        '200':
+          description: Invoice cancelled
+
+  # ==========================================
+  # PAYMENTS
+  # ==========================================
+  /payments:
+    get:
+      tags: [Billing]
+      summary: List all payments
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: invoice_id
+          in: query
+          schema:
+            type: integer
+        - name: payment_method
+          in: query
+          schema:
+            type: string
+            enum: [Cash, GCash, Bank Transfer]
+      responses:
+        '200':
+          description: List of payments
+    post:
+      tags: [Billing]
+      summary: Record payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreate'
+      responses:
+        '201':
+          description: Payment recorded
+
+  /payments/export:
+    get:
+      tags: [Billing, Export]
+      summary: Export payments data
+      parameters:
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, json, excel]
+            default: csv
+        - name: payment_method
+          in: query
+          schema:
+            type: string
+        - name: date_from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: date_to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Export file download
+
+  # ==========================================
+  # ADOPTION REQUESTS
+  # ==========================================
+  /adoptions:
+    get:
+      tags: [Adoptions]
+      summary: List adoption requests
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Pending, Interview Scheduled, Approved, Rejected, Cancelled, Completed]
+      responses:
+        '200':
+          description: List of adoption requests
+    post:
+      tags: [Adoptions]
+      summary: Submit adoption request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdoptionRequestCreate'
+      responses:
+        '201':
+          description: Request submitted
+
+  /adoptions/{id}:
+    get:
+      tags: [Adoptions]
+      summary: Get adoption request details
+      parameters:
+        - $ref: '#/components/parameters/AdoptionId'
+      responses:
+        '200':
+          description: Adoption request details
+
+  /adoptions/{id}/approve:
+    put:
+      tags: [Adoptions]
+      summary: Approve adoption request
+      parameters:
+        - $ref: '#/components/parameters/AdoptionId'
+      responses:
+        '200':
+          description: Request approved
+
+  /adoptions/{id}/reject:
+    put:
+      tags: [Adoptions]
+      summary: Reject adoption request
+      parameters:
+        - $ref: '#/components/parameters/AdoptionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rejection_reason:
+                  type: string
+      responses:
+        '200':
+          description: Request rejected
+
+  # ==========================================
+  # ROLES
+  # ==========================================
+  /roles:
+    get:
+      tags: [Users]
+      summary: List all roles (Admin only)
+      responses:
+        '200':
+          description: List of roles
+
+  # ==========================================
+  # BULK OPERATIONS
+  # ==========================================
+  /animals/bulk-status:
+    post:
+      tags: [Animals]
+      summary: Bulk update animal statuses
+      description: Update status for multiple animals at once (max 100)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [animal_ids, status]
+              properties:
+                animal_ids:
+                  type: array
+                  items:
+                    type: integer
+                  maxItems: 100
+                status:
+                  type: string
+                  enum: [Available, Adopted, Reclaimed, Deceased, Under Treatment]
+      responses:
+        '200':
+          description: Bulk update completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      updated_count:
+                        type: integer
+                      failed:
+                        type: array
+                        items:
+                          type: object
+                      new_status:
+                        type: string
+
+  # ==========================================
+  # DASHBOARD & ANALYTICS
+  # ==========================================
+  /dashboard/stats:
+    get:
+      tags: [Dashboard]
+      summary: Get comprehensive dashboard statistics
+      responses:
+        '200':
+          description: Dashboard statistics
+
+  /dashboard/trends:
+    get:
+      tags: [Dashboard]
+      summary: Get advanced trends and analytics
+      description: |
+        Provides detailed trend analysis including:
+        - Monthly adoption trends
+        - Revenue trends
+        - Intake by type
+        - Outcome distribution
+        - Average length of stay
+        - Top breeds
+        - Adoption success rate
+        - Year over year comparison
+      responses:
+        '200':
+          description: Trends and analytics data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      adoptions_monthly:
+                        type: array
+                        items:
+                          type: object
+                      revenue_monthly:
+                        type: array
+                        items:
+                          type: object
+                      intake_by_type:
+                        type: array
+                        items:
+                          type: object
+                      outcome_distribution:
+                        type: array
+                        items:
+                          type: object
+                      avg_length_of_stay:
+                        type: array
+                        items:
+                          type: object
+                      top_breeds:
+                        type: array
+                        items:
+                          type: object
+                      adoption_success:
+                        type: object
+                      year_comparison:
+                        type: object
+
+  /dashboard/quick-stats:
+    get:
+      tags: [Dashboard]
+      summary: Get quick stats for dashboard widgets
+      responses:
+        '200':
+          description: Quick statistics
+
+  /dashboard/activity:
+    get:
+      tags: [Dashboard]
+      summary: Get recent activity
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+      responses:
+        '200':
+          description: Recent activity list
+
+  /dashboard/intake:
+    get:
+      tags: [Dashboard]
+      summary: Get intake statistics for charts
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [week, month, year]
+            default: week
+      responses:
+        '200':
+          description: Intake statistics
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+    PerPage:
+      name: per_page
+      in: query
+      schema:
+        type: integer
+        default: 10
+        maximum: 100
+    AnimalId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    InvoiceId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    AdoptionId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  responses:
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Access denied
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              message:
+                type: string
+              errors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+            refresh_token:
+              type: string
+            expires_in:
+              type: integer
+            user:
+              $ref: '#/components/schemas/User'
+
+    RegisterRequest:
+      type: object
+      required: [first_name, last_name, email, password, password_confirmation]
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        password_confirmation:
+          type: string
+        contact_number:
+          type: string
+        address:
+          type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        full_name:
+          type: string
+        email:
+          type: string
+        username:
+          type: string
+        role_name:
+          type: string
+        account_status:
+          type: string
+        avatar_url:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    UserCreate:
+      type: object
+      required: [first_name, last_name, email, password, role_id]
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        role_id:
+          type: integer
+        contact_number:
+          type: string
+        address:
+          type: string
+
+    UserUpdate:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        contact_number:
+          type: string
+        address:
+          type: string
+        account_status:
+          type: string
+          enum: [Active, Inactive, Suspended]
+
+    ProfileUpdate:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        contact_number:
+          type: string
+        address:
+          type: string
+
+    Animal:
+      type: object
+      properties:
+        AnimalID:
+          type: integer
+        Name:
+          type: string
+        Type:
+          type: string
+        Breed:
+          type: string
+        Gender:
+          type: string
+        Age_Years:
+          type: integer
+        Age_Months:
+          type: integer
+        Weight_Kg:
+          type: number
+        Color:
+          type: string
+        Current_Status:
+          type: string
+        Intake_Status:
+          type: string
+        Intake_Date:
+          type: string
+          format: date
+        Description:
+          type: string
+        Adoption_Fee:
+          type: number
+        Image_URL:
+          type: string
+          nullable: true
+        Created_At:
+          type: string
+          format: date-time
+
+    AnimalCreate:
+      type: object
+      required: [name, type, gender, intake_status]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [Dog, Cat]
+        breed:
+          type: string
+        gender:
+          type: string
+          enum: [Male, Female]
+        age_years:
+          type: integer
+        age_months:
+          type: integer
+        weight_kg:
+          type: number
+        color:
+          type: string
+        intake_status:
+          type: string
+          enum: [Stray, Surrendered, Rescued, Born in Shelter]
+        intake_date:
+          type: string
+          format: date
+        description:
+          type: string
+        adoption_fee:
+          type: number
+
+    AnimalUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        breed:
+          type: string
+        age_years:
+          type: integer
+        age_months:
+          type: integer
+        weight_kg:
+          type: number
+        color:
+          type: string
+        description:
+          type: string
+        adoption_fee:
+          type: number
+
+    PaginatedAnimals:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Animal'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+
+    Pagination:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        per_page:
+          type: integer
+        total_items:
+          type: integer
+        total_pages:
+          type: integer
+        has_next:
+          type: boolean
+        has_prev:
+          type: boolean
+
+    InvoiceCreate:
+      type: object
+      required: [payer_user_id, transaction_type, total_amount]
+      properties:
+        payer_user_id:
+          type: integer
+        transaction_type:
+          type: string
+          enum: [Adoption Fee, Reclaim Fee]
+        total_amount:
+          type: number
+        animal_id:
+          type: integer
+        request_id:
+          type: integer
+
+    PaymentCreate:
+      type: object
+      required: [invoice_id, amount_paid, payment_method]
+      properties:
+        invoice_id:
+          type: integer
+        amount_paid:
+          type: number
+        payment_method:
+          type: string
+          enum: [Cash, GCash, Bank Transfer]
+        reference_number:
+          type: string
+
+    AdoptionRequestCreate:
+      type: object
+      required: [animal_id]
+      properties:
+        animal_id:
+          type: integer
+        message:
+          type: string
+        has_other_pets:
+          type: boolean
+        has_yard:
+          type: boolean
+        housing_type:
+          type: string

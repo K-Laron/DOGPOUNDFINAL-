@@ -106,16 +106,21 @@ const DataTable = {
             ? (sortDirection === 'asc' ? this.icons.sortAsc : this.icons.sortDesc)
             : this.icons.sort;
 
+        // Support custom headerHtml for columns that need raw HTML in header (like checkboxes)
+        const headerContent = column.headerHtml 
+            ? column.headerHtml 
+            : `<div class="flex items-center gap-1">
+                    <span>${column.label}</span>
+                    ${isSortable ? `<span class="sort-icon">${sortIcon}</span>` : ''}
+               </div>`;
+
         return `
             <th 
                 class="${sortClass} ${isActive ? sortDirection : ''}"
                 style="${column.width ? `width: ${column.width};` : ''}"
                 ${isSortable ? `onclick="DataTable.sort('${tableId}', '${column.key}')"` : ''}
             >
-                <div class="flex items-center gap-1">
-                    <span>${column.label}</span>
-                    ${isSortable ? `<span class="sort-icon">${sortIcon}</span>` : ''}
-                </div>
+                ${headerContent}
             </th>
         `;
     },
@@ -132,7 +137,7 @@ const DataTable = {
      * @returns {string}
      */
     renderRow(tableId, row, index, columns, selectable, actions, onRowClick) {
-        const rowId = row.id || row.ID || row[Object.keys(row)[0]] || index;
+        const rowId = row.id || row.ID || row.AnimalID || row.UserID || row[Object.keys(row)[0]] || index;
         const clickable = onRowClick ? 'style="cursor: pointer;"' : '';
         const clickHandler = onRowClick ? `onclick="DataTable.handleRowClick('${tableId}', ${rowId})"` : '';
 
@@ -201,8 +206,10 @@ const DataTable = {
 
         const align = column.align ? `text-align: ${column.align};` : '';
         const className = column.className || '';
+        // Use empty data-label for columns with headerHtml (like checkboxes) to avoid HTML in attribute
+        const dataLabel = column.headerHtml ? '' : (column.label || '');
 
-        return `<td style="${align}" class="${className}" data-label="${column.label}">${value ?? '-'}</td>`;
+        return `<td style="${align}" class="${className}" data-label="${dataLabel}">${value ?? '-'}</td>`;
     },
 
     /**
@@ -415,7 +422,7 @@ const DataTable = {
         if (!table || !table.onRowClick) return;
 
         const row = table.data?.find(r => {
-            const id = r.id || r.ID || r[Object.keys(r)[0]];
+            const id = r.id || r.ID || r.AnimalID || r.UserID || r[Object.keys(r)[0]];
             return id == rowId;
         });
 

@@ -360,8 +360,51 @@ class AdoptionController extends BaseController
                 $this->logActivity('AUTO_CREATE_INVOICE', "Auto-created adoption invoice for request ID: {$id}, Amount: {$feeResult['total']}");
             }
 
-            // If completed, update animal status and reject other pending requests
+            // If completed, check invoice is fully paid first, then update animal status
             if ($newStatus === 'Completed') {
+                // Check if there's an invoice for this adoption and get payment status
+                $stmt = $this->db->prepare("
+                    SELECT 
+                        i.InvoiceID, 
+                        i.Status, 
+                        i.Total_Amount,
+                        COALESCE((SELECT SUM(Amount_Paid) FROM Payments WHERE InvoiceID = i.InvoiceID), 0) as Amount_Paid
+                    FROM Invoices i
+                    WHERE i.Related_RequestID = :request_id 
+                    AND i.Transaction_Type = 'Adoption Fee'
+                    AND i.Is_Deleted = FALSE
+                    ORDER BY i.Created_At DESC
+                    LIMIT 1
+                ");
+                $stmt->execute(['request_id' => $id]);
+                $invoice = $stmt->fetch();
+
+                // If no invoice exists, block completion
+                if (!$invoice) {
+                    $this->db->rollBack();
+                    Response::error(
+                        "Cannot complete adoption. No invoice found for this adoption request. Please contact an administrator.", 
+                        400
+                    );
+                    return;
+                }
+
+                // Calculate remaining balance
+                $balance = $invoice['Total_Amount'] - $invoice['Amount_Paid'];
+
+                // If not fully paid, block completion with detailed message
+                if ($balance > 0) {
+                    $this->db->rollBack();
+                    $message = sprintf(
+                        "Cannot complete adoption. Payment not fully settled. Total: PHP %s | Paid: PHP %s | Balance: PHP %s",
+                        number_format($invoice['Total_Amount'], 2),
+                        number_format($invoice['Amount_Paid'], 2),
+                        number_format($balance, 2)
+                    );
+                    Response::error($message, 400);
+                    return;
+                }
+
                 // Update animal status
                 $stmt = $this->db->prepare("UPDATE Animals SET Current_Status = 'Adopted' WHERE AnimalID = :id");
                 $stmt->execute(['id' => $request['AnimalID']]);

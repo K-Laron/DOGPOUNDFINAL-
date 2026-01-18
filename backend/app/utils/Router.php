@@ -154,6 +154,12 @@ class Router
                     if (!in_array('*', $route['roles'])) {
                         $this->authorize($route['roles']);
                     }
+                    
+                    // Validate CSRF token for state-changing requests
+                    // This runs after authentication to ensure the token matches the user
+                    if (!CsrfMiddleware::validate($uri, $method)) {
+                        return; // Response already sent by middleware
+                    }
                 }
 
                 // Call the controller method

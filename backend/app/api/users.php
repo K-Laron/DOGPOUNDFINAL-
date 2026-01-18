@@ -15,6 +15,9 @@ $router->get('/users', 'UserController@index', ['Admin', 'Staff']);
 // User Statistics
 $router->get('/users/stats/summary', 'UserController@stats', ['Admin', 'Staff']);
 
+// Export users data (CSV, JSON, Excel)
+$router->get('/users/export', 'UserController@export', ['Admin']);
+
 // Get single user (Admin, Staff)
 $router->get('/users/{id}', 'UserController@show', ['Admin', 'Staff']);
 

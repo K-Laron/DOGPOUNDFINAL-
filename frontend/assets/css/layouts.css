@@ -1402,6 +1402,12 @@ body.no-sidebar .sidebar {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: var(--space-4);
+    padding: 0 var(--space-3);
+}
+
+/* Animals container - wrapper for grid/table views */
+#animals-container {
+    margin-top: var(--space-4);
 }
 
 /* ==========================================
@@ -1472,4 +1478,178 @@ body.no-sidebar .sidebar {
 
 [data-theme="dark"] .table tbody tr:hover td:first-child::before {
     background-color: #1DB954 !important;
+}
+
+/* ==========================================
+   SIDEBAR TOOLTIPS (Collapsed Mode)
+   ========================================== */
+
+/* Tooltip for sidebar links when collapsed */
+.sidebar.collapsed .sidebar-link {
+    position: relative;
+}
+
+.sidebar.collapsed .sidebar-link::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) scale(0.9);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s var(--ease-out-expo);
+    z-index: var(--z-tooltip);
+}
+
+/* Tooltip arrow */
+.sidebar.collapsed .sidebar-link::before {
+    content: '';
+    position: absolute;
+    left: calc(100% + 6px);
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: var(--bg-elevated);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s var(--ease-out-expo);
+    z-index: var(--z-tooltip);
+}
+
+/* Show tooltip on hover (only when not expanded) */
+.sidebar.collapsed:not(:hover) .sidebar-link:hover::after,
+.sidebar.collapsed:not(:hover) .sidebar-link:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+}
+
+/* Active link indicator - keep original */
+.sidebar.collapsed .sidebar-link.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background-color: var(--color-primary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    opacity: 1;
+    visibility: visible;
+    border: none;
+}
+
+/* User tooltip */
+.sidebar.collapsed .sidebar-user[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    transform: translateY(-50%) scale(0.9);
+    padding: var(--space-2) var(--space-3);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s var(--ease-out-expo);
+    z-index: var(--z-tooltip);
+}
+
+.sidebar.collapsed:not(:hover) .sidebar-user:hover::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) scale(1);
+}
+
+/* ==========================================
+   SIDEBAR SMOOTH TRANSITIONS
+   ========================================== */
+
+/* Smoother sidebar collapse/expand */
+.sidebar {
+    transition: 
+        width 0.3s var(--ease-out-expo),
+        transform 0.3s var(--ease-out-expo),
+        box-shadow 0.3s var(--ease-out-expo);
+}
+
+.sidebar-header,
+.sidebar-nav,
+.sidebar-footer {
+    transition: all 0.25s var(--ease-out-expo);
+}
+
+.sidebar-brand,
+.sidebar-section-title,
+.sidebar-link-text,
+.sidebar-user-info {
+    transition: 
+        opacity 0.2s var(--ease-out-expo),
+        width 0.25s var(--ease-out-expo),
+        visibility 0.2s;
+}
+
+/* Sidebar link hover with subtle glow */
+.sidebar-link:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.sidebar-link.active:hover {
+    background-color: rgba(var(--color-primary-rgb), 0.15);
+}
+
+/* Sidebar link ripple effect */
+.sidebar-link {
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(var(--color-primary-rgb), 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.3s, transform 0.5s var(--ease-out-expo);
+}
+
+.sidebar-link:active::after {
+    opacity: 1;
+    transform: scale(2.5);
+    transition: opacity 0s, transform 0s;
+}
+
+/* Badge animation on update */
+.sidebar-link-badge {
+    transition: transform 0.3s var(--ease-spring);
+}
+
+.sidebar-link-badge.updated {
+    animation: badgePop 0.4s var(--ease-spring);
+}
+
+@keyframes badgePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
 }

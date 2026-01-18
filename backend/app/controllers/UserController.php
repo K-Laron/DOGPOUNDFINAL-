@@ -918,7 +918,8 @@ class UserController extends BaseController {
             }
         } catch (Throwable $e) {
             error_log("Upload Error: " . $e->getMessage());
-            Response::serverError("Crash: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+            require_once APP_PATH . '/utils/ErrorHandler.php';
+            ErrorHandler::handle($e);
         }
     }
 
@@ -973,27 +974,25 @@ class UserController extends BaseController {
      * @return void
      */
     public function listRoles() {
+        // Single query with LEFT JOIN to get user counts - fixes N+1 query issue
         $stmt = $this->db->prepare("
             SELECT 
-                RoleID as id,
-                Role_Name as name,
-                Created_At as created_at
-            FROM Roles 
-            ORDER BY RoleID ASC
+                r.RoleID as id,
+                r.Role_Name as name,
+                r.Created_At as created_at,
+                COUNT(u.UserID) as user_count
+            FROM Roles r
+            LEFT JOIN Users u ON r.RoleID = u.RoleID AND u.Is_Deleted = FALSE
+            GROUP BY r.RoleID, r.Role_Name, r.Created_At
+            ORDER BY r.RoleID ASC
         ");
         $stmt->execute();
         
         $roles = $stmt->fetchAll();
         
-        // Add user count for each role
+        // Ensure user_count is integer
         foreach ($roles as &$role) {
-            $stmt = $this->db->prepare("
-                SELECT COUNT(*) as count 
-                FROM Users 
-                WHERE RoleID = :role_id AND Is_Deleted = FALSE
-            ");
-            $stmt->execute(['role_id' => $role['id']]);
-            $role['user_count'] = (int)$stmt->fetch()['count'];
+            $role['user_count'] = (int)$role['user_count'];
         }
         
         Response::success($roles, "Roles retrieved successfully");
@@ -1448,5 +1447,77 @@ class UserController extends BaseController {
         }
         
         return $dependencies;
+    }
+
+    /**
+     * Export users data
+     * GET /users/export
+     * 
+     * Query params:
+     * - format: csv, json, excel (default: csv)
+     * - role: filter by role name
+     * - status: filter by account status
+     */
+    public function export()
+    {
+        require_once APP_PATH . '/utils/ExportService.php';
+
+        $format = $this->query('format') ?? 'csv';
+
+        // Build query with filters
+        $where = ["u.Is_Deleted = FALSE"];
+        $params = [];
+
+        if ($this->query('role')) {
+            $where[] = "r.Role_Name = :role";
+            $params['role'] = $this->query('role');
+        }
+
+        if ($this->query('status')) {
+            $where[] = "u.Account_Status = :status";
+            $params['status'] = $this->query('status');
+        }
+
+        $whereClause = implode(' AND ', $where);
+
+        $stmt = $this->db->prepare("
+            SELECT 
+                u.UserID,
+                u.FirstName,
+                u.LastName,
+                u.Username,
+                u.Email,
+                u.Contact_Number,
+                u.Address,
+                r.Role_Name,
+                u.Account_Status,
+                u.Created_At,
+                u.Updated_At
+            FROM Users u
+            JOIN Roles r ON u.RoleID = r.RoleID
+            WHERE {$whereClause}
+            ORDER BY u.Created_At DESC
+        ");
+
+        $stmt->execute($params);
+        $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $headers = [
+            'UserID' => 'User ID',
+            'FirstName' => 'First Name',
+            'LastName' => 'Last Name',
+            'Username' => 'Username',
+            'Email' => 'Email',
+            'Contact_Number' => 'Contact Number',
+            'Address' => 'Address',
+            'Role_Name' => 'Role',
+            'Account_Status' => 'Status',
+            'Created_At' => 'Created At',
+            'Updated_At' => 'Updated At'
+        ];
+
+        $this->logActivity('EXPORT_USERS', "Exported " . count($users) . " users to {$format}");
+
+        ExportService::export($users, $format, 'users_export', $headers);
     }
 }

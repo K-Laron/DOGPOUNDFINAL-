@@ -28,5 +28,8 @@ $router->post('/auth/logout-all', 'AuthController@logoutAll');
 // Forgot password - request reset
 $router->post('/auth/forgot-password', 'AuthController@forgotPassword');
 
+// Validate reset token (check if token is valid before showing reset form)
+$router->post('/auth/validate-reset-token', 'AuthController@validateResetToken');
+
 // Reset password with token
 $router->post('/auth/reset-password', 'AuthController@resetPassword');

@@ -352,6 +352,8 @@ class AnimalController extends BaseController
     /**
      * Update animal status only
      * PATCH /animals/{id}/status
+     * 
+     * Uses database transaction to ensure atomicity when auto-creating invoices
      */
     public function updateStatus($id)
     {
@@ -368,17 +370,20 @@ class AnimalController extends BaseController
         }
 
         $newStatus = $this->input('status');
+        $reclaimingUserId = $this->input('reclaiming_user_id');
+        $invoiceCreated = false;
+        $invoiceAmount = 0;
 
-        $stmt = $this->db->prepare("UPDATE Animals SET Current_Status = :status WHERE AnimalID = :id");
-        $stmt->execute(['status' => $newStatus, 'id' => $id]);
+        // Start transaction for atomic status update + invoice creation
+        $this->db->beginTransaction();
 
-        $this->logActivity('UPDATE_ANIMAL_STATUS', "Changed animal ID: {$id} status from {$animal['Current_Status']} to {$newStatus}");
+        try {
+            // Update animal status
+            $stmt = $this->db->prepare("UPDATE Animals SET Current_Status = :status, Updated_At = NOW() WHERE AnimalID = :id");
+            $stmt->execute(['status' => $newStatus, 'id' => $id]);
 
-        // AUTO-CREATE INVOICE for reclaim fee when status is changed to 'Reclaimed'
-        if ($newStatus === 'Reclaimed') {
-            $reclaimingUserId = $this->input('reclaiming_user_id');
-
-            if ($reclaimingUserId) {
+            // AUTO-CREATE INVOICE for reclaim fee when status is changed to 'Reclaimed'
+            if ($newStatus === 'Reclaimed' && $reclaimingUserId) {
                 // Verify user exists
                 $userStmt = $this->db->prepare("SELECT UserID FROM Users WHERE UserID = :id AND Is_Deleted = FALSE");
                 $userStmt->execute(['id' => $reclaimingUserId]);
@@ -414,12 +419,33 @@ class AnimalController extends BaseController
                         'animal_id' => $id
                     ]);
 
-                    $this->logActivity('AUTO_CREATE_INVOICE', "Auto-created reclaim invoice for animal ID: {$id}, Amount: {$feeResult['total']}");
+                    $invoiceCreated = true;
+                    $invoiceAmount = $feeResult['total'];
                 }
             }
-        }
 
-        Response::success(['status' => $newStatus], "Animal status updated");
+            // Commit the transaction
+            $this->db->commit();
+
+            // Log activities after successful commit
+            $this->logActivity('UPDATE_ANIMAL_STATUS', "Changed animal ID: {$id} status from {$animal['Current_Status']} to {$newStatus}");
+
+            if ($invoiceCreated) {
+                $this->logActivity('AUTO_CREATE_INVOICE', "Auto-created reclaim invoice for animal ID: {$id}, Amount: {$invoiceAmount}");
+            }
+
+            Response::success([
+                'status' => $newStatus,
+                'invoice_created' => $invoiceCreated,
+                'invoice_amount' => $invoiceCreated ? $invoiceAmount : null
+            ], "Animal status updated" . ($invoiceCreated ? " and invoice created" : ""));
+
+        } catch (Exception $e) {
+            // Rollback on any error
+            $this->db->rollBack();
+            error_log("Failed to update animal status: " . $e->getMessage());
+            Response::serverError("Failed to update animal status. Please try again.");
+        }
     }
 
     /**
@@ -585,5 +611,194 @@ class AnimalController extends BaseController
         Response::success([
             'image_url' => $this->getFileUrl($relativePath)
         ], "Image uploaded successfully");
+    }
+
+    /**
+     * Export animals data
+     * GET /animals/export
+     * 
+     * Query params:
+     * - format: csv, json, excel (default: csv)
+     * - status: filter by status
+     * - type: filter by animal type
+     * - date_from: filter by intake date from
+     * - date_to: filter by intake date to
+     */
+    public function export()
+    {
+        try {
+            require_once APP_PATH . '/utils/ExportService.php';
+
+            // Clean any previous output buffers for clean export
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+
+            $format = $this->query('format') ?? 'csv';
+
+            // Validate format
+            if (!in_array($format, ['csv', 'json', 'excel'])) {
+                Response::error("Invalid export format. Allowed: csv, json, excel", 400);
+                return;
+            }
+
+            // Build query with filters
+            $where = ["a.Is_Deleted = FALSE"];
+            $params = [];
+
+            if ($this->query('status')) {
+                $where[] = "a.Current_Status = :status";
+                $params['status'] = $this->query('status');
+            }
+
+            if ($this->query('type')) {
+                $where[] = "a.Type = :type";
+                $params['type'] = $this->query('type');
+            }
+
+            if ($this->query('date_from')) {
+                $where[] = "DATE(a.Created_At) >= :date_from";
+                $params['date_from'] = $this->query('date_from');
+            }
+
+            if ($this->query('date_to')) {
+                $where[] = "DATE(a.Created_At) <= :date_to";
+                $params['date_to'] = $this->query('date_to');
+            }
+
+            $whereClause = implode(' AND ', $where);
+
+            $stmt = $this->db->prepare("
+                SELECT 
+                    a.AnimalID,
+                    a.Name,
+                    a.Type,
+                    a.Breed,
+                    a.Gender,
+                    a.Age_Group,
+                    a.Weight,
+                    a.Current_Status,
+                    a.Intake_Status,
+                    a.Intake_Date,
+                    a.Image_URL,
+                    a.Created_At
+                FROM Animals a
+                WHERE {$whereClause}
+                ORDER BY a.Created_At DESC
+            ");
+
+            $stmt->execute($params);
+            $animals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Define export headers for better readability
+            $headers = [
+                'AnimalID' => 'Animal ID',
+                'Name' => 'Name',
+                'Type' => 'Type',
+                'Breed' => 'Breed',
+                'Gender' => 'Gender',
+                'Age_Group' => 'Age Group',
+                'Weight' => 'Weight (Kg)',
+                'Current_Status' => 'Status',
+                'Intake_Status' => 'Intake Type',
+                'Intake_Date' => 'Intake Date',
+                'Image_URL' => 'Image URL',
+                'Created_At' => 'Created At'
+            ];
+
+            $this->logActivity('EXPORT_ANIMALS', "Exported " . count($animals) . " animals to {$format}");
+
+            ExportService::export($animals, $format, 'animals_export', $headers);
+        } catch (\Exception $e) {
+            // Log the error
+            error_log("AnimalController::export failed: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+            require_once APP_PATH . '/utils/ErrorHandler.php';
+            ErrorHandler::handle($e);
+        }
+    }
+
+    /**
+     * Bulk update animal statuses
+     * POST /animals/bulk-status
+     * 
+     * Request body:
+     * - animal_ids: array of animal IDs
+     * - status: new status to apply
+     */
+    public function bulkUpdateStatus()
+    {
+        $this->validate([
+            'animal_ids' => 'required|array',
+            'status' => 'required|in:Available,Adopted,Reclaimed,Deceased,Under Treatment'
+        ]);
+
+        $animalIds = $this->input('animal_ids');
+        $newStatus = $this->input('status');
+
+        if (empty($animalIds)) {
+            Response::error("No animals selected", 400);
+        }
+
+        if (count($animalIds) > 100) {
+            Response::error("Maximum 100 animals can be updated at once", 400);
+        }
+
+        $this->db->beginTransaction();
+
+        try {
+            $updated = 0;
+            $failed = [];
+
+            foreach ($animalIds as $animalId) {
+                // Validate each animal exists
+                $stmt = $this->db->prepare("
+                    SELECT AnimalID, Name, Current_Status 
+                    FROM Animals 
+                    WHERE AnimalID = :id AND Is_Deleted = FALSE
+                ");
+                $stmt->execute(['id' => $animalId]);
+                $animal = $stmt->fetch();
+
+                if (!$animal) {
+                    $failed[] = ['id' => $animalId, 'reason' => 'Animal not found'];
+                    continue;
+                }
+
+                // Skip if already has the same status
+                if ($animal['Current_Status'] === $newStatus) {
+                    continue;
+                }
+
+                // Update status
+                $stmt = $this->db->prepare("
+                    UPDATE Animals 
+                    SET Current_Status = :status, Updated_At = NOW() 
+                    WHERE AnimalID = :id
+                ");
+                $stmt->execute(['status' => $newStatus, 'id' => $animalId]);
+                $updated++;
+            }
+
+            $this->db->commit();
+
+            $this->logActivity(
+                'BULK_STATUS_UPDATE',
+                "Bulk updated {$updated} animals to status: {$newStatus}"
+            );
+
+            Response::success([
+                'updated_count' => $updated,
+                'failed' => $failed,
+                'new_status' => $newStatus
+            ], "Bulk status update completed. {$updated} animals updated.");
+
+        } catch (Exception $e) {
+            if ($e->getMessage() === 'RESPONSE_EXIT') {
+                throw $e;
+            }
+            $this->db->rollBack();
+            error_log("Bulk status update error: " . $e->getMessage());
+            Response::serverError("Failed to update animal statuses");
+        }
     }
 }

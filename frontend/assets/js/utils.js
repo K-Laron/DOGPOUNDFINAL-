@@ -931,43 +931,44 @@ const Utils = {
      */
 
     /**
-     * Get item from localStorage
+     * Get item from sessionStorage (more secure - cleared when browser closes)
+     * This prevents tokens from persisting and reduces XSS attack window
      * @param {string} key
      * @param {*} defaultValue
      * @returns {*}
      */
     getStorage(key, defaultValue = null) {
         try {
-            const item = localStorage.getItem(key);
+            const item = sessionStorage.getItem(key);
             return item ? JSON.parse(item) : defaultValue;
         } catch (e) {
-            console.error('Error reading from localStorage:', e);
+            console.error('Error reading from sessionStorage:', e);
             return defaultValue;
         }
     },
 
     /**
-     * Set item in localStorage
+     * Set item in sessionStorage (more secure - cleared when browser closes)
      * @param {string} key
      * @param {*} value
      */
     setStorage(key, value) {
         try {
-            localStorage.setItem(key, JSON.stringify(value));
+            sessionStorage.setItem(key, JSON.stringify(value));
         } catch (e) {
-            console.error('Error writing to localStorage:', e);
+            console.error('Error writing to sessionStorage:', e);
         }
     },
 
     /**
-     * Remove item from localStorage
+     * Remove item from sessionStorage
      * @param {string} key
      */
     removeStorage(key) {
         try {
-            localStorage.removeItem(key);
+            sessionStorage.removeItem(key);
         } catch (e) {
-            console.error('Error removing from localStorage:', e);
+            console.error('Error removing from sessionStorage:', e);
         }
     },
 
@@ -976,6 +977,132 @@ const Utils = {
      * ASYNC UTILITIES
      * ==========================================
      */
+
+    /**
+     * Retry a function with exponential backoff
+     * @param {Function} fn - Async function to retry
+     * @param {Object} options - Retry options
+     * @param {number} options.maxRetries - Maximum number of retries (default: 3)
+     * @param {number} options.baseDelay - Base delay in ms (default: 1000)
+     * @param {number} options.maxDelay - Maximum delay in ms (default: 10000)
+     * @param {Function} options.shouldRetry - Function to determine if should retry (default: network errors only)
+     * @param {Function} options.onRetry - Callback on each retry attempt
+     * @returns {Promise<*>}
+     */
+    async retry(fn, options = {}) {
+        const {
+            maxRetries = 3,
+            baseDelay = 1000,
+            maxDelay = 10000,
+            shouldRetry = (error) => {
+                // Retry on network errors, timeouts, and 5xx server errors
+                if (error instanceof APIError) {
+                    return error.status === 0 || error.status === 408 || error.status >= 500;
+                }
+                return error.name === 'TypeError' || error.message.includes('network');
+            },
+            onRetry = null
+        } = options;
+
+        let lastError;
+
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                return await fn();
+            } catch (error) {
+                lastError = error;
+
+                // Don't retry if max retries reached or shouldn't retry this error
+                if (attempt >= maxRetries || !shouldRetry(error)) {
+                    throw error;
+                }
+
+                // Calculate delay with exponential backoff and jitter
+                const delay = Math.min(
+                    baseDelay * Math.pow(2, attempt) + Math.random() * 1000,
+                    maxDelay
+                );
+
+                // Call retry callback if provided
+                if (onRetry) {
+                    onRetry(error, attempt + 1, delay);
+                }
+
+                await this.sleep(delay);
+            }
+        }
+
+        throw lastError;
+    },
+
+    /**
+     * Wrap an async function with error handling
+     * Returns [error, result] tuple similar to Go-style error handling
+     * @param {Promise} promise - Promise to wrap
+     * @returns {Promise<[Error|null, *]>}
+     */
+    async safeAwait(promise) {
+        try {
+            const result = await promise;
+            return [null, result];
+        } catch (error) {
+            return [error, null];
+        }
+    },
+
+    /**
+     * Execute a function with loading state management
+     * @param {Function} fn - Async function to execute
+     * @param {Object} options - Options
+     * @param {string} options.loadingMessage - Message to show while loading
+     * @param {string} options.successMessage - Message to show on success
+     * @param {string} options.errorMessage - Custom error message (uses API error if not provided)
+     * @param {boolean} options.showLoading - Whether to show loading toast (default: false)
+     * @param {boolean} options.showSuccess - Whether to show success toast (default: true)
+     * @param {boolean} options.showError - Whether to show error toast (default: true)
+     * @returns {Promise<{success: boolean, data: *, error: Error|null}>}
+     */
+    async withLoadingState(fn, options = {}) {
+        const {
+            loadingMessage = 'Loading...',
+            successMessage = null,
+            errorMessage = null,
+            showLoading = false,
+            showSuccess = true,
+            showError = true
+        } = options;
+
+        let loadingToast = null;
+
+        try {
+            if (showLoading && loadingMessage) {
+                loadingToast = Toast.info(loadingMessage);
+            }
+
+            const data = await fn();
+
+            if (loadingToast) {
+                Toast.dismiss(loadingToast);
+            }
+
+            if (showSuccess && successMessage) {
+                Toast.success(successMessage);
+            }
+
+            return { success: true, data, error: null };
+        } catch (error) {
+            if (loadingToast) {
+                Toast.dismiss(loadingToast);
+            }
+
+            if (showError) {
+                const message = errorMessage || error.message || 'An error occurred';
+                Toast.error(message);
+            }
+
+            return { success: false, data: null, error };
+        }
+    },
 
     /**
      * Debounce function
@@ -1389,18 +1516,383 @@ const Utils = {
      */
     getAnimalTypeBadgeClass(type) {
         const typeMap = {
-            'Dog': 'badge-primary',
-            'Cat': 'badge-success',
-            'Other': 'badge-warning'
+            'Dog': 'badge-info',
+            'Cat': 'badge-purple',
+            'Other': 'badge-orange'
         };
         return typeMap[type] || 'badge-gray';
     }
 };
 
 /**
+ * ErrorBoundary - Catches and handles rendering errors gracefully
+ * Provides fallback UI and error recovery options
+ * 
+ * @package AnimalShelter
+ */
+const ErrorBoundary = {
+    /**
+     * Wrap a render function with error handling
+     * @param {Function} renderFn - Function that returns HTML string
+     * @param {Object} options - Options
+     * @param {string} options.fallback - Fallback HTML on error
+     * @param {Function} options.onError - Error callback
+     * @param {boolean} options.showRetry - Show retry button (default: true)
+     * @returns {string} - HTML string
+     */
+    wrap(renderFn, options = {}) {
+        const {
+            fallback = null,
+            onError = null,
+            showRetry = true
+        } = options;
+
+        try {
+            return renderFn();
+        } catch (error) {
+            console.error('Render error:', error);
+
+            if (onError) {
+                onError(error);
+            }
+
+            if (fallback) {
+                return fallback;
+            }
+
+            return this.renderErrorState(error, showRetry);
+        }
+    },
+
+    /**
+     * Wrap an async render/load function with error handling
+     * @param {Function} asyncFn - Async function to execute
+     * @param {HTMLElement} container - Container to render into
+     * @param {Object} options - Options
+     * @param {string} options.loadingHTML - HTML to show while loading
+     * @param {Function} options.onError - Error callback
+     * @param {boolean} options.showRetry - Show retry button (default: true)
+     * @returns {Promise<boolean>} - Success status
+     */
+    async wrapAsync(asyncFn, container, options = {}) {
+        const {
+            loadingHTML = Skeleton.page(),
+            onError = null,
+            showRetry = true,
+            retryFn = null
+        } = options;
+
+        try {
+            // Show loading state
+            if (loadingHTML) {
+                container.innerHTML = loadingHTML;
+            }
+
+            // Execute the async function
+            await asyncFn();
+            return true;
+        } catch (error) {
+            console.error('Async render error:', error);
+
+            if (onError) {
+                onError(error);
+            }
+
+            // Show error state
+            container.innerHTML = this.renderErrorState(error, showRetry, retryFn);
+
+            // Attach retry handler if provided
+            if (showRetry && retryFn) {
+                const retryBtn = container.querySelector('[data-error-retry]');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', async () => {
+                        await this.wrapAsync(asyncFn, container, options);
+                    });
+                }
+            }
+
+            return false;
+        }
+    },
+
+    /**
+     * Render error state UI
+     * @param {Error} error - The error that occurred
+     * @param {boolean} showRetry - Whether to show retry button
+     * @param {Function} retryFn - Retry function
+     * @returns {string} - HTML string
+     */
+    renderErrorState(error, showRetry = true, retryFn = null) {
+        const isNetworkError = error instanceof APIError && (error.status === 0 || error.status === 408);
+        const isServerError = error instanceof APIError && error.status >= 500;
+
+        let title = 'Something went wrong';
+        let message = error.message || 'An unexpected error occurred.';
+        let icon = 'alert-circle';
+
+        if (isNetworkError) {
+            title = 'Connection Error';
+            message = 'Unable to connect to the server. Please check your internet connection.';
+            icon = 'wifi-off';
+        } else if (isServerError) {
+            title = 'Server Error';
+            message = 'The server encountered an error. Please try again later.';
+            icon = 'server';
+        }
+
+        return `
+            <div class="error-boundary">
+                <div class="error-boundary-content">
+                    <div class="error-boundary-icon">
+                        ${this.getIcon(icon)}
+                    </div>
+                    <h3 class="error-boundary-title">${title}</h3>
+                    <p class="error-boundary-message">${Utils.escapeHTML(message)}</p>
+                    ${showRetry ? `
+                        <button class="btn btn-primary" data-error-retry>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                            Try Again
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Get icon SVG for error states
+     * @param {string} name - Icon name
+     * @returns {string} - SVG string
+     */
+    getIcon(name) {
+        const icons = {
+            'alert-circle': '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>',
+            'wifi-off': '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"></path><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path><path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>',
+            'server': '<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>'
+        };
+        return icons[name] || icons['alert-circle'];
+    }
+};
+
+/**
+ * Skeleton - Loading placeholder utilities
+ * Creates skeleton loading states for better UX
+ * 
+ * @package AnimalShelter
+ */
+const Skeleton = {
+    /**
+     * Create a skeleton line
+     * @param {string} width - Width (e.g., '100%', '200px')
+     * @param {string} height - Height (default: '1rem')
+     * @returns {string}
+     */
+    line(width = '100%', height = '1rem') {
+        return `<div class="skeleton skeleton-line" style="width: ${width}; height: ${height};"></div>`;
+    },
+
+    /**
+     * Create a skeleton circle (for avatars)
+     * @param {string} size - Size (default: '40px')
+     * @returns {string}
+     */
+    circle(size = '40px') {
+        return `<div class="skeleton skeleton-circle" style="width: ${size}; height: ${size};"></div>`;
+    },
+
+    /**
+     * Create a skeleton rectangle (for images, cards)
+     * @param {string} width - Width
+     * @param {string} height - Height
+     * @returns {string}
+     */
+    rect(width = '100%', height = '200px') {
+        return `<div class="skeleton skeleton-rect" style="width: ${width}; height: ${height};"></div>`;
+    },
+
+    /**
+     * Create a skeleton card
+     * @returns {string}
+     */
+    card() {
+        return `
+            <div class="skeleton-card">
+                ${this.rect('100%', '150px')}
+                <div class="skeleton-card-content">
+                    ${this.line('70%')}
+                    ${this.line('90%')}
+                    ${this.line('50%')}
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Create skeleton table rows
+     * @param {number} rows - Number of rows
+     * @param {number} cols - Number of columns
+     * @returns {string}
+     */
+    table(rows = 5, cols = 5) {
+        let html = '<div class="skeleton-table">';
+
+        // Header
+        html += '<div class="skeleton-table-header">';
+        for (let c = 0; c < cols; c++) {
+            html += `<div class="skeleton-table-cell">${this.line('80%', '0.875rem')}</div>`;
+        }
+        html += '</div>';
+
+        // Rows
+        for (let r = 0; r < rows; r++) {
+            html += '<div class="skeleton-table-row">';
+            for (let c = 0; c < cols; c++) {
+                const width = c === 0 ? '60%' : (c === cols - 1 ? '40%' : '70%');
+                html += `<div class="skeleton-table-cell">${this.line(width)}</div>`;
+            }
+            html += '</div>';
+        }
+
+        html += '</div>';
+        return html;
+    },
+
+    /**
+     * Create skeleton list items
+     * @param {number} count - Number of items
+     * @param {boolean} withAvatar - Include avatar
+     * @returns {string}
+     */
+    list(count = 5, withAvatar = false) {
+        let html = '<div class="skeleton-list">';
+
+        for (let i = 0; i < count; i++) {
+            html += `
+                <div class="skeleton-list-item">
+                    ${withAvatar ? this.circle('40px') : ''}
+                    <div class="skeleton-list-content">
+                        ${this.line('60%')}
+                        ${this.line('80%', '0.75rem')}
+                    </div>
+                </div>
+            `;
+        }
+
+        html += '</div>';
+        return html;
+    },
+
+    /**
+     * Create skeleton stat cards
+     * @param {number} count - Number of stat cards
+     * @returns {string}
+     */
+    stats(count = 4) {
+        let html = '<div class="skeleton-stats">';
+
+        for (let i = 0; i < count; i++) {
+            html += `
+                <div class="skeleton-stat-card">
+                    <div class="skeleton-stat-header">
+                        ${this.circle('32px')}
+                        ${this.line('60%', '0.75rem')}
+                    </div>
+                    ${this.line('40%', '2rem')}
+                    ${this.line('70%', '0.625rem')}
+                </div>
+            `;
+        }
+
+        html += '</div>';
+        return html;
+    },
+
+    /**
+     * Create a full page skeleton
+     * @returns {string}
+     */
+    page() {
+        return `
+            <div class="skeleton-page">
+                <div class="skeleton-page-header">
+                    ${this.line('200px', '1.5rem')}
+                    ${this.line('300px', '1rem')}
+                </div>
+                ${this.stats(4)}
+                <div class="skeleton-page-content">
+                    ${this.table(8, 6)}
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Create skeleton for animal grid
+     * @param {number} count - Number of cards
+     * @returns {string}
+     */
+    animalGrid(count = 8) {
+        let html = '<div class="skeleton-animal-grid">';
+
+        for (let i = 0; i < count; i++) {
+            html += `
+                <div class="skeleton-animal-card">
+                    ${this.rect('100%', '180px')}
+                    <div class="skeleton-animal-content">
+                        ${this.line('70%', '1.25rem')}
+                        <div class="skeleton-animal-meta">
+                            ${this.line('40%', '0.75rem')}
+                            ${this.line('30%', '0.75rem')}
+                        </div>
+                        ${this.line('50%', '1.5rem')}
+                    </div>
+                </div>
+            `;
+        }
+
+        html += '</div>';
+        return html;
+    },
+
+    /**
+     * Create skeleton for form
+     * @param {number} fields - Number of fields
+     * @returns {string}
+     */
+    form(fields = 4) {
+        let html = '<div class="skeleton-form">';
+
+        for (let i = 0; i < fields; i++) {
+            html += `
+                <div class="skeleton-form-field">
+                    ${this.line('30%', '0.875rem')}
+                    ${this.line('100%', '2.5rem')}
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="skeleton-form-actions">
+                ${this.line('100px', '2.5rem')}
+                ${this.line('80px', '2.5rem')}
+            </div>
+        `;
+
+        html += '</div>';
+        return html;
+    }
+};
+
+// Make ErrorBoundary globally available
+window.ErrorBoundary = ErrorBoundary;
+
+// Make Skeleton globally available
+window.Skeleton = Skeleton;
+
+/**
  * SSE (Server-Sent Events) Client
  * Handles real-time updates from the server
- * 
+ *
  * @package AnimalShelter
  */
 const SSE = {
@@ -1425,10 +1917,16 @@ const SSE = {
     },
 
     /**
+     * Reconnect timeout ID (for cleanup)
+     */
+    _reconnectTimeout: null,
+
+    /**
      * Configuration
      */
     config: {
-        url: '/api/sse',
+        // SSE runs on separate port to avoid blocking main API (PHP dev server is single-threaded)
+        baseUrl: 'http://localhost:8001',
         maxRetries: 5,
         retryDelay: 3000, // 3 seconds
         maxRetryDelay: 30000 // 30 seconds max
@@ -1449,12 +1947,18 @@ const SSE = {
         }
 
         try {
-            const url = new URL(API_BASE_URL + this.config.url);
+            const url = new URL(this.config.baseUrl);
             if (this.state.lastCheck) {
                 url.searchParams.set('last_check', this.state.lastCheck);
             }
 
-            this.connection = new EventSource(url.toString());
+            // Add auth token as query param since EventSource doesn't support headers
+            const token = Auth.getToken();
+            if (token) {
+                url.searchParams.set('token', token);
+            }
+
+            this.connection = new EventSource(url.toString(), { withCredentials: true });
 
             // Connection opened
             this.connection.addEventListener('open', () => {
@@ -1517,12 +2021,31 @@ const SSE = {
      * Disconnect from SSE
      */
     disconnect() {
+        // Clear any pending reconnect timeout
+        if (this._reconnectTimeout) {
+            clearTimeout(this._reconnectTimeout);
+            this._reconnectTimeout = null;
+        }
+
         if (this.connection) {
             this.connection.close();
             this.connection = null;
         }
         this.state.connected = false;
         this.state.reconnecting = false;
+    },
+
+    /**
+     * Full cleanup - disconnect and clear all handlers
+     * Call this on logout
+     */
+    cleanup() {
+        this.disconnect();
+        this.handlers = {};
+        this.pendingUpdates = {};
+        this.state.retryCount = 0;
+        this.state.lastCheck = null;
+        this.hideUpdateIndicator();
     },
 
     /**
@@ -1546,7 +2069,9 @@ const SSE = {
 
         this.state.retryCount++;
 
-        setTimeout(() => {
+        // Store timeout ID for cleanup
+        this._reconnectTimeout = setTimeout(() => {
+            this._reconnectTimeout = null;
             this.state.reconnecting = false;
             this.connect();
         }, delay);
@@ -1690,6 +2215,24 @@ const SSE = {
     },
 
     /**
+     * Remove all handlers for specified event types
+     * Useful for component cleanup
+     * 
+     * @param {string[]} eventTypes - Array of event types to clear
+     */
+    offAll(eventTypes) {
+        if (!eventTypes || !Array.isArray(eventTypes)) {
+            // Clear all handlers
+            this.handlers = {};
+            return;
+        }
+
+        eventTypes.forEach(eventType => {
+            delete this.handlers[eventType];
+        });
+    },
+
+    /**
      * Trigger event handlers
      * 
      * @param {string} eventType
@@ -1715,13 +2258,18 @@ window.Utils = Utils;
 window.SSE = SSE;
 
 // Auto-connect SSE when page loads (if authenticated)
+// SSE runs on separate port 8001 so it won't block main API requests
 document.addEventListener('DOMContentLoaded', () => {
-    // Small delay to ensure Auth is initialized
     setTimeout(() => {
         if (Auth.isAuthenticated()) {
             SSE.connect();
         }
     }, 1000);
+});
+
+// Cleanup SSE on logout
+window.addEventListener('logout', () => {
+    SSE.cleanup();
 });
 
 // Process pending updates when user finishes being busy

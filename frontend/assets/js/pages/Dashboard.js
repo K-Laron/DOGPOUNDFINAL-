@@ -433,6 +433,9 @@ const DashboardPage = {
         const container = document.getElementById('status-legend');
         if (!container) return;
 
+        // Add spacing class to container
+        container.className = 'mt-4 space-y-2';
+
         const total = Object.values(distribution).reduce((a, b) => a + b, 0);
 
         container.innerHTML = Object.entries(distribution).map(([status, count]) => {
@@ -440,7 +443,7 @@ const DashboardPage = {
             const badgeClass = Utils.getStatusBadgeClass(status);
 
             return `
-                <div class="flex items-center justify-between py-3">
+                <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <span class="badge ${badgeClass}">${status}</span>
                     </div>
@@ -641,6 +644,33 @@ const DashboardPage = {
         Toast.info('Refreshing dashboard...');
         await this.loadDashboardData();
         Toast.success('Dashboard refreshed');
+    },
+
+    /**
+     * Cleanup when navigating away
+     * Called by Router before rendering new page
+     */
+    destroy() {
+        // Destroy all chart instances to prevent memory leaks
+        if (typeof Charts !== 'undefined') {
+            Charts.destroyAll();
+        }
+        
+        // Clear SSE handlers for dashboard events
+        if (typeof SSE !== 'undefined') {
+            SSE.offAll(['animals_updated', 'adoptions_updated', 'inventory_updated', 'medical_updated', 'billing_updated']);
+        }
+        
+        // Reset data to prevent stale state
+        this.data = {
+            stats: null,
+            recentAnimals: [],
+            recentActivity: [],
+            pendingAdoptions: [],
+            upcomingTreatments: [],
+            lowStockItems: [],
+            showAllActivity: false
+        };
     }
 };
 

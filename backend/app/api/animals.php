@@ -12,9 +12,6 @@
 // Get available animals for adoption (public)
 $router->get('/animals/available', 'AnimalController@available');
 
-// Get single animal details (public)
-$router->get('/animals/{id}', 'AnimalController@show');
-
 // ============================================
 // PROTECTED ANIMAL ROUTES
 // ============================================
@@ -22,11 +19,20 @@ $router->get('/animals/{id}', 'AnimalController@show');
 // List all animals (with filters)
 $router->get('/animals', 'AnimalController@index', ['Admin', 'Staff', 'Veterinarian']);
 
-// Get animal statistics
+// Get animal statistics - MUST come before /animals/{id}
 $router->get('/animals/stats/summary', 'AnimalController@statistics', ['Admin', 'Staff', 'Veterinarian']);
+
+// Export animals data (CSV, JSON, Excel) - MUST come before /animals/{id}
+$router->get('/animals/export', 'AnimalController@export', ['Admin', 'Staff']);
+
+// Bulk update animal statuses
+$router->post('/animals/bulk-status', 'AnimalController@bulkUpdateStatus', ['Admin', 'Staff']);
 
 // Create new animal record
 $router->post('/animals', 'AnimalController@store', ['Admin', 'Staff', 'Veterinarian']);
+
+// Get single animal details (public) - Parameterized route MUST come AFTER specific routes
+$router->get('/animals/{id}', 'AnimalController@show');
 
 // Update animal record
 $router->put('/animals/{id}', 'AnimalController@update', ['Admin', 'Staff', 'Veterinarian']);
@@ -54,6 +60,5 @@ $router->put('/animals/{id}/impound', 'AnimalController@updateImpoundRecord', ['
 // ANIMAL IMAGE UPLOAD
 // ============================================
 
-// Upload animal image
 // Upload animal image
 $router->post('/animals/{id}/image', 'AnimalController@uploadImage', ['Admin', 'Staff', 'Veterinarian']);

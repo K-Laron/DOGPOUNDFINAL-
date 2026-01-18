@@ -11,6 +11,15 @@ require_once APP_PATH . '/controllers/BaseController.php';
 class NotificationController extends BaseController {
     
     /**
+     * Generate a secure random ID for notifications
+     * @param string $prefix Prefix for the ID
+     * @return string
+     */
+    private function generateSecureId(string $prefix): string {
+        return $prefix . bin2hex(random_bytes(8));
+    }
+    
+    /**
      * Get all notifications
      * GET /notifications
      */
@@ -29,7 +38,7 @@ class NotificationController extends BaseController {
         
         foreach ($lowStock as $item) {
             $notifications[] = [
-                'id' => 'inv_low_' . uniqid(),
+                'id' => $this->generateSecureId('inv_low_'),
                 'title' => "Low Stock: {$item['Item_Name']}",
                 'message' => "Only {$item['Quantity_On_Hand']} remaining (Reorder Level: {$item['Reorder_Level']})",
                 'type' => 'warning',
@@ -51,7 +60,7 @@ class NotificationController extends BaseController {
         foreach ($expiring as $item) {
             $days = (new DateTime($item['Expiration_Date']))->diff(new DateTime())->days;
             $notifications[] = [
-                'id' => 'inv_exp_' . uniqid(),
+                'id' => $this->generateSecureId('inv_exp_'),
                 'title' => "Expiring Soon: {$item['Item_Name']}",
                 'message' => "Expires in {$days} days ({$item['Expiration_Date']})",
                 'type' => 'danger',
@@ -119,7 +128,7 @@ class NotificationController extends BaseController {
 
         foreach ($treatments as $treatment) {
             $notifications[] = [
-                'id' => 'med_' . uniqid(),
+                'id' => $this->generateSecureId('med_'),
                 'title' => "Treatment Due: {$treatment['Name']}",
                 'message' => "{$treatment['Diagnosis_Type']} due on {$treatment['Next_Due_Date']}",
                 'type' => 'warning',

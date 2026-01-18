@@ -42,6 +42,26 @@ const UsersPage = {
                     <p class="page-subtitle">Manage system users and their access</p>
                 </div>
                 <div class="page-actions">
+                    <div class="dropdown" id="export-dropdown">
+                        <button class="btn btn-ghost" onclick="UsersPage.toggleExportMenu()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Export
+                        </button>
+                        <div class="dropdown-menu" id="export-menu" style="display: none;">
+                            <button class="dropdown-item" onclick="UsersPage.exportData('csv')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                Export as CSV
+                            </button>
+                            <button class="dropdown-item" onclick="UsersPage.exportData('json')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                Export as JSON
+                            </button>
+                            <button class="dropdown-item" onclick="UsersPage.exportData('excel')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                Export as Excel
+                            </button>
+                        </div>
+                    </div>
                     <button class="btn btn-secondary" onclick="UsersPage.showAddModal()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                         Add User
@@ -164,27 +184,6 @@ const UsersPage = {
             `).join('')}
         `;
     },
-
-    /**
-     * Load statistics
-     */
-    async loadStats() {
-        try {
-            const response = await API.get('/users/stats/summary');
-
-            if (response.success) {
-                this.renderStats(response.data);
-            }
-        } catch (error) {
-            console.error('Failed to load stats:', error);
-            // Render default stats
-            this.renderStats({});
-        }
-    },
-
-    // ... (keeping intermediate code unchanged if possible, but replace_file_content needs contiguous block)
-    // Actually, since the edits are far apart (line 121 and line 713), I should use multi_replace_file_content.
-
 
     /**
      * Load statistics
@@ -819,6 +818,48 @@ const UsersPage = {
         });
 
         return fields;
+    },
+
+    /**
+     * Toggle export dropdown menu
+     */
+    toggleExportMenu() {
+        const menu = document.getElementById('export-menu');
+        if (menu) {
+            const isVisible = menu.style.display !== 'none';
+            menu.style.display = isVisible ? 'none' : 'block';
+            
+            // Close when clicking outside
+            if (!isVisible) {
+                const closeHandler = (e) => {
+                    if (!e.target.closest('#export-dropdown')) {
+                        menu.style.display = 'none';
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', closeHandler), 0);
+            }
+        }
+    },
+
+    /**
+     * Export users data
+     * @param {string} format - csv, json, or excel
+     */
+    async exportData(format) {
+        // Close the dropdown
+        const menu = document.getElementById('export-menu');
+        if (menu) menu.style.display = 'none';
+
+        try {
+            Toast.info('Preparing export...');
+            await API.users.export({ 
+                format,
+                ...this.state.filters 
+            });
+        } catch (error) {
+            Toast.error(error.message || 'Failed to export data');
+        }
     }
 };
 

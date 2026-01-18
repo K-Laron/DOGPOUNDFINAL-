@@ -8,6 +8,20 @@
 class JWT {
     
     /**
+     * @var PDO|null Database connection for token version verification
+     */
+    private static $db = null;
+    
+    /**
+     * Set database connection for token version verification
+     * 
+     * @param PDO $db Database connection
+     */
+    public static function setDatabase(PDO $db): void {
+        self::$db = $db;
+    }
+    
+    /**
      * Generate JWT token
      * 
      * @param array $payload Token payload data
@@ -99,8 +113,85 @@ class JWT {
             return false;
         }
         
+        // ====================================================
+        // TOKEN VERSION CHECK
+        // Verify token version matches user's current version
+        // This allows server-side token invalidation on logout
+        // ====================================================
+        if (self::$db && isset($payload['user_id']) && isset($payload['token_version'])) {
+            if (!self::verifyTokenVersion($payload['user_id'], $payload['token_version'])) {
+                return false;
+            }
+        }
+        
         // Token is valid - return the payload data
         return $payload;
+    }
+    
+    /**
+     * Verify token version against database
+     * 
+     * @param int $userId User ID
+     * @param int $tokenVersion Token version from payload
+     * @return bool True if version matches
+     */
+    private static function verifyTokenVersion(int $userId, int $tokenVersion): bool {
+        if (!self::$db) {
+            return true; // Skip check if no database connection
+        }
+        
+        try {
+            $stmt = self::$db->prepare("SELECT Token_Version FROM Users WHERE UserID = :user_id AND Is_Deleted = FALSE");
+            $stmt->execute(['user_id' => $userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$user) {
+                return false;
+            }
+            
+            // Token version must match current user version
+            return (int)$user['Token_Version'] === (int)$tokenVersion;
+        } catch (PDOException $e) {
+            error_log("JWT token version check failed: " . $e->getMessage());
+            return true; // Fail open on database errors to prevent lockout
+        }
+    }
+    
+    /**
+     * Increment user's token version (invalidates all existing tokens)
+     * 
+     * @param PDO $db Database connection
+     * @param int $userId User ID
+     * @return bool Success
+     */
+    public static function incrementTokenVersion(PDO $db, int $userId): bool {
+        try {
+            $stmt = $db->prepare("UPDATE Users SET Token_Version = Token_Version + 1 WHERE UserID = :user_id");
+            return $stmt->execute(['user_id' => $userId]);
+        } catch (PDOException $e) {
+            error_log("Failed to increment token version: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Get user's current token version
+     * 
+     * @param PDO $db Database connection
+     * @param int $userId User ID
+     * @return int|null Token version or null if not found
+     */
+    public static function getTokenVersion(PDO $db, int $userId): ?int {
+        try {
+            $stmt = $db->prepare("SELECT Token_Version FROM Users WHERE UserID = :user_id AND Is_Deleted = FALSE");
+            $stmt->execute(['user_id' => $userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return $user ? (int)$user['Token_Version'] : null;
+        } catch (PDOException $e) {
+            error_log("Failed to get token version: " . $e->getMessage());
+            return null;
+        }
     }
 
     /**
@@ -124,16 +215,34 @@ class JWT {
      * Generate refresh token
      * 
      * @param int $userId User ID
+     * @param int|null $tokenVersion Token version (fetched from DB if not provided)
      * @return string Refresh token
      */
-    public static function generateRefreshToken($userId) {
-        return self::generate(
-            [
-                'user_id' => $userId,
-                'type' => 'refresh'
-            ],
-            JWT_REFRESH_EXPIRY
-        );
+    public static function generateRefreshToken($userId, $tokenVersion = null) {
+        $payload = [
+            'user_id' => $userId,
+            'type' => 'refresh'
+        ];
+        
+        // Include token version if available
+        if ($tokenVersion !== null) {
+            $payload['token_version'] = $tokenVersion;
+        }
+        
+        return self::generate($payload, JWT_REFRESH_EXPIRY);
+    }
+    
+    /**
+     * Generate access token with token version for invalidation support
+     * 
+     * @param array $userData User data to include in payload
+     * @param int $tokenVersion User's current token version
+     * @param int|null $expiry Custom expiry time in seconds
+     * @return string JWT token
+     */
+    public static function generateWithVersion(array $userData, int $tokenVersion, $expiry = null): string {
+        $userData['token_version'] = $tokenVersion;
+        return self::generate($userData, $expiry);
     }
 
     /**

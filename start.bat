@@ -1,4 +1,4 @@
-﻿@echo off
+@echo off
 TITLE Catarman Dog Pound System
 echo 🔍 Searching for PHP and XAMPP Services...
 
@@ -30,14 +30,21 @@ if exist "%APACHE_BIN%" (
 )
 
 echo.
-echo 🚀 Starting Backend Server (Port 8000)...
+echo 🚀 Starting Backend API Server (Port 8000)...
 powershell -Command "Start-Process '%PHP_BIN%' -ArgumentList '-S 0.0.0.0:8000 -t backend/public backend/public/index.php' -WindowStyle Hidden"
+
+echo 🚀 Starting SSE Server (Port 8001)...
+powershell -Command "Start-Process '%PHP_BIN%' -ArgumentList '-S 0.0.0.0:8001 -t backend/public backend/public/sse.php' -WindowStyle Hidden"
 
 echo 🚀 Starting Frontend Server (Port 3000)...
 powershell -Command "Start-Process '%PHP_BIN%' -ArgumentList '-S 0.0.0.0:3000 -t frontend' -WindowStyle Hidden"
 
 echo.
 echo ✨ Application & Database Launched!
+echo.
+echo    📡 API Server:  http://localhost:8000
+echo    📡 SSE Server:  http://localhost:8001
+echo    🌐 Frontend:    http://localhost:3000
 echo.
 echo Opening System and Database Admin...
 timeout /t 3 >nul

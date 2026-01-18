@@ -26,6 +26,82 @@ const API = {
     timeout: 30000,
 
     /**
+     * CSRF token for state-changing requests
+     * Stored in memory (not localStorage) for security
+     */
+    _csrfToken: null,
+
+    /**
+     * Set CSRF token
+     * @param {string} token
+     */
+    setCsrfToken(token) {
+        this._csrfToken = token;
+    },
+
+    /**
+     * Get CSRF token
+     * @returns {string|null}
+     */
+    getCsrfToken() {
+        return this._csrfToken;
+    },
+
+    /**
+     * Clear CSRF token (call on logout)
+     */
+    clearCsrfToken() {
+        this._csrfToken = null;
+    },
+
+    /**
+     * Token refresh state management
+     * Prevents multiple simultaneous refresh attempts and queues failed requests
+     */
+    _isRefreshing: false,
+    _pendingRequests: [],
+
+    /**
+     * Queue a request to retry after token refresh
+     * @param {Function} resolve - Promise resolve function
+     * @param {Function} reject - Promise reject function  
+     * @param {string} method - HTTP method
+     * @param {string} endpoint - API endpoint
+     * @param {Object} data - Request data
+     * @param {Object} options - Request options
+     */
+    _queueRequest(resolve, reject, method, endpoint, data, options) {
+        this._pendingRequests.push({ resolve, reject, method, endpoint, data, options });
+    },
+
+    /**
+     * Process all queued requests after token refresh
+     * @param {boolean} success - Whether refresh was successful
+     */
+    async _processQueue(success) {
+        const queue = [...this._pendingRequests];
+        this._pendingRequests = [];
+
+        for (const request of queue) {
+            if (success) {
+                try {
+                    const result = await this.request(
+                        request.method, 
+                        request.endpoint, 
+                        request.data, 
+                        { ...request.options, _isRetry: true }
+                    );
+                    request.resolve(result);
+                } catch (error) {
+                    request.reject(error);
+                }
+            } else {
+                request.reject(new APIError('Session expired. Please login again.', 401));
+            }
+        }
+    },
+
+    /**
      * ==========================================
      * CORE REQUEST METHOD
      * ==========================================
@@ -49,6 +125,12 @@ const API = {
         const token = Auth.getToken();
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        // Add CSRF token for state-changing requests
+        const method_upper = method.toUpperCase();
+        if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(method_upper) && this._csrfToken) {
+            headers['X-CSRF-Token'] = this._csrfToken;
         }
 
         // Merge custom headers
@@ -117,6 +199,46 @@ const API = {
 
             // Handle errors
             if (!response.ok) {
+                // Handle 401 with token refresh and retry queue
+                if (response.status === 401 && !options._isRetry && !window.location.pathname.includes('login')) {
+                    // If already refreshing, queue this request
+                    if (this._isRefreshing) {
+                        return new Promise((resolve, reject) => {
+                            this._queueRequest(resolve, reject, method, endpoint, data, options);
+                        });
+                    }
+
+                    // Start refresh process
+                    this._isRefreshing = true;
+
+                    try {
+                        const refreshSuccess = await Auth.refreshToken();
+                        this._isRefreshing = false;
+
+                        if (refreshSuccess) {
+                            // Process queued requests
+                            this._processQueue(true);
+                            
+                            // Retry the original request with new token
+                            return this.request(method, endpoint, data, { ...options, _isRetry: true });
+                        } else {
+                            // Refresh failed - process queue with failure
+                            this._processQueue(false);
+                            Auth.logout();
+                            Toast.error('Session expired. Please login again.');
+                            Router.navigate('/login');
+                            throw new APIError('Session expired', 401, responseData);
+                        }
+                    } catch (refreshError) {
+                        this._isRefreshing = false;
+                        this._processQueue(false);
+                        Auth.logout();
+                        Toast.error('Session expired. Please login again.');
+                        Router.navigate('/login');
+                        throw new APIError('Session expired', 401, responseData);
+                    }
+                }
+
                 return this.handleError(response, responseData);
             }
 
@@ -152,14 +274,11 @@ const API = {
         let message = data?.message || 'An error occurred';
 
         // Handle specific status codes
+        // Note: 401 is handled in request() with token refresh retry logic
         switch (status) {
             case 401:
-                // Unauthorized - clear auth and redirect
-                if (!window.location.pathname.includes('login')) {
-                    Auth.logout();
-                    Toast.error('Session expired. Please login again.');
-                    Router.navigate('/login');
-                }
+                // Fallback for 401 errors that bypass the retry logic
+                message = data?.message || 'Authentication required.';
                 break;
 
             case 403:
@@ -249,6 +368,133 @@ const API = {
      */
     delete(endpoint, data = null, options = {}) {
         return this.request('DELETE', endpoint, data, options);
+    },
+
+    /**
+     * ==========================================
+     * RETRY-ENABLED REQUEST METHODS
+     * ==========================================
+     */
+
+    /**
+     * Make a request with automatic retry for transient failures
+     * @param {string} method - HTTP method
+     * @param {string} endpoint - API endpoint
+     * @param {Object} data - Request data
+     * @param {Object} options - Request options
+     * @param {Object} retryOptions - Retry configuration
+     * @returns {Promise<Object>}
+     */
+    async requestWithRetry(method, endpoint, data = null, options = {}, retryOptions = {}) {
+        return Utils.retry(
+            () => this.request(method, endpoint, data, options),
+            {
+                maxRetries: retryOptions.maxRetries || 3,
+                baseDelay: retryOptions.baseDelay || 1000,
+                maxDelay: retryOptions.maxDelay || 10000,
+                shouldRetry: (error) => {
+                    // Retry on network errors, timeouts, and 5xx server errors
+                    if (error instanceof APIError) {
+                        return error.status === 0 || error.status === 408 || error.status >= 500;
+                    }
+                    return error.name === 'TypeError';
+                },
+                onRetry: retryOptions.onRetry || null
+            }
+        );
+    },
+
+    /**
+     * GET request with automatic retry
+     * @param {string} endpoint
+     * @param {Object} params
+     * @param {Object} options
+     * @returns {Promise<Object>}
+     */
+    getWithRetry(endpoint, params = null, options = {}) {
+        return this.requestWithRetry('GET', endpoint, params, options);
+    },
+
+    /**
+     * POST request with automatic retry
+     * @param {string} endpoint
+     * @param {Object} data
+     * @param {Object} options
+     * @returns {Promise<Object>}
+     */
+    postWithRetry(endpoint, data = null, options = {}) {
+        return this.requestWithRetry('POST', endpoint, data, options);
+    },
+
+    /**
+     * Download file (export)
+     * @param {string} endpoint
+     * @param {Object} params - Query parameters including format
+     * @returns {Promise<void>}
+     */
+    async download(endpoint, params = {}) {
+        const url = `${this.baseURL}${endpoint}`;
+        
+        // Build query string
+        const queryParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+                queryParams.append(key, value);
+            }
+        });
+        
+        const queryString = queryParams.toString();
+        const requestUrl = queryString ? `${url}?${queryString}` : url;
+        
+        // Build headers
+        const headers = {};
+        const token = Auth.getToken();
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        try {
+            const response = await fetch(requestUrl, { headers });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new APIError(errorData.message || 'Export failed', response.status);
+            }
+            
+            // Get filename from Content-Disposition header or generate one
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = 'export';
+            if (contentDisposition) {
+                const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+                if (match && match[1]) {
+                    filename = match[1].replace(/['"]/g, '');
+                }
+            } else {
+                // Generate filename based on format
+                const format = params.format || 'csv';
+                const ext = format === 'excel' ? 'xlsx' : format;
+                filename = `export_${new Date().toISOString().split('T')[0]}.${ext}`;
+            }
+            
+            // Download the file
+            const blob = await response.blob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+            
+            Toast.success('Export downloaded successfully');
+        } catch (error) {
+            if (error instanceof APIError) {
+                throw error;
+            }
+            console.error('Download error:', error);
+            throw new APIError('Failed to download export', 500);
+        }
     },
 
     /**
@@ -343,6 +589,11 @@ const API = {
 
         roles() {
             return API.get('/roles');
+        },
+
+        // Export users data
+        export(params = {}) {
+            return API.download('/users/export', params);
         }
     },
 
@@ -397,6 +648,16 @@ const API = {
 
         updateImpound(animalId, data) {
             return API.put(`/animals/${animalId}/impound`, data);
+        },
+
+        // Export animals data
+        export(params = {}) {
+            return API.download('/animals/export', params);
+        },
+
+        // Bulk update status
+        bulkUpdateStatus(animalIds, status) {
+            return API.post('/animals/bulk-status', { animal_ids: animalIds, status });
         }
     },
 
@@ -609,6 +870,16 @@ const API = {
         // Get customers with unpaid invoices
         customersWithBills() {
             return API.get('/invoices/customers-with-bills');
+        },
+
+        // Export invoices data
+        exportInvoices(params = {}) {
+            return API.download('/invoices/export', params);
+        },
+
+        // Export payments data
+        exportPayments(params = {}) {
+            return API.download('/payments/export', params);
         }
     },
 
@@ -630,6 +901,11 @@ const API = {
 
         intake(period = 'year') {
             return API.get('/dashboard/intake', { period });
+        },
+
+        // Get trends/analytics data
+        trends() {
+            return API.get('/dashboard/trends');
         }
     },
 

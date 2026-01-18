@@ -263,6 +263,11 @@ class AuthMiddleware
             return trim($matches[1]);
         }
 
+        // Fallback: Check for token in query string (for file downloads)
+        if (isset($_GET['token']) && !empty($_GET['token'])) {
+            return trim($_GET['token']);
+        }
+
         return null;
     }
 

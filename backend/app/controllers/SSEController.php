@@ -45,8 +45,18 @@ class SSEController extends BaseController
         // Get user ID from the injected user (if authenticated)
         $userId = $this->user['UserID'] ?? null;
 
-        // Get last known timestamps from query params
-        $lastCheck = $_GET['last_check'] ?? date('Y-m-d H:i:s', strtotime('-1 minute'));
+        // Get last known timestamps from query params - validate datetime format
+        $lastCheck = $_GET['last_check'] ?? null;
+        if ($lastCheck !== null) {
+            // Validate datetime format (Y-m-d H:i:s)
+            $parsed = \DateTime::createFromFormat('Y-m-d H:i:s', $lastCheck);
+            if (!$parsed || $parsed->format('Y-m-d H:i:s') !== $lastCheck) {
+                // Invalid format, use default
+                $lastCheck = date('Y-m-d H:i:s', strtotime('-1 minute'));
+            }
+        } else {
+            $lastCheck = date('Y-m-d H:i:s', strtotime('-1 minute'));
+        }
 
         $startTime = time();
         $lastEventTime = $lastCheck;

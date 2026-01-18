@@ -268,7 +268,7 @@ const HoverPreview = {
      * @returns {Promise<string>}
      */
     async loadAnimalPreview(id) {
-        const response = await API.get(`/animals.php?id=${id}`);
+        const response = await API.get(`/animals/${id}`);
         const animal = response.animal || response;
 
         const imageUrl = animal.Image_URL || '/assets/images/default-animal.jpg';
@@ -306,7 +306,7 @@ const HoverPreview = {
      * @returns {Promise<string>}
      */
     async loadUserPreview(id) {
-        const response = await API.get(`/users.php?id=${id}`);
+        const response = await API.get(`/users/${id}`);
         const user = response.user || response;
 
         const fullName = `${user.First_Name || ''} ${user.Last_Name || ''}`.trim() || 'Unknown';
@@ -347,7 +347,7 @@ const HoverPreview = {
      * @returns {Promise<string>}
      */
     async loadAdoptionPreview(id) {
-        const response = await API.get(`/adoptions.php?id=${id}`);
+        const response = await API.get(`/adoptions/${id}`);
         const adoption = response.adoption || response;
 
         const statusClass = Utils.getStatusBadgeClass(adoption.Status);

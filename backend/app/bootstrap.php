@@ -56,6 +56,7 @@ require_once APP_PATH . '/utils/JWT.php';
 require_once APP_PATH . '/utils/Validator.php';
 require_once APP_PATH . '/utils/Router.php';
 require_once APP_PATH . '/middleware/RequestLogger.php';
+require_once APP_PATH . '/middleware/CsrfMiddleware.php';
 require_once APP_PATH . '/config/database.php';
 
 // ============================================
@@ -148,7 +149,7 @@ class App
         header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 
         // Which headers can the frontend send?
-        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin");
+        header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, Accept, Origin, X-CSRF-Token");
 
         // Allow cookies/credentials in cross-origin requests
         header("Access-Control-Allow-Credentials: true");
@@ -156,7 +157,7 @@ class App
         // Cache preflight response for 24 hours (reduces OPTIONS requests)
         header("Access-Control-Max-Age: 86400");
 
-        // All API responses are JSON
+        // Default Content-Type for API responses (can be overridden by specific endpoints)
         header("Content-Type: application/json; charset=UTF-8");
 
         // ====================================================
@@ -201,8 +202,9 @@ class App
             $database = new Database();
             $this->db = $database->getConnection();
         } catch (Exception $e) {
-            error_log("Database initialization failed: " . $e->getMessage());
-            Response::serverError("Service temporarily unavailable. Please try again later.");
+            // Use ErrorHandler to centralize logging and safe responses
+            require_once APP_PATH . '/utils/ErrorHandler.php';
+            ErrorHandler::handle($e);
         }
     }
 

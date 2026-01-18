@@ -7,6 +7,8 @@
  */
 
 require_once APP_PATH . '/controllers/BaseController.php';
+require_once APP_PATH . '/utils/TokenGenerator.php';
+require_once APP_PATH . '/utils/CsrfToken.php';
 
 class AuthController extends BaseController {
     
@@ -59,15 +61,17 @@ class AuthController extends BaseController {
             Response::error("Your account is " . strtolower($user['Account_Status']) . ". Please contact support.", 403);
         }
         
-        // Generate tokens
-        $accessToken = JWT::generate([
+        // Generate tokens with token version for invalidation support
+        $tokenVersion = (int)($user['Token_Version'] ?? 1);
+        
+        $accessToken = JWT::generateWithVersion([
             'user_id' => $user['UserID'],
             'email' => $user['Email'],
             'username' => $user['Username'],
             'role' => $user['Role_Name']
-        ]);
+        ], $tokenVersion);
         
-        $refreshToken = JWT::generateRefreshToken($user['UserID']);
+        $refreshToken = JWT::generateRefreshToken($user['UserID'], $tokenVersion);
         
         // Log successful login
         $this->logLoginActivity($user['UserID']);
@@ -76,6 +80,7 @@ class AuthController extends BaseController {
         Response::success([
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
+            'csrf_token' => CsrfToken::createWithExpiry(),
             'token_type' => 'Bearer',
             'expires_in' => JWT_EXPIRY,
             'user' => [
@@ -211,15 +216,18 @@ class AuthController extends BaseController {
             Response::forbidden("Account is " . strtolower($user['Account_Status']));
         }
         
-        // Generate new access token
-        $accessToken = JWT::generate([
+        // Generate new access token with current token version
+        $tokenVersion = (int)($user['Token_Version'] ?? 1);
+        
+        $accessToken = JWT::generateWithVersion([
             'user_id' => $user['UserID'],
             'email' => $user['Email'],
             'role' => $user['Role_Name']
-        ]);
+        ], $tokenVersion);
         
         Response::success([
             'access_token' => $accessToken,
+            'csrf_token' => CsrfToken::createWithExpiry(),
             'token_type' => 'Bearer',
             'expires_in' => JWT_EXPIRY
         ], "Token refreshed");
@@ -228,52 +236,93 @@ class AuthController extends BaseController {
     /**
      * Logout
      * POST /auth/logout
+     * 
+     * Invalidates all tokens for the current user by incrementing token version
      */
     public function logout() {
-        // JWT is stateless, so we just log the action
         if ($this->user) {
-            $this->logActivity('LOGOUT', 'User logged out');
+            // Increment token version to invalidate all existing tokens
+            JWT::incrementTokenVersion($this->db, $this->user['UserID']);
+            $this->logActivity('LOGOUT', 'User logged out - all tokens invalidated');
         }
         
-        Response::success(null, "Logged out successfully");
+        Response::success(null, "Logged out successfully. All active sessions have been invalidated.");
     }
     
     /**
      * Logout from all sessions
      * POST /auth/logout-all
+     * 
+     * Invalidates all tokens by incrementing token version (same as logout)
      */
     public function logoutAll() {
-        // In a stateless JWT setup without a token blacklist/versioning, 
-        // we can't strictly invalidate other tokens server-side.
-        // We log the action for audit purposes.
         if ($this->user) {
-            $this->logActivity('LOGOUT_ALL', 'User requested logout from all sessions');
+            // Increment token version to invalidate all existing tokens
+            JWT::incrementTokenVersion($this->db, $this->user['UserID']);
+            $this->logActivity('LOGOUT_ALL', 'User logged out from all sessions - all tokens invalidated');
         }
         
-        Response::success(null, "Logged out from all sessions successfully");
+        Response::success(null, "Logged out from all sessions successfully. All tokens have been invalidated.");
     }
     
     /**
-     * Forgot password - request reset (placeholder)
+     * Forgot password - request reset
      * POST /auth/forgot-password
+     * 
+     * Generates a password reset token and stores it in the database.
+     * In production, this would send an email with the reset link.
      */
     public function forgotPassword() {
         $this->validate([
             'email' => 'required|email'
         ]);
         
-        // In a real implementation, you would:
-        // 1. Generate a password reset token
-        // 2. Store it in the database with expiry
-        // 3. Send email with reset link
+        $email = $this->input('email');
         
-        // For now, just return success (don't reveal if email exists)
-        Response::success(null, "If your email exists in our system, you will receive a password reset link.");
+        // Find user by email (but don't reveal if email exists for security)
+        $stmt = $this->db->prepare("
+            SELECT UserID, FirstName, Email 
+            FROM Users 
+            WHERE Email = :email AND Is_Deleted = FALSE AND Account_Status = 'Active'
+        ");
+        $stmt->execute(['email' => $email]);
+        $user = $stmt->fetch();
+        
+        if ($user) {
+            try {
+                // Generate password reset token (expires in 1 hour)
+                $token = TokenGenerator::createPasswordResetToken($this->db, $user['UserID'], 3600);
+                
+                // Log the action
+                $this->logPasswordResetRequest($user['UserID']);
+                
+                // In production, send email here:
+                // EmailService::sendPasswordReset($user['Email'], $user['FirstName'], $token);
+                
+                // For development/testing, log the token (remove in production!)
+                if (defined('APP_ENV') && APP_ENV === 'development') {
+                    error_log("Password reset token for {$email}: {$token}");
+                }
+                
+            } catch (Exception $e) {
+                error_log("Failed to create password reset token: " . $e->getMessage());
+                // Don't reveal the error to the user
+            }
+        }
+        
+        // Always return success to prevent email enumeration attacks
+        Response::success([
+            'message' => 'If your email exists in our system, you will receive a password reset link.',
+            'expires_in' => 3600 // 1 hour
+        ], "Password reset request processed");
     }
     
     /**
-     * Reset password with token (placeholder)
+     * Reset password with token
      * POST /auth/reset-password
+     * 
+     * Validates the reset token and updates the user's password.
+     * Also invalidates all existing sessions.
      */
     public function resetPassword() {
         $this->validate([
@@ -281,13 +330,129 @@ class AuthController extends BaseController {
             'password' => 'required|min:8'
         ]);
         
-        // In a real implementation, you would:
-        // 1. Verify the reset token
-        // 2. Check if it's not expired
-        // 3. Update the user's password
-        // 4. Invalidate the token
+        $token = $this->input('token');
+        $newPassword = $this->input('password');
         
-        Response::error("Password reset is not yet implemented", 501);
+        // Validate the token
+        $tokenRecord = TokenGenerator::validatePasswordResetToken($this->db, $token);
+        
+        if (!$tokenRecord) {
+            Response::error("Invalid or expired reset token. Please request a new password reset.", 400);
+        }
+        
+        $this->db->beginTransaction();
+        
+        try {
+            // Hash the new password
+            $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+            
+            // Update user's password and increment token version (invalidates all sessions)
+            $stmt = $this->db->prepare("
+                UPDATE Users 
+                SET Password_Hash = :password, 
+                    Token_Version = Token_Version + 1,
+                    Updated_At = NOW()
+                WHERE UserID = :user_id
+            ");
+            $stmt->execute([
+                'password' => $passwordHash,
+                'user_id' => $tokenRecord['UserID']
+            ]);
+            
+            // Mark the token as used
+            TokenGenerator::markTokenUsed($this->db, $tokenRecord['TokenID']);
+            
+            // Log the action
+            $this->logPasswordReset($tokenRecord['UserID']);
+            
+            $this->db->commit();
+            
+            Response::success([
+                'message' => 'Password has been reset successfully. Please login with your new password.',
+                'sessions_invalidated' => true
+            ], "Password reset successful");
+            
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            error_log("Password reset failed: " . $e->getMessage());
+            Response::serverError("Failed to reset password. Please try again.");
+        }
+    }
+    
+    /**
+     * Validate reset token (check if valid without using it)
+     * POST /auth/validate-reset-token
+     */
+    public function validateResetToken() {
+        $this->validate([
+            'token' => 'required'
+        ]);
+        
+        $token = $this->input('token');
+        $tokenRecord = TokenGenerator::validatePasswordResetToken($this->db, $token);
+        
+        if (!$tokenRecord) {
+            Response::error("Invalid or expired reset token", 400);
+        }
+        
+        Response::success([
+            'valid' => true,
+            'email' => $this->maskEmail($tokenRecord['Email']),
+            'expires_at' => $tokenRecord['Expires_At']
+        ], "Token is valid");
+    }
+    
+    /**
+     * Mask email for privacy (show first 2 chars and domain)
+     */
+    private function maskEmail(string $email): string {
+        $parts = explode('@', $email);
+        if (count($parts) !== 2) {
+            return '***@***';
+        }
+        
+        $local = $parts[0];
+        $domain = $parts[1];
+        
+        $maskedLocal = substr($local, 0, 2) . str_repeat('*', max(0, strlen($local) - 2));
+        
+        return $maskedLocal . '@' . $domain;
+    }
+    
+    /**
+     * Log password reset request
+     */
+    private function logPasswordResetRequest($userId) {
+        try {
+            $stmt = $this->db->prepare("
+                INSERT INTO Activity_Logs (UserID, Action_Type, Description, IP_Address, Log_Date)
+                VALUES (:user_id, 'PASSWORD_RESET_REQUEST', 'Password reset requested', :ip, NOW())
+            ");
+            $stmt->execute([
+                'user_id' => $userId,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null
+            ]);
+        } catch (PDOException $e) {
+            error_log("Failed to log password reset request: " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Log password reset completion
+     */
+    private function logPasswordReset($userId) {
+        try {
+            $stmt = $this->db->prepare("
+                INSERT INTO Activity_Logs (UserID, Action_Type, Description, IP_Address, Log_Date)
+                VALUES (:user_id, 'PASSWORD_RESET', 'Password was reset successfully', :ip, NOW())
+            ");
+            $stmt->execute([
+                'user_id' => $userId,
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? null
+            ]);
+        } catch (PDOException $e) {
+            error_log("Failed to log password reset: " . $e->getMessage());
+        }
     }
     
     /**

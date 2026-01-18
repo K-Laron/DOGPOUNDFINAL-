@@ -18,6 +18,9 @@ $router->get('/invoices', 'BillingController@indexInvoices', ['Admin', 'Staff', 
 // Get invoice statistics
 $router->get('/invoices/stats/summary', 'BillingController@invoiceStatistics', ['Admin', 'Staff']);
 
+// Export invoices data (CSV, JSON, Excel)
+$router->get('/invoices/export', 'BillingController@exportInvoices', ['Admin', 'Staff']);
+
 // Get customers with unpaid invoices (for dropdown) - MUST be before /invoices/{id}
 $router->get('/invoices/customers-with-bills', 'BillingController@customersWithUnpaidInvoices', ['Admin', 'Staff']);
 
@@ -39,6 +42,9 @@ $router->put('/invoices/{id}/cancel', 'BillingController@cancelInvoice', ['Admin
 
 // List all payments
 $router->get('/payments', 'BillingController@indexPayments', ['Admin', 'Staff']);
+
+// Export payments data (CSV, JSON, Excel)
+$router->get('/payments/export', 'BillingController@exportPayments', ['Admin', 'Staff']);
 
 // Get single payment
 $router->get('/payments/{id}', 'BillingController@showPayment', ['Admin', 'Staff']);

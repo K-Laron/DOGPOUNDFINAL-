@@ -33,27 +33,7 @@ try {
     $app = new App();
     $app->run();
 } catch (Throwable $e) {
-    // Log the error
-    error_log("Application Error: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
-    
-    // Send generic error response
-    http_response_code(500);
-    header('Content-Type: application/json; charset=UTF-8');
-    
-    $response = [
-        'success' => false,
-        'message' => 'Internal server error',
-        'timestamp' => date('c')
-    ];
-    
-    // Add debug info in development
-    if (defined('APP_ENV') && APP_ENV === 'development') {
-        $response['debug'] = [
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine()
-        ];
-    }
-    
-    echo json_encode($response);
+    // Use centralized error handler to log and respond safely
+    require_once APP_PATH . '/utils/ErrorHandler.php';
+    ErrorHandler::handle($e);
 }

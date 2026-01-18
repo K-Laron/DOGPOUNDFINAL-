@@ -36,7 +36,8 @@ const MedicalPage = {
         'Treatment',
         'Emergency',
         'Deworming',
-        'Spay/Neuter'
+        'Spay/Neuter',
+        'Euthanasia'
     ],
 
     /**
@@ -458,7 +459,20 @@ const MedicalPage = {
                 {
                     key: 'Diagnosis_Type',
                     label: 'Type',
-                    render: val => `<span class="badge badge-primary">${val}</span>`
+                    render: val => {
+                        const colorMap = {
+                            'Checkup': 'badge-info',
+                            'Vaccination': 'badge-success',
+                            'Surgery': 'badge-purple',
+                            'Treatment': 'badge-primary',
+                            'Emergency': 'badge-warning',
+                            'Deworming': 'badge-secondary',
+                            'Spay/Neuter': 'badge-teal',
+                            'Euthanasia': 'badge-danger'
+                        };
+                        const badgeClass = colorMap[val] || 'badge-primary';
+                        return `<span class="badge ${badgeClass}">${val}</span>`;
+                    }
                 },
                 {
                     key: 'Vaccine_Name',

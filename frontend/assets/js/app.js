@@ -51,6 +51,9 @@ const App = {
             // Initialize onboarding for new users (only if authenticated)
             if (isAuthenticated) {
                 this.initOnboarding();
+                
+                // Initialize mobile bottom navigation
+                this.initMobileNav();
             }
 
             // Hide loading screen
@@ -585,6 +588,16 @@ const App = {
             tooltip.remove();
             localStorage.setItem('dogpound_onboarding_complete', 'true');
         });
+    },
+
+    /**
+     * Initialize mobile bottom navigation
+     */
+    initMobileNav() {
+        if (typeof MobileNav !== 'undefined') {
+            MobileNav.render();
+            this.log('Mobile navigation initialized');
+        }
     }
 };
 

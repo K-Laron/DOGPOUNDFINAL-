@@ -17,6 +17,11 @@ const Router = {
     currentRoute: null,
 
     /**
+     * Current component instance (for cleanup)
+     */
+    currentComponent: null,
+
+    /**
      * Previous route
      */
     previousRoute: null,
@@ -418,6 +423,16 @@ const Router = {
             // Show loading
             Store.setLoading(true);
 
+            // Cleanup previous component if it has a destroy method
+            if (this.currentComponent && typeof this.currentComponent.destroy === 'function') {
+                try {
+                    await this.currentComponent.destroy();
+                } catch (e) {
+                    console.warn('Component destroy error:', e);
+                }
+            }
+            this.currentComponent = route.component;
+
             // Get containers
             const authContainer = Utils.$('#auth-container');
             const mainContainer = Utils.$('#main-container');
@@ -532,6 +547,11 @@ const Router = {
                 if (!sidebar.innerHTML.trim()) {
                     Sidebar.render();
                 }
+            }
+            
+            // Initialize mobile navigation if not already rendered
+            if (typeof MobileNav !== 'undefined' && !Utils.$('#mobile-nav')) {
+                MobileNav.render();
             }
         } else {
             // Hide sidebar for landing layout

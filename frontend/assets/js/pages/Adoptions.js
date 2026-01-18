@@ -668,6 +668,28 @@ const AdoptionsPage = {
                 Toast.error(error.message || 'Failed to cancel request');
             }
         }
+    },
+
+    /**
+     * Cleanup when navigating away
+     * Called by Router before rendering new page
+     */
+    destroy() {
+        // Clear SSE handlers for adoptions
+        if (typeof SSE !== 'undefined') {
+            SSE.off('adoptions_updated');
+        }
+        
+        // Reset state
+        this.state = {
+            adoptions: [],
+            pagination: { page: 1, perPage: 20, total: 0 },
+            filters: {
+                status: '',
+                search: ''
+            },
+            loading: false
+        };
     }
 };
 

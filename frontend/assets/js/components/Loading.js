@@ -1,11 +1,27 @@
 /**
  * Loading Component
- * Various loading indicators and skeletons
+ * Various loading indicators, skeletons, and empty states
  * 
  * @package AnimalShelter
  */
 
 const Loading = {
+    /**
+     * SVG Icons for empty states
+     */
+    emptyStateIcons: {
+        noData: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15" opacity="0.5"/></svg>`,
+        noAnimals: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.172C10 3.782 8.423 2.679 6.5 3c-2.823.47-4.113 6.006-4 7 .08.703 1.725 1.722 3.656 1 1.261-.472 1.96-1.45 2.344-2.5"/><path d="M14.267 5.172c0-1.39 1.577-2.493 3.5-2.172 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5"/><path d="M8 14v.5"/><path d="M16 14v.5"/><path d="M11.25 16.25h1.5L12 17l-.75-.75Z"/><path d="M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444c0-1.061-.162-2.2-.493-3.309m-9.243-6.082A8.801 8.801 0 0 1 12 5c.78 0 1.5.108 2.161.306"/><line x1="4" y1="4" x2="20" y2="20" opacity="0.5"/></svg>`,
+        noResults: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11" opacity="0.5"/></svg>`,
+        noUsers: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><line x1="1" y1="1" x2="23" y2="23" opacity="0.3"/></svg>`,
+        noMedical: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/><circle cx="12" cy="12" r="10" opacity="0.3"/></svg>`,
+        noInventory: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96" opacity="0.5"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+        noBilling: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/><line x1="7" y1="15" x2="13" y2="15" opacity="0.5"/></svg>`,
+        error: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+        offline: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>`,
+        success: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
+    },
+
     /**
      * Render spinner
      * @param {Object} options
@@ -312,6 +328,153 @@ const Loading = {
             button.innerHTML = button.dataset.originalText || button.innerHTML;
             button.classList.remove('is-loading');
         }
+    },
+
+    /**
+     * Render enhanced empty state
+     * @param {Object} options
+     * @returns {string}
+     */
+    emptyState(options = {}) {
+        const {
+            type = 'noData',
+            title = 'No data found',
+            description = 'There are no items to display at the moment.',
+            action = null,
+            actionLabel = 'Add New',
+            actionIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>',
+            secondaryAction = null,
+            secondaryLabel = 'Learn More'
+        } = options;
+
+        const icon = this.emptyStateIcons[type] || this.emptyStateIcons.noData;
+
+        return `
+            <div class="empty-state-enhanced animate-fade-in-up">
+                <div class="empty-state-icon-wrapper">
+                    <div class="empty-state-icon-bg"></div>
+                    <div class="empty-state-icon">${icon}</div>
+                </div>
+                <h3 class="empty-state-title">${title}</h3>
+                <p class="empty-state-description">${description}</p>
+                ${action || secondaryAction ? `
+                    <div class="empty-state-actions">
+                        ${action ? `
+                            <button class="btn btn-primary" onclick="${action}">
+                                ${actionIcon}
+                                <span>${actionLabel}</span>
+                            </button>
+                        ` : ''}
+                        ${secondaryAction ? `
+                            <button class="btn btn-ghost" onclick="${secondaryAction}">
+                                ${secondaryLabel}
+                            </button>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    },
+
+    /**
+     * Render error state with retry
+     * @param {Object} options
+     * @returns {string}
+     */
+    errorState(options = {}) {
+        const {
+            title = 'Something went wrong',
+            description = 'We encountered an error while loading. Please try again.',
+            retryAction = null,
+            retryLabel = 'Try Again',
+            showSupport = false
+        } = options;
+
+        return `
+            <div class="error-state-enhanced animate-fade-in-up">
+                <div class="error-state-icon-wrapper">
+                    <div class="error-state-icon-bg"></div>
+                    <div class="error-state-icon">${this.emptyStateIcons.error}</div>
+                </div>
+                <h3 class="error-state-title">${title}</h3>
+                <p class="error-state-description">${description}</p>
+                <div class="error-state-actions">
+                    ${retryAction ? `
+                        <button class="btn btn-primary" onclick="${retryAction}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                            <span>${retryLabel}</span>
+                        </button>
+                    ` : ''}
+                    ${showSupport ? `
+                        <button class="btn btn-ghost" onclick="window.open('mailto:support@catarmandogpound.gov.ph')">
+                            Contact Support
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render offline state
+     * @param {Object} options
+     * @returns {string}
+     */
+    offlineState(options = {}) {
+        const {
+            title = 'You\'re offline',
+            description = 'Please check your internet connection and try again.',
+            retryAction = 'location.reload()'
+        } = options;
+
+        return `
+            <div class="offline-state-enhanced animate-fade-in-up">
+                <div class="offline-state-icon-wrapper">
+                    <div class="offline-state-icon-bg"></div>
+                    <div class="offline-state-icon">${this.emptyStateIcons.offline}</div>
+                </div>
+                <h3 class="offline-state-title">${title}</h3>
+                <p class="offline-state-description">${description}</p>
+                <div class="offline-state-actions">
+                    <button class="btn btn-primary" onclick="${retryAction}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                        <span>Retry</span>
+                    </button>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render success state
+     * @param {Object} options
+     * @returns {string}
+     */
+    successState(options = {}) {
+        const {
+            title = 'Success!',
+            description = 'The operation completed successfully.',
+            action = null,
+            actionLabel = 'Continue'
+        } = options;
+
+        return `
+            <div class="success-state-enhanced animate-fade-in-up">
+                <div class="success-state-icon-wrapper animate-celebrate">
+                    <div class="success-state-icon-bg"></div>
+                    <div class="success-state-icon">${this.emptyStateIcons.success}</div>
+                </div>
+                <h3 class="success-state-title">${title}</h3>
+                <p class="success-state-description">${description}</p>
+                ${action ? `
+                    <div class="success-state-actions">
+                        <button class="btn btn-primary" onclick="${action}">
+                            ${actionLabel}
+                        </button>
+                    </div>
+                ` : ''}
+            </div>
+        `;
     }
 };
 

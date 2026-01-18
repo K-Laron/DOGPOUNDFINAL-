@@ -247,7 +247,7 @@ class MedicalController extends BaseController {
     public function store() {
         $this->validate([
             'animal_id' => 'required|integer',
-            'diagnosis_type' => 'required|in:Checkup,Vaccination,Surgery,Treatment,Emergency,Deworming,Spay/Neuter',
+            'diagnosis_type' => 'required|in:Checkup,Vaccination,Surgery,Treatment,Emergency,Deworming,Spay/Neuter,Euthanasia',
             'treatment_notes' => 'required'
         ]);
         
@@ -306,6 +306,13 @@ class MedicalController extends BaseController {
         
         $this->logActivity('CREATE_MEDICAL_RECORD', "Created medical record ID: {$recordId} for animal ID: {$this->input('animal_id')}");
         
+        // If diagnosis is Euthanasia, update animal status to Deceased
+        if ($this->input('diagnosis_type') === 'Euthanasia') {
+            $updateStmt = $this->db->prepare("UPDATE Animals SET Current_Status = 'Deceased', Updated_At = NOW() WHERE AnimalID = :animal_id");
+            $updateStmt->execute(['animal_id' => $this->input('animal_id')]);
+            $this->logActivity('UPDATE_ANIMAL_STATUS', "Animal ID: {$this->input('animal_id')} status changed to Deceased due to Euthanasia");
+        }
+        
         // Get created record
         $stmt = $this->db->prepare("
             SELECT mr.*, 
@@ -338,7 +345,7 @@ class MedicalController extends BaseController {
         $params = ['id' => $id];
         
         if ($this->has('diagnosis_type')) {
-            $this->validate(['diagnosis_type' => 'in:Checkup,Vaccination,Surgery,Treatment,Emergency,Deworming,Spay/Neuter']);
+            $this->validate(['diagnosis_type' => 'in:Checkup,Vaccination,Surgery,Treatment,Emergency,Deworming,Spay/Neuter,Euthanasia']);
             $updates[] = "Diagnosis_Type = :diagnosis_type";
             $params['diagnosis_type'] = $this->input('diagnosis_type');
         }
@@ -366,6 +373,20 @@ class MedicalController extends BaseController {
         $stmt->execute($params);
         
         $this->logActivity('UPDATE_MEDICAL_RECORD', "Updated medical record ID: {$id}");
+        
+        // If diagnosis is changed to Euthanasia, update animal status to Deceased
+        if ($this->has('diagnosis_type') && $this->input('diagnosis_type') === 'Euthanasia') {
+            // Get the animal ID from the record
+            $animalStmt = $this->db->prepare("SELECT AnimalID FROM Medical_Records WHERE RecordID = :id");
+            $animalStmt->execute(['id' => $id]);
+            $record = $animalStmt->fetch();
+            
+            if ($record) {
+                $updateStmt = $this->db->prepare("UPDATE Animals SET Current_Status = 'Deceased', Updated_At = NOW() WHERE AnimalID = :animal_id");
+                $updateStmt->execute(['animal_id' => $record['AnimalID']]);
+                $this->logActivity('UPDATE_ANIMAL_STATUS', "Animal ID: {$record['AnimalID']} status changed to Deceased due to Euthanasia");
+            }
+        }
         
         // Get updated record
         $stmt = $this->db->prepare("

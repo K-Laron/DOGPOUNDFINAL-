@@ -685,10 +685,6 @@ const SettingsPage = {
                 </div>
                 
                 <div class="flex items-center gap-4 mt-6 pt-6 border-t">
-                    <button type="button" class="btn btn-secondary" onclick="SettingsPage.testEmail()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                        Test Connection
-                    </button>
                     <div class="flex-1"></div>
                     <button type="submit" class="btn btn-primary">
                         Save Settings
@@ -1121,7 +1117,7 @@ const SettingsPage = {
         try {
             if (submitBtn) Loading.setButtonLoading(submitBtn, true, 'Saving...');
 
-            const response = await API.put(`/settings/${section}`, data);
+            const response = await API.put('/settings', { category: section, data: data });
 
             if (response.success) {
                 Toast.success('Settings saved successfully');
@@ -1131,31 +1127,6 @@ const SettingsPage = {
             Toast.error(error.message || 'Failed to save settings');
         } finally {
             if (submitBtn) Loading.setButtonLoading(submitBtn, false);
-        }
-    },
-
-    /**
-     * Test email configuration
-     */
-    async testEmail() {
-        const loadingModal = Modal.loading('Testing email connection...');
-
-        try {
-            const form = document.getElementById('email-settings-form');
-            const data = Form.getData(form);
-
-            const response = await API.post('/settings/email/test', data);
-
-            loadingModal.close();
-
-            if (response.success) {
-                Toast.success('Email test successful! Check your inbox.');
-            } else {
-                Toast.error(response.message || 'Email test failed');
-            }
-        } catch (error) {
-            loadingModal.close();
-            Toast.error(error.message || 'Failed to test email');
         }
     },
 
@@ -1170,22 +1141,19 @@ const SettingsPage = {
 
         if (!confirmed) return;
 
-        const loadingModal = Modal.loading('Creating backup...');
+        Toast.info('Creating backup... Download will start shortly.');
 
         try {
-            Toast.info('Preparing backup file...');
-
-            // This would typically trigger a download
-            const response = await API.get('/backup/create');
-
-            loadingModal.close();
-
-            if (response.success && response.data.download_url) {
-                window.location.href = response.data.download_url;
-                Toast.success('Backup created successfully');
-            }
+            // Trigger download directly via URL
+            const token = Auth.getToken();
+            const url = `${API.baseURL}/settings/backup?token=${encodeURIComponent(token)}`;
+            window.location.href = url;
+            
+            // Update last backup display after a delay
+            setTimeout(() => {
+                this.settings.last_backup = new Date().toISOString();
+            }, 2000);
         } catch (error) {
-            loadingModal.close();
             Toast.error(error.message || 'Failed to create backup');
         }
     },
@@ -1239,17 +1207,11 @@ const SettingsPage = {
         Toast.info(`Exporting ${type}...`);
 
         try {
-            const response = await API.get(`/export/${type}`);
-
-            if (response.success && response.data.download_url) {
-                window.location.href = response.data.download_url;
-                Toast.success(`${Utils.capitalize(type)} exported successfully`);
-            } else if (response.success && response.data) {
-                // If data is returned directly, convert to CSV
-                const csv = this.convertToCSV(response.data);
-                Utils.downloadFile(csv, `${type}-${Utils.toInputDate(new Date())}.csv`, 'text/csv');
-                Toast.success(`${Utils.capitalize(type)} exported successfully`);
-            }
+            // Trigger download directly via URL
+            const token = Auth.getToken();
+            const url = `${API.baseURL}/settings/export/${type}?token=${encodeURIComponent(token)}`;
+            window.location.href = url;
+            Toast.success(`${Utils.capitalize(type)} export started`);
         } catch (error) {
             Toast.error(error.message || `Failed to export ${type}`);
         }
@@ -1285,14 +1247,11 @@ const SettingsPage = {
         Toast.info('Exporting activity logs...');
 
         try {
-            const response = await API.system.logs({ per_page: 10000 });
-
-            if (response.success) {
-                const logs = response.data.data || response.data;
-                const csv = this.convertToCSV(logs);
-                Utils.downloadFile(csv, `activity-logs-${Utils.toInputDate(new Date())}.csv`, 'text/csv');
-                Toast.success('Logs exported successfully');
-            }
+            // Trigger download directly via URL
+            const token = Auth.getToken();
+            const url = `${API.baseURL}/settings/export-logs?token=${encodeURIComponent(token)}`;
+            window.location.href = url;
+            Toast.success('Logs export started');
         } catch (error) {
             Toast.error(error.message || 'Failed to export logs');
         }
@@ -1303,17 +1262,17 @@ const SettingsPage = {
      */
     async clearLogs() {
         const confirmed = await Modal.confirm(
-            'This will permanently delete all activity logs. This action cannot be undone.',
-            'Clear Activity Logs'
+            'This will delete activity logs older than 30 days. Recent logs will be kept.',
+            'Clear Old Activity Logs'
         );
 
         if (!confirmed) return;
 
         try {
-            const response = await API.delete('/logs/clear');
+            const response = await API.delete('/settings/clear-logs');
 
             if (response.success) {
-                Toast.success('Activity logs cleared');
+                Toast.success(response.message || 'Old activity logs cleared');
                 this.renderActivityLogs();
             }
         } catch (error) {

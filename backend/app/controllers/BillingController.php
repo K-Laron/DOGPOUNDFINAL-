@@ -295,32 +295,49 @@ class BillingController extends BaseController
      */
     public function cancelInvoice($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM Invoices WHERE InvoiceID = :id AND Is_Deleted = FALSE");
-        $stmt->execute(['id' => $id]);
-        $invoice = $stmt->fetch();
+        $this->db->beginTransaction();
 
-        if (!$invoice) {
-            Response::notFound("Invoice not found");
+        try {
+            // Use FOR UPDATE to lock the row and prevent race conditions
+            $stmt = $this->db->prepare("SELECT * FROM Invoices WHERE InvoiceID = :id AND Is_Deleted = FALSE FOR UPDATE");
+            $stmt->execute(['id' => $id]);
+            $invoice = $stmt->fetch();
+
+            if (!$invoice) {
+                $this->db->rollBack();
+                Response::notFound("Invoice not found");
+            }
+
+            if ($invoice['Status'] === 'Paid') {
+                $this->db->rollBack();
+                Response::error("Cannot cancel a paid invoice", 400);
+            }
+
+            // Check if there are any payments
+            $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Payments WHERE InvoiceID = :id");
+            $stmt->execute(['id' => $id]);
+
+            if ($stmt->fetch()['count'] > 0) {
+                $this->db->rollBack();
+                Response::error("Cannot cancel invoice with existing payments", 400);
+            }
+
+            $stmt = $this->db->prepare("UPDATE Invoices SET Status = 'Cancelled', Is_Deleted = TRUE WHERE InvoiceID = :id");
+            $stmt->execute(['id' => $id]);
+
+            $this->db->commit();
+
+            $this->logActivity('CANCEL_INVOICE', "Cancelled invoice ID: {$id}");
+
+            Response::success(null, "Invoice cancelled");
+        } catch (Exception $e) {
+            if ($e->getMessage() === 'RESPONSE_EXIT') {
+                throw $e;
+            }
+            $this->db->rollBack();
+            error_log("Error cancelling invoice: " . $e->getMessage());
+            Response::serverError("Failed to cancel invoice");
         }
-
-        if ($invoice['Status'] === 'Paid') {
-            Response::error("Cannot cancel a paid invoice", 400);
-        }
-
-        // Check if there are any payments
-        $stmt = $this->db->prepare("SELECT COUNT(*) as count FROM Payments WHERE InvoiceID = :id");
-        $stmt->execute(['id' => $id]);
-
-        if ($stmt->fetch()['count'] > 0) {
-            Response::error("Cannot cancel invoice with existing payments", 400);
-        }
-
-        $stmt = $this->db->prepare("UPDATE Invoices SET Status = 'Cancelled', Is_Deleted = TRUE WHERE InvoiceID = :id");
-        $stmt->execute(['id' => $id]);
-
-        $this->logActivity('CANCEL_INVOICE', "Cancelled invoice ID: {$id}");
-
-        Response::success(null, "Invoice cancelled");
     }
 
     /**
@@ -886,5 +903,171 @@ class BillingController extends BaseController
         }
 
         Response::success($result, "Fee calculated successfully");
+    }
+
+    /**
+     * Export invoices data
+     * GET /invoices/export
+     * 
+     * Query params:
+     * - format: csv, json, excel (default: csv)
+     * - status: filter by status (Paid, Unpaid, Cancelled)
+     * - type: filter by transaction type
+     * - date_from: filter by date from
+     * - date_to: filter by date to
+     */
+    public function exportInvoices()
+    {
+        require_once APP_PATH . '/utils/ExportService.php';
+
+        $format = $this->query('format') ?? 'csv';
+
+        // Build query with filters
+        $where = ["i.Is_Deleted = FALSE"];
+        $params = [];
+
+        if ($this->query('status')) {
+            $where[] = "i.Status = :status";
+            $params['status'] = $this->query('status');
+        }
+
+        if ($this->query('type')) {
+            $where[] = "i.Transaction_Type = :type";
+            $params['type'] = $this->query('type');
+        }
+
+        if ($this->query('date_from')) {
+            $where[] = "DATE(i.Created_At) >= :date_from";
+            $params['date_from'] = $this->query('date_from');
+        }
+
+        if ($this->query('date_to')) {
+            $where[] = "DATE(i.Created_At) <= :date_to";
+            $params['date_to'] = $this->query('date_to');
+        }
+
+        $whereClause = implode(' AND ', $where);
+
+        $stmt = $this->db->prepare("
+            SELECT 
+                i.InvoiceID,
+                i.Transaction_Type,
+                i.Total_Amount,
+                i.Status,
+                i.Created_At,
+                CONCAT(payer.FirstName, ' ', payer.LastName) as Payer_Name,
+                payer.Email as Payer_Email,
+                CONCAT(staff.FirstName, ' ', staff.LastName) as Issued_By,
+                a.Name as Animal_Name,
+                COALESCE((SELECT SUM(Amount_Paid) FROM Payments WHERE InvoiceID = i.InvoiceID), 0) as Amount_Paid
+            FROM Invoices i
+            JOIN Users payer ON i.Payer_UserID = payer.UserID
+            JOIN Users staff ON i.Issued_By_UserID = staff.UserID
+            LEFT JOIN Animals a ON i.Related_AnimalID = a.AnimalID
+            WHERE {$whereClause}
+            ORDER BY i.Created_At DESC
+        ");
+
+        $stmt->execute($params);
+        $invoices = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Calculate balance for each invoice
+        foreach ($invoices as &$invoice) {
+            $invoice['Balance'] = $invoice['Total_Amount'] - $invoice['Amount_Paid'];
+        }
+
+        $headers = [
+            'InvoiceID' => 'Invoice ID',
+            'Transaction_Type' => 'Transaction Type',
+            'Total_Amount' => 'Total Amount',
+            'Amount_Paid' => 'Amount Paid',
+            'Balance' => 'Balance',
+            'Status' => 'Status',
+            'Payer_Name' => 'Payer Name',
+            'Payer_Email' => 'Payer Email',
+            'Animal_Name' => 'Animal',
+            'Issued_By' => 'Issued By',
+            'Created_At' => 'Created At'
+        ];
+
+        $this->logActivity('EXPORT_INVOICES', "Exported " . count($invoices) . " invoices to {$format}");
+
+        ExportService::export($invoices, $format, 'invoices_export', $headers);
+    }
+
+    /**
+     * Export payments data
+     * GET /payments/export
+     * 
+     * Query params:
+     * - format: csv, json, excel (default: csv)
+     * - payment_method: filter by payment method
+     * - date_from: filter by date from
+     * - date_to: filter by date to
+     */
+    public function exportPayments()
+    {
+        require_once APP_PATH . '/utils/ExportService.php';
+
+        $format = $this->query('format') ?? 'csv';
+
+        // Build query with filters
+        $where = ["1=1"];
+        $params = [];
+
+        if ($this->query('payment_method')) {
+            $where[] = "p.Payment_Method = :method";
+            $params['method'] = $this->query('payment_method');
+        }
+
+        if ($this->query('date_from')) {
+            $where[] = "DATE(p.Payment_Date) >= :date_from";
+            $params['date_from'] = $this->query('date_from');
+        }
+
+        if ($this->query('date_to')) {
+            $where[] = "DATE(p.Payment_Date) <= :date_to";
+            $params['date_to'] = $this->query('date_to');
+        }
+
+        $whereClause = implode(' AND ', $where);
+
+        $stmt = $this->db->prepare("
+            SELECT 
+                p.PaymentID,
+                p.InvoiceID,
+                p.Payment_Date,
+                p.Amount_Paid,
+                p.Payment_Method,
+                p.Reference_Number,
+                i.Transaction_Type,
+                CONCAT(payer.FirstName, ' ', payer.LastName) as Payer_Name,
+                CONCAT(receiver.FirstName, ' ', receiver.LastName) as Received_By
+            FROM Payments p
+            JOIN Invoices i ON p.InvoiceID = i.InvoiceID
+            JOIN Users payer ON i.Payer_UserID = payer.UserID
+            JOIN Users receiver ON p.Received_By_UserID = receiver.UserID
+            WHERE {$whereClause}
+            ORDER BY p.Payment_Date DESC
+        ");
+
+        $stmt->execute($params);
+        $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $headers = [
+            'PaymentID' => 'Payment ID',
+            'InvoiceID' => 'Invoice ID',
+            'Payment_Date' => 'Payment Date',
+            'Amount_Paid' => 'Amount Paid',
+            'Payment_Method' => 'Payment Method',
+            'Reference_Number' => 'Reference Number',
+            'Transaction_Type' => 'Transaction Type',
+            'Payer_Name' => 'Payer Name',
+            'Received_By' => 'Received By'
+        ];
+
+        $this->logActivity('EXPORT_PAYMENTS', "Exported " . count($payments) . " payments to {$format}");
+
+        ExportService::export($payments, $format, 'payments_export', $headers);
     }
 }

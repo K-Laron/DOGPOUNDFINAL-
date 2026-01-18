@@ -87,6 +87,11 @@ const Auth = {
                     this.setRefreshToken(response.data.refresh_token);
                 }
 
+                // Store CSRF token in memory for API requests
+                if (response.data.csrf_token) {
+                    API.setCsrfToken(response.data.csrf_token);
+                }
+
                 // Save user
                 this.setUser(response.data.user);
                 Store.setUser(response.data.user);
@@ -155,6 +160,12 @@ const Auth = {
 
             if (response.success) {
                 this.setToken(response.data.access_token);
+                
+                // Update CSRF token if provided
+                if (response.data.csrf_token) {
+                    API.setCsrfToken(response.data.csrf_token);
+                }
+                
                 this.startRefreshTimer();
                 return true;
             }
@@ -206,18 +217,31 @@ const Auth = {
     },
 
     /**
-     * Parse JWT token
+     * Parse JWT token safely
+     * Handles malformed tokens and invalid base64 encoding
      * @param {string} token
      * @returns {Object|null}
      */
     parseToken(token) {
-        if (!token) return null;
+        if (!token || typeof token !== 'string') return null;
 
         try {
             const parts = token.split('.');
             if (parts.length !== 3) return null;
 
-            const payload = JSON.parse(atob(parts[1]));
+            // Validate base64 format before decoding
+            const base64 = parts[1];
+            if (!base64 || !/^[A-Za-z0-9_-]+$/.test(base64)) {
+                console.error('Invalid token base64 format');
+                return null;
+            }
+
+            // Handle base64url encoding (replace - with + and _ with /)
+            const base64Standard = base64.replace(/-/g, '+').replace(/_/g, '/');
+            
+            // Decode and parse
+            const decoded = atob(base64Standard);
+            const payload = JSON.parse(decoded);
             return payload;
         } catch (error) {
             console.error('Token parse error:', error);
@@ -404,6 +428,14 @@ const Auth = {
         Utils.removeStorage(this.TOKEN_KEY);
         Utils.removeStorage(this.REFRESH_TOKEN_KEY);
         Utils.removeStorage(this.USER_KEY);
+        
+        // Clear CSRF token from memory
+        API.clearCsrfToken();
+        
+        // Cleanup SSE connection and handlers
+        if (typeof SSE !== 'undefined') {
+            SSE.cleanup();
+        }
     },
 
     /**

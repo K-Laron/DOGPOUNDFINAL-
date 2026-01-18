@@ -19,7 +19,9 @@ const AnimalsPage = {
             search: ''
         },
         viewMode: 'grid', // 'grid' or 'table'
-        loading: false
+        loading: false,
+        selectedAnimals: [], // For bulk operations
+        showExportMenu: false
     },
 
     /**
@@ -35,7 +37,27 @@ const AnimalsPage = {
                 </div>
                 <div class="page-actions">
                     ${Auth.isStaff() ? `
-                        <button class="btn btn-secondary" onclick="AnimalsPage.showAddModal()">
+                        <div class="dropdown" id="export-dropdown">
+                            <button class="btn btn-secondary" onclick="AnimalsPage.toggleExportMenu()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Export
+                            </button>
+                            <div class="dropdown-menu" id="export-menu">
+                                <button class="dropdown-item" onclick="AnimalsPage.exportData('csv')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                    Export as CSV
+                                </button>
+                                <button class="dropdown-item" onclick="AnimalsPage.exportData('json')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                    Export as JSON
+                                </button>
+                                <button class="dropdown-item" onclick="AnimalsPage.exportData('excel')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                    Export as Excel
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="AnimalsPage.showAddModal()">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                             Add Animal
                         </button>
@@ -90,6 +112,26 @@ const AnimalsPage = {
                     </div>
                 </div>
             </div>
+            
+            <!-- Bulk Action Bar (hidden by default, placed OUTSIDE filter card) -->
+            ${Auth.isStaff() ? `
+            <div id="bulk-action-bar" class="bulk-actions-bar" style="display: none;">
+                <span id="selected-count" class="selected-count" style="color: white; font-weight: 600;">0 selected</span>
+                <button class="btn btn-ghost btn-sm" onclick="AnimalsPage.clearSelection()">
+                    Clear Selection
+                </button>
+                <select id="bulk-status-select" class="form-select" style="width: auto; min-width: 180px; margin-left: auto;">
+                    <option value="">Change Status To...</option>
+                    <option value="Available">Available</option>
+                    <option value="Reserved">Reserved</option>
+                    <option value="In Treatment">In Treatment</option>
+                    <option value="Quarantine">Quarantine</option>
+                </select>
+                <button class="btn btn-primary btn-sm" onclick="AnimalsPage.applyBulkStatus()">
+                    Apply
+                </button>
+            </div>
+            ` : ''}
             
             <!-- Animals Container -->
             <div id="animals-container">
@@ -273,29 +315,61 @@ const AnimalsPage = {
                 </div>
             `;
         } else {
+            // Build columns with optional checkbox for staff
+            const columns = [];
+            
+            // Non-editable statuses (final states)
+            const nonEditableStatuses = ['Adopted', 'Reclaimed'];
+            
+            // Add checkbox column for staff (disabled for adopted/reclaimed animals)
+            if (Auth.isStaff()) {
+                columns.push({
+                    key: '_select',
+                    label: '',
+                    headerHtml: `<div onclick="event.stopPropagation();"><input type="checkbox" id="select-all-checkbox" onchange="AnimalsPage.toggleSelectAll()" ${this.state.selectedAnimals.length === this.getSelectableAnimals().length && this.getSelectableAnimals().length > 0 ? 'checked' : ''}></div>`,
+                    render: (val, row) => {
+                        const isNonEditable = nonEditableStatuses.includes(row.Current_Status);
+                        return `
+                            <div onclick="event.stopPropagation();" style="display: flex; align-items: center; justify-content: center;">
+                                <input type="checkbox" 
+                                       data-animal-id="${row.AnimalID}" 
+                                       ${this.state.selectedAnimals.includes(row.AnimalID) ? 'checked' : ''} 
+                                       ${isNonEditable ? `disabled title="${row.Current_Status} animals cannot be edited"` : ''}
+                                       onchange="AnimalsPage.toggleSelection(${row.AnimalID})"
+                                       style="${isNonEditable ? 'opacity: 0.4; cursor: not-allowed;' : ''}">
+                            </div>
+                        `;
+                    },
+                    width: '40px',
+                    sortable: false
+                });
+            }
+
+            columns.push(
+                {
+                    key: 'Name', label: 'Name', render: (val, row) => {
+                        const placeholder = Utils.getAnimalPlaceholder(row.Type);
+                        return `
+                    <div class="flex items-center gap-3">
+                        <img src="${row.Image_URL || placeholder}" 
+                             alt="${val}" 
+                             style="width: 40px; height: 40px; border-radius: var(--radius-md); object-fit: cover;"
+                             onerror="this.src='${placeholder}'">
+                        <span class="font-semibold">${val}</span>
+                    </div>
+                `}
+                },
+                { key: 'Type', label: 'Type' },
+                { key: 'Breed', label: 'Breed', render: val => val || '-' },
+                { key: 'Gender', label: 'Gender' },
+                { key: 'Age_Group', label: 'Age', render: val => val || '-' },
+                { key: 'Current_Status', label: 'Status', type: 'badge' },
+                { key: 'Intake_Date', label: 'Intake Date', type: 'date' }
+            );
+
             container.innerHTML = DataTable.render({
                 id: 'animals-table',
-                columns: [
-                    {
-                        key: 'Name', label: 'Name', render: (val, row) => {
-                            const placeholder = Utils.getAnimalPlaceholder(row.Type);
-                            return `
-                        <div class="flex items-center gap-3">
-                            <img src="${row.Image_URL || placeholder}" 
-                                 alt="${val}" 
-                                 style="width: 40px; height: 40px; border-radius: var(--radius-md); object-fit: cover;"
-                                 onerror="this.src='${placeholder}'">
-                            <span class="font-semibold">${val}</span>
-                        </div>
-                    `}
-                    },
-                    { key: 'Type', label: 'Type' },
-                    { key: 'Breed', label: 'Breed', render: val => val || '-' },
-                    { key: 'Gender', label: 'Gender' },
-                    { key: 'Age_Group', label: 'Age', render: val => val || '-' },
-                    { key: 'Current_Status', label: 'Status', type: 'badge' },
-                    { key: 'Intake_Date', label: 'Intake Date', type: 'date' }
-                ],
+                columns: columns,
                 data: this.state.animals,
                 pagination: this.state.pagination,
                 actions: {
@@ -522,19 +596,28 @@ const AnimalsPage = {
      * @param {Object} animal
      */
     showEditModal(animal) {
-        const fields = this.getAnimalFormFields();
+        // Check if animal has a non-editable status
+        const nonEditableStatuses = ['Adopted', 'Reclaimed'];
+        const isNonEditable = nonEditableStatuses.includes(animal.Current_Status);
+        
+        // Get form fields and modify based on animal status
+        const fields = this.getAnimalFormFields(isNonEditable, animal.Current_Status);
+        
+        // Map animal data to form field names (lowercase with underscores)
+        const formValues = {
+            name: animal.Name || '',
+            type: animal.Type || '',
+            breed: animal.Breed || '',
+            gender: animal.Gender || '',
+            age_group: animal.Age_Group || '',
+            weight: animal.Weight || '',
+            intake_status: animal.Intake_Status || '',
+            current_status: animal.Current_Status || ''
+        };
 
         Modal.open({
             title: `Edit ${animal.Name}`,
-            content: `<form id="edit-animal-form">${Form.generate(fields, {
-                name: animal.Name,
-                type: animal.Type,
-                breed: animal.Breed,
-                gender: animal.Gender,
-                age_group: animal.Age_Group,
-                weight: animal.Weight,
-                current_status: animal.Current_Status
-            })}</form>`,
+            content: `<form id="edit-animal-form">${Form.generate(fields, formValues)}</form>`,
             size: 'lg',
             confirmText: 'Save Changes',
             onConfirm: async () => {
@@ -549,6 +632,11 @@ const AnimalsPage = {
 
                 // Remove photo from data as it's handled separately
                 delete data.photo;
+                
+                // For non-editable status animals, preserve the original status
+                if (isNonEditable) {
+                    data.current_status = animal.Current_Status;
+                }
 
                 try {
                     const response = await API.animals.update(animal.AnimalID, data);
@@ -628,10 +716,12 @@ const AnimalsPage = {
 
     /**
      * Get animal form fields
+     * @param {boolean} isNonEditable - Whether the animal has a non-editable status (Adopted/Reclaimed)
+     * @param {string} currentStatus - The current status of the animal (for display when non-editable)
      * @returns {Array}
      */
-    getAnimalFormFields() {
-        return [
+    getAnimalFormFields(isNonEditable = false, currentStatus = '') {
+        const fields = [
             { type: 'text', name: 'name', label: 'Name', required: true, placeholder: 'Enter animal name' },
             { type: 'select', name: 'type', label: 'Type', required: true, options: ['Dog', 'Cat', 'Other'] },
             { type: 'text', name: 'breed', label: 'Breed', placeholder: 'Enter breed' },
@@ -654,23 +744,248 @@ const AnimalsPage = {
                     { value: 'Born in Shelter', label: 'Born in Shelter' },
                     { value: 'Transferred', label: 'Transferred' }
                 ]
-            },
-            {
+            }
+        ];
+        
+        // Add current status field - different based on whether status is editable
+        if (isNonEditable) {
+            // For Adopted/Reclaimed animals, show status as readonly text
+            fields.push({
+                type: 'text',
+                name: 'current_status',
+                label: 'Current Status',
+                readonly: true,
+                disabled: true,
+                hint: 'Status cannot be changed for adopted or reclaimed animals'
+            });
+        } else {
+            // For other animals, show editable dropdown
+            fields.push({
                 type: 'select', name: 'current_status', label: 'Current Status', options: [
                     { value: 'Available', label: 'Available' },
                     { value: 'Reserved', label: 'Reserved' },
                     { value: 'In Treatment', label: 'In Treatment' },
                     { value: 'Quarantine', label: 'Quarantine' }
                 ]
-            },
-            {
-                type: 'file',
-                name: 'photo',
-                label: 'Photo',
-                accept: 'image/*',
-                hint: 'Upload a photo of the animal (optional)'
+            });
+        }
+        
+        // Add photo upload field
+        fields.push({
+            type: 'file',
+            name: 'photo',
+            label: 'Photo',
+            accept: 'image/*',
+            hint: 'Upload a photo of the animal (optional)'
+        });
+        
+        return fields;
+    },
+
+    /**
+     * Toggle export dropdown menu
+     */
+    toggleExportMenu() {
+        const dropdown = document.getElementById('export-dropdown');
+        const menu = document.getElementById('export-menu');
+        if (dropdown && menu) {
+            const isOpen = dropdown.classList.contains('open');
+            
+            if (isOpen) {
+                dropdown.classList.remove('open');
+            } else {
+                dropdown.classList.add('open');
+                
+                // Close when clicking outside
+                const closeHandler = (e) => {
+                    if (!e.target.closest('#export-dropdown')) {
+                        dropdown.classList.remove('open');
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', closeHandler), 0);
             }
-        ];
+        }
+    },
+
+    /**
+     * Export animals data
+     * @param {string} format - csv, json, or excel
+     */
+    async exportData(format) {
+        // Close the dropdown
+        const dropdown = document.getElementById('export-dropdown');
+        if (dropdown) dropdown.classList.remove('open');
+
+        try {
+            Toast.info('Preparing export...');
+            await API.animals.export({ 
+                format,
+                ...this.state.filters 
+            });
+        } catch (error) {
+            Toast.error(error.message || 'Failed to export data');
+        }
+    },
+
+    /**
+     * Toggle selection of an animal
+     * @param {number} animalId
+     */
+    toggleSelection(animalId) {
+        const index = this.state.selectedAnimals.indexOf(animalId);
+        if (index > -1) {
+            this.state.selectedAnimals.splice(index, 1);
+        } else {
+            this.state.selectedAnimals.push(animalId);
+        }
+        this.updateBulkActionBar();
+        this.updateCheckboxUI(animalId);
+    },
+
+    /**
+     * Get animals that can be selected (excludes adopted/reclaimed animals)
+     * @returns {Array}
+     */
+    getSelectableAnimals() {
+        const nonEditableStatuses = ['Adopted', 'Reclaimed'];
+        return this.state.animals.filter(a => !nonEditableStatuses.includes(a.Current_Status));
+    },
+
+    /**
+     * Toggle select all animals (only selectable ones, not adopted)
+     */
+    toggleSelectAll() {
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        if (selectAllCheckbox && selectAllCheckbox.checked) {
+            // Select all selectable animals (exclude adopted)
+            this.state.selectedAnimals = this.getSelectableAnimals().map(a => a.AnimalID);
+        } else {
+            this.state.selectedAnimals = [];
+        }
+        this.updateBulkActionBar();
+        this.renderContainer();
+    },
+
+    /**
+     * Clear all selections
+     */
+    clearSelection() {
+        this.state.selectedAnimals = [];
+        this.updateBulkActionBar();
+        this.renderContainer();
+    },
+
+    /**
+     * Update the bulk action bar visibility and count
+     */
+    updateBulkActionBar() {
+        const bar = document.getElementById('bulk-action-bar');
+        const countEl = document.getElementById('selected-count');
+        
+        if (bar) {
+            // Use 'flex' instead of 'block' since .bulk-actions-bar is a flex container
+            bar.style.display = this.state.selectedAnimals.length > 0 ? 'flex' : 'none';
+        }
+        if (countEl) {
+            countEl.textContent = `${this.state.selectedAnimals.length} selected`;
+        }
+    },
+
+    /**
+     * Update checkbox UI for a specific animal
+     * @param {number} animalId
+     */
+    updateCheckboxUI(animalId) {
+        const checkbox = document.querySelector(`input[data-animal-id="${animalId}"]`);
+        if (checkbox) {
+            const isSelected = this.state.selectedAnimals.includes(animalId);
+            checkbox.checked = isSelected;
+            
+            // Update row styling
+            const row = checkbox.closest('tr');
+            if (row) {
+                row.classList.toggle('selected', isSelected);
+            }
+        }
+        
+        // Update select-all checkbox state (only count selectable animals, not adopted)
+        const selectAllCheckbox = document.getElementById('select-all-checkbox');
+        if (selectAllCheckbox) {
+            const selectableAnimals = this.getSelectableAnimals();
+            const selectableCount = selectableAnimals.length;
+            const selectedCount = this.state.selectedAnimals.length;
+            
+            selectAllCheckbox.checked = selectedCount === selectableCount && selectableCount > 0;
+            selectAllCheckbox.indeterminate = selectedCount > 0 && selectedCount < selectableCount;
+        }
+    },
+
+    /**
+     * Apply bulk status change
+     */
+    async applyBulkStatus() {
+        const statusSelect = document.getElementById('bulk-status-select');
+        const status = statusSelect?.value;
+
+        if (!status) {
+            Toast.warning('Please select a status');
+            return;
+        }
+
+        if (this.state.selectedAnimals.length === 0) {
+            Toast.warning('No animals selected');
+            return;
+        }
+
+        const confirmed = await Modal.confirm(
+            `Are you sure you want to change the status of ${this.state.selectedAnimals.length} animal(s) to "${status}"?`,
+            'Bulk Status Update'
+        );
+
+        if (!confirmed) return;
+
+        try {
+            Toast.info('Updating animals...');
+            const response = await API.animals.bulkUpdateStatus(this.state.selectedAnimals, status);
+            
+            if (response.success) {
+                Toast.success(`Successfully updated ${response.data.updated_count || this.state.selectedAnimals.length} animal(s)`);
+                this.state.selectedAnimals = [];
+                this.updateBulkActionBar();
+                if (statusSelect) statusSelect.value = '';
+                await this.loadAnimals();
+            }
+        } catch (error) {
+            Toast.error(error.message || 'Failed to update animals');
+        }
+    },
+
+    /**
+     * Cleanup when navigating away
+     * Called by Router before rendering new page
+     */
+    destroy() {
+        // Clear SSE handlers for animals
+        if (typeof SSE !== 'undefined') {
+            SSE.off('animals_updated');
+        }
+        
+        // Reset state to prevent stale data
+        this.state = {
+            animals: [],
+            pagination: { page: 1, perPage: 20, total: 0 },
+            filters: {
+                type: '',
+                status: '',
+                gender: '',
+                search: ''
+            },
+            viewMode: 'grid',
+            loading: false,
+            selectedAnimals: [],
+            showExportMenu: false
+        };
     }
 };
 

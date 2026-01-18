@@ -666,7 +666,9 @@ class DashboardController extends BaseController
             if ($e->getMessage() === 'RESPONSE_EXIT') {
                 throw $e;
             }
-            Response::serverError("Crash: " . $e->getMessage());
+            error_log("DashboardController::userActivity failed: " . $e->getMessage());
+            require_once APP_PATH . '/utils/ErrorHandler.php';
+            ErrorHandler::handle($e);
         }
     }
 
@@ -778,5 +780,229 @@ class DashboardController extends BaseController
                 'health' => BASE_URL . '/system/health'
             ]
         ], "System info retrieved");
+    }
+
+    /**
+     * Get advanced trends and analytics
+     * GET /dashboard/trends
+     * 
+     * Provides detailed trend analysis for key metrics
+     */
+    public function trends()
+    {
+        $trends = [];
+
+        // ==========================================
+        // ADOPTION TRENDS (Last 12 months)
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                DATE_FORMAT(Updated_At, '%Y-%m') as month,
+                DATE_FORMAT(Updated_At, '%b %Y') as label,
+                COUNT(*) as completed_adoptions
+            FROM Adoption_Requests
+            WHERE Status = 'Completed'
+            AND Updated_At >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+            GROUP BY DATE_FORMAT(Updated_At, '%Y-%m')
+            ORDER BY month ASC
+        ");
+        $stmt->execute();
+        $trends['adoptions_monthly'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // ==========================================
+        // REVENUE TRENDS (Last 12 months)
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                DATE_FORMAT(p.Payment_Date, '%Y-%m') as month,
+                DATE_FORMAT(p.Payment_Date, '%b %Y') as label,
+                SUM(p.Amount_Paid) as total_collected,
+                COUNT(p.PaymentID) as payment_count
+            FROM Payments p
+            WHERE p.Payment_Date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+            GROUP BY DATE_FORMAT(p.Payment_Date, '%Y-%m')
+            ORDER BY month ASC
+        ");
+        $stmt->execute();
+        $trends['revenue_monthly'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // ==========================================
+        // INTAKE BY TYPE TRENDS (Last 12 months)
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                DATE_FORMAT(Intake_Date, '%Y-%m') as month,
+                DATE_FORMAT(Intake_Date, '%b %Y') as label,
+                SUM(CASE WHEN Intake_Status = 'Stray' THEN 1 ELSE 0 END) as stray,
+                SUM(CASE WHEN Intake_Status = 'Surrendered' THEN 1 ELSE 0 END) as surrendered,
+                SUM(CASE WHEN Intake_Status = 'Rescued' THEN 1 ELSE 0 END) as rescued,
+                SUM(CASE WHEN Intake_Status = 'Born in Shelter' THEN 1 ELSE 0 END) as born_in_shelter,
+                COUNT(*) as total
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            AND Intake_Date >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+            GROUP BY DATE_FORMAT(Intake_Date, '%Y-%m')
+            ORDER BY month ASC
+        ");
+        $stmt->execute();
+        $trends['intake_by_type'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // ==========================================
+        // OUTCOME ANALYSIS (Last 12 months)
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                Current_Status as status,
+                COUNT(*) as count,
+                ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM Animals WHERE Is_Deleted = FALSE), 2) as percentage
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            GROUP BY Current_Status
+            ORDER BY count DESC
+        ");
+        $stmt->execute();
+        $trends['outcome_distribution'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // ==========================================
+        // AVERAGE LENGTH OF STAY
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                Type,
+                ROUND(AVG(DATEDIFF(
+                    CASE 
+                        WHEN Current_Status IN ('Adopted', 'Reclaimed') THEN Updated_At
+                        ELSE NOW()
+                    END,
+                    Intake_Date
+                )), 1) as avg_days_in_shelter
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            AND Current_Status IN ('Available', 'Adopted', 'Reclaimed')
+            GROUP BY Type
+        ");
+        $stmt->execute();
+        $trends['avg_length_of_stay'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Overall average
+        $stmt = $this->db->prepare("
+            SELECT 
+                ROUND(AVG(DATEDIFF(
+                    CASE 
+                        WHEN Current_Status IN ('Adopted', 'Reclaimed') THEN Updated_At
+                        ELSE NOW()
+                    END,
+                    Intake_Date
+                )), 1) as avg_days
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            AND Current_Status IN ('Available', 'Adopted', 'Reclaimed')
+        ");
+        $stmt->execute();
+        $trends['overall_avg_stay'] = (float)$stmt->fetch()['avg_days'];
+
+        // ==========================================
+        // TOP BREEDS (Most common)
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                Breed,
+                Type,
+                COUNT(*) as count
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            AND Breed IS NOT NULL
+            AND Breed != ''
+            GROUP BY Breed, Type
+            ORDER BY count DESC
+            LIMIT 10
+        ");
+        $stmt->execute();
+        $trends['top_breeds'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // ==========================================
+        // ADOPTION SUCCESS RATE
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                COUNT(*) as total_requests,
+                SUM(CASE WHEN Status = 'Completed' THEN 1 ELSE 0 END) as completed,
+                SUM(CASE WHEN Status = 'Rejected' THEN 1 ELSE 0 END) as rejected,
+                SUM(CASE WHEN Status = 'Cancelled' THEN 1 ELSE 0 END) as cancelled,
+                ROUND(
+                    SUM(CASE WHEN Status = 'Completed' THEN 1 ELSE 0 END) * 100.0 / 
+                    NULLIF(SUM(CASE WHEN Status IN ('Completed', 'Rejected') THEN 1 ELSE 0 END), 0),
+                    1
+                ) as approval_rate
+            FROM Adoption_Requests
+            WHERE Created_At >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
+        ");
+        $stmt->execute();
+        $trends['adoption_success'] = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // ==========================================
+        // BUSIEST DAYS OF WEEK
+        // ==========================================
+        $stmt = $this->db->prepare("
+            SELECT 
+                DAYNAME(Intake_Date) as day_name,
+                DAYOFWEEK(Intake_Date) as day_num,
+                COUNT(*) as intake_count
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            AND Intake_Date >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+            GROUP BY DAYOFWEEK(Intake_Date), DAYNAME(Intake_Date)
+            ORDER BY day_num
+        ");
+        $stmt->execute();
+        $trends['intakes_by_day'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // ==========================================
+        // YEAR OVER YEAR COMPARISON
+        // ==========================================
+        // This year stats
+        $stmt = $this->db->prepare("
+            SELECT 
+                COUNT(*) as total_intakes,
+                SUM(CASE WHEN Current_Status = 'Adopted' THEN 1 ELSE 0 END) as total_adoptions
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            AND YEAR(Intake_Date) = YEAR(NOW())
+        ");
+        $stmt->execute();
+        $thisYear = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Last year stats
+        $stmt = $this->db->prepare("
+            SELECT 
+                COUNT(*) as total_intakes,
+                SUM(CASE WHEN Current_Status = 'Adopted' THEN 1 ELSE 0 END) as total_adoptions
+            FROM Animals
+            WHERE Is_Deleted = FALSE
+            AND YEAR(Intake_Date) = YEAR(NOW()) - 1
+        ");
+        $stmt->execute();
+        $lastYear = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $trends['year_comparison'] = [
+            'current_year' => [
+                'year' => date('Y'),
+                'intakes' => (int)$thisYear['total_intakes'],
+                'adoptions' => (int)$thisYear['total_adoptions']
+            ],
+            'previous_year' => [
+                'year' => date('Y') - 1,
+                'intakes' => (int)$lastYear['total_intakes'],
+                'adoptions' => (int)$lastYear['total_adoptions']
+            ],
+            'intake_change' => $lastYear['total_intakes'] > 0 
+                ? round(($thisYear['total_intakes'] - $lastYear['total_intakes']) / $lastYear['total_intakes'] * 100, 1)
+                : 0,
+            'adoption_change' => $lastYear['total_adoptions'] > 0 
+                ? round(($thisYear['total_adoptions'] - $lastYear['total_adoptions']) / $lastYear['total_adoptions'] * 100, 1)
+                : 0
+        ];
+
+        Response::success($trends, "Trends and analytics retrieved");
     }
 }

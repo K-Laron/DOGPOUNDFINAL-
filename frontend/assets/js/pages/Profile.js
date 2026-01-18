@@ -466,32 +466,6 @@ const ProfilePage = {
                 </form>
             </div>
             
-
-            
-            <!--Active Sessions-->
-            <div class="mb-8 pt-8 border-t">
-                <h4 class="font-semibold mb-4">Active Sessions</h4>
-                <div class="space-y-3">
-                    <div class="p-4 bg-secondary rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="avatar" style="background: var(--color-success);">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                                </div>
-                                <div>
-                                    <p class="font-medium">Current Session</p>
-                                    <p class="text-tertiary text-sm">This device • Active now</p>
-                                </div>
-                            </div>
-                            <span class="badge badge-success">Active</span>
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-ghost btn-sm mt-4 text-danger" onclick="ProfilePage.logoutAllSessions()">
-                    Log out of all other sessions
-                </button>
-            </div>
-            
             <!--Danger Zone-->
     <div class="pt-8 border-t">
         <h4 class="font-semibold mb-2 text-danger">Danger Zone</h4>
@@ -553,9 +527,9 @@ const ProfilePage = {
         const config = strengthConfig[strength] || strengthConfig[1];
 
         bar.style.width = config.width;
-        bar.className = `progress - bar ${config.color} `;
+        bar.className = `progress-bar ${config.color}`;
         label.textContent = config.label;
-        label.style.color = `var(--color - ${config.color})`;
+        label.style.color = `var(--color-${config.color})`;
     },
 
     /**
@@ -593,13 +567,14 @@ const ProfilePage = {
     /**
      * Load activity log
      * @param {string} filter
+     * @param {boolean} showAll - Whether to show all activities
      */
-    async loadActivityLog(filter = 'all') {
+    async loadActivityLog(filter = 'all', showAll = false) {
         const container = document.getElementById('activity-list');
         if (!container) return;
 
         try {
-            const params = { limit: 30 };
+            const params = { limit: 50 };
             if (filter !== 'all') {
                 params.action_pattern = filter.toUpperCase();
             }
@@ -620,12 +595,17 @@ const ProfilePage = {
                     return;
                 }
 
+                // Limit to 5 items unless showAll is true
+                const displayLimit = 5;
+                const logsToShow = showAll ? this.activityLog : this.activityLog.slice(0, displayLimit);
+                const hasMore = this.activityLog.length > displayLimit;
+
                 // Group by date
-                const grouped = Utils.groupBy(this.activityLog, (item) => {
+                const grouped = Utils.groupBy(logsToShow, (item) => {
                     return Utils.formatDate(item.Log_Date, 'medium');
                 });
 
-                container.innerHTML = Object.entries(grouped).map(([date, logs]) => `
+                let html = Object.entries(grouped).map(([date, logs]) => `
                     <div class="mb-6">
                         <p class="text-sm font-medium text-secondary mb-3">${date}</p>
                         <div class="space-y-1">
@@ -649,6 +629,31 @@ const ProfilePage = {
                         </div>
                     </div>
     `).join('');
+
+                // Add Show More/Show Less button
+                if (hasMore) {
+                    if (showAll) {
+                        html += `
+                            <div class="text-center pt-4 border-t">
+                                <button class="btn btn-ghost btn-sm" onclick="ProfilePage.loadActivityLog('${filter}', false)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                                    Show Less
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="text-center pt-4 border-t">
+                                <button class="btn btn-ghost btn-sm" onclick="ProfilePage.loadActivityLog('${filter}', true)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    Show All (${this.activityLog.length} activities)
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+
+                container.innerHTML = html;
             }
         } catch (error) {
             console.error('Load activity log error:', error);
@@ -1210,25 +1215,6 @@ const ProfilePage = {
 
             if (!confirmed) {
                 document.getElementById('two-factor').checked = true;
-            }
-        }
-    },
-
-    /**
-     * Logout all other sessions
-     */
-    async logoutAllSessions() {
-        const confirmed = await Modal.confirm(
-            'This will log you out of all other devices and browsers. You will need to log in again on those devices.',
-            'Log Out All Sessions'
-        );
-
-        if (confirmed) {
-            try {
-                await API.post('/auth/logout-all');
-                Toast.success('Logged out of all other sessions');
-            } catch (error) {
-                Toast.error(error.message || 'Failed to logout other sessions');
             }
         }
     },

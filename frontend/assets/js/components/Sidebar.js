@@ -204,7 +204,7 @@ const Sidebar = {
         const badge = typeof item.badge === 'function' ? item.badge() : item.badge;
 
         return `
-            <a href="${item.path}" class="sidebar-link${isActive ? ' active' : ''}" data-page="${item.id}">
+            <a href="${item.path}" class="sidebar-link${isActive ? ' active' : ''}" data-page="${item.id}" data-tooltip="${item.label}">
                 <span class="sidebar-link-icon">${this.icons[item.icon] || ''}</span>
                 <span class="sidebar-link-text">${item.label}</span>
                 ${badge > 0 ? `<span class="sidebar-link-badge">${badge > 99 ? '99+' : badge}</span>` : ''}
@@ -228,7 +228,7 @@ const Sidebar = {
 
         return `
             <div class="sidebar-footer">
-                <div class="sidebar-user dropdown" id="sidebar-user-dropdown">
+                <div class="sidebar-user dropdown" id="sidebar-user-dropdown" data-tooltip="${fullName}">
                     ${avatarHtml}
                     <div class="sidebar-user-info">
                         <div class="sidebar-user-name">${fullName}</div>

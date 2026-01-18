@@ -27,7 +27,8 @@ class MedicalRecord {
         'Treatment', 
         'Emergency', 
         'Deworming', 
-        'Spay/Neuter'
+        'Spay/Neuter',
+        'Euthanasia'
     ];
     
     /**

@@ -44,6 +44,29 @@ const BillingPage = {
                     <p class="page-subtitle">Manage invoices and payments</p>
                 </div>
                 <div class="page-actions">
+                    <div class="dropdown" id="export-dropdown">
+                        <button class="btn btn-ghost" onclick="BillingPage.toggleExportMenu()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Export
+                        </button>
+                        <div class="dropdown-menu" id="export-menu" style="display: none;">
+                            <div class="dropdown-header">Invoices</div>
+                            <button class="dropdown-item" onclick="BillingPage.exportInvoices('csv')">
+                                Export Invoices (CSV)
+                            </button>
+                            <button class="dropdown-item" onclick="BillingPage.exportInvoices('excel')">
+                                Export Invoices (Excel)
+                            </button>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-header">Payments</div>
+                            <button class="dropdown-item" onclick="BillingPage.exportPayments('csv')">
+                                Export Payments (CSV)
+                            </button>
+                            <button class="dropdown-item" onclick="BillingPage.exportPayments('excel')">
+                                Export Payments (Excel)
+                            </button>
+                        </div>
+                    </div>
                     <button class="btn btn-secondary" onclick="BillingPage.showReportModal()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         Generate Report
@@ -1817,6 +1840,68 @@ const BillingPage = {
         } catch (error) {
             console.error('Invoice PDF generation failed:', error);
             Toast.error('Failed to generate invoice PDF');
+        }
+    },
+
+    /**
+     * Toggle export dropdown menu
+     */
+    toggleExportMenu() {
+        const menu = document.getElementById('export-menu');
+        if (menu) {
+            const isVisible = menu.style.display !== 'none';
+            menu.style.display = isVisible ? 'none' : 'block';
+            
+            // Close when clicking outside
+            if (!isVisible) {
+                const closeHandler = (e) => {
+                    if (!e.target.closest('#export-dropdown')) {
+                        menu.style.display = 'none';
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', closeHandler), 0);
+            }
+        }
+    },
+
+    /**
+     * Export invoices data
+     * @param {string} format - csv, json, or excel
+     */
+    async exportInvoices(format) {
+        // Close the dropdown
+        const menu = document.getElementById('export-menu');
+        if (menu) menu.style.display = 'none';
+
+        try {
+            Toast.info('Preparing invoices export...');
+            await API.billing.exportInvoices({ 
+                format,
+                ...this.state.filters 
+            });
+        } catch (error) {
+            Toast.error(error.message || 'Failed to export invoices');
+        }
+    },
+
+    /**
+     * Export payments data
+     * @param {string} format - csv, json, or excel
+     */
+    async exportPayments(format) {
+        // Close the dropdown
+        const menu = document.getElementById('export-menu');
+        if (menu) menu.style.display = 'none';
+
+        try {
+            Toast.info('Preparing payments export...');
+            await API.billing.exportPayments({ 
+                format,
+                payment_method: this.state.filters.payment_method 
+            });
+        } catch (error) {
+            Toast.error(error.message || 'Failed to export payments');
         }
     }
 };

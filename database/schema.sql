@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS Medical_Records (
     AnimalID INT NOT NULL,
     VetID INT NOT NULL,
     Date_Performed DATETIME DEFAULT CURRENT_TIMESTAMP,
-    Diagnosis_Type ENUM('Checkup', 'Vaccination', 'Surgery', 'Treatment', 'Emergency', 'Deworming', 'Spay/Neuter') NOT NULL,
+    Diagnosis_Type ENUM('Checkup', 'Vaccination', 'Surgery', 'Treatment', 'Emergency', 'Deworming', 'Spay/Neuter', 'Euthanasia') NOT NULL,
     Vaccine_Name VARCHAR(100),
     Treatment_Notes TEXT,
     Next_Due_Date DATE,
