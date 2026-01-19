@@ -1926,7 +1926,7 @@ const SSE = {
      */
     config: {
         // SSE runs on separate port to avoid blocking main API (PHP dev server is single-threaded)
-        baseUrl: 'http://localhost:8001',
+        baseUrl: `http://${window.location.hostname}:8001`,
         maxRetries: 5,
         retryDelay: 3000, // 3 seconds
         maxRetryDelay: 30000 // 30 seconds max

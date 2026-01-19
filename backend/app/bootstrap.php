@@ -130,9 +130,12 @@ class App
         // Get the origin of the incoming request
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
+        // Check if origin is a private network IP (allows local network access)
+        $isPrivateNetwork = preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?$/', $origin);
+
         // Check if this origin is in our whitelist (defined in config.php)
         // This prevents malicious sites from making API requests
-        if (in_array($origin, ALLOWED_ORIGINS) || in_array('*', ALLOWED_ORIGINS)) {
+        if (in_array($origin, ALLOWED_ORIGINS) || in_array('*', ALLOWED_ORIGINS) || $isPrivateNetwork) {
             // Origin is trusted - echo it back in the response header
             header("Access-Control-Allow-Origin: " . ($origin ?: '*'));
         } else {

@@ -322,6 +322,11 @@ const Router = {
             Sidebar.updateActive();
         }
 
+        // Update mobile nav active state
+        if (window.MobileNav) {
+            MobileNav.updateActive();
+        }
+
         // Scroll to top
         window.scrollTo(0, 0);
     },
@@ -548,7 +553,7 @@ const Router = {
                     Sidebar.render();
                 }
             }
-            
+
             // Initialize mobile navigation if not already rendered
             if (typeof MobileNav !== 'undefined' && !Utils.$('#mobile-nav')) {
                 MobileNav.render();

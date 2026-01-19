@@ -25,8 +25,15 @@ define('APP_VERSION', '1.2.0');
 // Base URL for the API (update for your environment)
 define('BASE_URL', 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost:8000'));
 
-// Frontend URL (for CORS)
-define('FRONTEND_URL', 'http://localhost:3000');
+// Frontend URL (for CORS) - dynamically detect based on request origin
+$requestOrigin = $_SERVER['HTTP_ORIGIN'] ?? null;
+if ($requestOrigin && preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?$/', $requestOrigin)) {
+    // Allow localhost and private network IPs (10.x.x.x, 192.168.x.x, 172.16-31.x.x)
+    define('FRONTEND_URL', $requestOrigin);
+} else {
+    // Fallback to localhost
+    define('FRONTEND_URL', 'http://localhost:3000');
+}
 
 // ============================================
 // JWT CONFIGURATION

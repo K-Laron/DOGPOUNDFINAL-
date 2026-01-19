@@ -30,7 +30,8 @@ require_once APP_PATH . '/config/database.php';
 
 // Handle CORS for SSE
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (in_array($origin, ALLOWED_ORIGINS) || in_array('*', ALLOWED_ORIGINS)) {
+$isPrivateNetwork = preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)(:\d+)?$/', $origin);
+if (in_array($origin, ALLOWED_ORIGINS) || in_array('*', ALLOWED_ORIGINS) || $isPrivateNetwork) {
     header("Access-Control-Allow-Origin: " . ($origin ?: '*'));
 } else {
     header("Access-Control-Allow-Origin: " . FRONTEND_URL);
